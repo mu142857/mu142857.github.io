@@ -25,8 +25,4 @@ First-year Mathematics student at the University of Waterloo exploring applied m
 
 ## Credits
 
-Design template by [HTML5 UP](https://html5up.net)
-
----
-
-© 2025 Jiamu Shangguan
+Template at https://html5up.net
