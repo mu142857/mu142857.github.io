@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Technical Projects - Jiamu Shangguan</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <style>
+        /* Page Navigation */
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 35%;
+            right: 0;
+            background: rgba(44, 62, 80, 0.95);
+            padding: 1em 2em;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            gap: 2em;
+        }
+
+        .page-nav a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: none;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+
+        .page-nav a:hover {
+            color: #54a0ff;
+        }
+
+        .page-nav a.active {
+            color: #54a0ff;
+            border-bottom: 2px solid #54a0ff;
+        }
+
+        body {
+            padding-top: 3.5em;
+        }
+
+        @media screen and (max-width: 1280px) {
+            .page-nav {
+                left: 0;
+            }
+        }
+
+        @media screen and (max-width: 736px) {
+            .page-nav {
+                padding: 0.8em 1em;
+                gap: 1em;
+                font-size: 0.85em;
+            }
+        }
+
+        #header {
+            background-image: url("../assets/css/images/overlay.png"), url("../images/bg1.jpg");
+        }
+
+        #footer {
+            background: transparent;
+        }
+
+        @media screen and (max-width: 980px) {
+            #footer {
+                background-image: url("../assets/css/images/overlay.png"), url("../images/bg1.jpg");
+                background-color: #1f1815;
+                /* Fallback/Base color */
+                background-position: top left, bottom center;
+                background-repeat: repeat, no-repeat;
+                background-size: auto, cover;
+            }
+        }
+
+        /* Deep Blue Theme Overrides */
+        body {
+            background-color: #1b2631;
+        }
+
+        body,
+        input,
+        select,
+        textarea {
+            color: #e0e6ed;
+            /* Light gray-blue text */
+            text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+        }
+
+        strong,
+        b,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #ffffff;
+            /* White headers */
+        }
+
+        blockquote {
+            border-left-color: #54a0ff;
+            /* Change green accent to blue */
+        }
+
+        code {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        hr {
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Update link colors for dark background */
+        a {
+            color: #74c7d5;
+            /* Lighter blue for links */
+            border-bottom-color: rgba(116, 199, 213, 0.5);
+        }
+
+        a:hover {
+            color: #54a0ff !important;
+            /* Change hover green to blue */
+            border-bottom-color: transparent;
+        }
+
+        /* Button visibility fix for dark background */
+        .button {
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.7) !important;
+            box-shadow: none !important;
+        }
+
+        .button:hover {
+            border-color: #54a0ff !important;
+            color: #54a0ff !important;
+        }
+
+        .page-nav a {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="is-preload">
+
+    <!-- Navigation -->
+    <nav class="page-nav">
+        <a href="../">About</a>
+        <a href="./" class="active">Projects</a>
+        <a href="../games/">Games</a>
+        <a href="../contact/">Contact</a>
+    </nav>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="inner">
+            <a href="../" class="image avatar"><img src="../images/avatar.jpg" alt="" /></a>
+            <h1><strong style="font-size: 1.5em;">Technical Projects</strong></h1>
+            <p>Python, Web Development & Scientific Computing</p>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <div id="main">
+
+        <section>
+            <h2>Code & Innovations</h2>
+            <div class="row">
+                <article class="col-6 col-12-xsmall work-item">
+                    <a href="../images/fulls/07.jpg" class="image fit thumb"><img src="../images/thumbs/07.jpg"
+                            alt="" /></a>
+                    <div class="title-row">
+                        <h3>Sentimen Flow</h3>
+                        <a href="https://www.youtube.com/watch?v=uDgtdfvAk6M&t" class="button small"
+                            target="_blank">Project Video</a>
+                    </div>
+                    <p>Hackathon project built in 48 hours — sentiment analysis tool for text data.</p>
+                </article>
+                <article class="col-6 col-12-xsmall work-item">
+                    <a href="../images/fulls/02.jpg" class="image fit thumb"><img src="../images/thumbs/02.jpg"
+                            alt="" /></a>
+                    <div class="title-row">
+                        <h3>Spring Oscillator</h3>
+                        <a href="https://anoyume91.github.io/spring-oscillator-visualization/" class="button small"
+                            target="_blank">Project Link</a>
+                    </div>
+                    <p>Physics visualization of spring. 1st place at Socratica's Claude Create-A-Thon — built in 6 hours
+                        as a team project.</p>
+                </article>
+                <article class="col-6 col-12-xsmall work-item">
+                    <a href="../images/fulls/03.jpg" class="image fit thumb"><img src="../images/thumbs/03.jpg"
+                            alt="" /></a>
+                    <div class="title-row">
+                        <h3>Pendulum Simulation</h3>
+                        <a href="https://anoyume91.github.io/pendulum-visual-controller/" class="button small"
+                            target="_blank">Project Link</a>
+                    </div>
+                    <p>Interactive pendulum visualization — built in 6 hours as a team project.</p>
+                </article>
+                <article class="col-6 col-12-xsmall work-item">
+                    <a href="../images/fulls/08.jpg" class="image fit thumb"><img src="../images/thumbs/08.jpg"
+                            alt="" /></a>
+                    <div class="title-row">
+                        <h3>R&S Studio</h3>
+                        <a href="https://r-s-studio.github.io/" class="button small" target="_blank">Visit Website</a>
+                    </div>
+                    <p>Music production studio for game soundtracks and animation scores — collaboration with Rouri.</p>
+                </article>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                <li><a href="mailto:linjiamu49@gmail.com" class="icon solid fa-envelope"><span
+                            class="label">Email</span></a></li>
+                <li><a href="https://github.com/mu142857" class="icon brands fa-github" target="_blank"><span
+                            class="label">Github</span></a></li>
+                <li><a href="https://www.linkedin.com/in/jiamu-shangguan-464092399" class="icon brands fa-linkedin"
+                        target="_blank"><span class="label">LinkedIn</span></a></li>
+                <li><a href="https://safari-mu.itch.io/" class="icon brands fa-itch-io" target="_blank"><span
+                            class="label">itch.io</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Jiamu Shangguan</li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/jquery.poptrox.min.js"></script>
+    <script src="../assets/js/browser.min.js"></script>
+    <script src="../assets/js/breakpoints.min.js"></script>
+    <script src="../assets/js/util.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/typewriter.js"></script>
+
+</body>
+
+</html>

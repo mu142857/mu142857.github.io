@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Contact - Jiamu Shangguan</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <style>
+        /* Page Navigation */
+        .page-nav {
+            position: fixed;
+            top: 0;
+            left: 35%;
+            right: 0;
+            background: rgba(120, 100, 75, 0.95);
+            padding: 1em 2em;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            gap: 2em;
+        }
+
+        .page-nav a {
+            color: #fff;
+            text-decoration: none;
+            border-bottom: none;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+
+        .page-nav a:hover {
+            color: #d4a574;
+        }
+
+        .page-nav a.active {
+            color: #d4a574;
+            border-bottom: 2px solid #d4a574;
+        }
+
+        body {
+            padding-top: 3.5em;
+            /* Space for fixed nav */
+        }
+
+        @media screen and (max-width: 1280px) {
+            .page-nav {
+                left: 0;
+            }
+        }
+
+        @media screen and (max-width: 736px) {
+            .page-nav {
+                padding: 0.8em 1em;
+                gap: 1em;
+                font-size: 0.85em;
+            }
+        }
+
+        #header {
+            background-image: url("../assets/css/images/overlay.png"), url("../images/bg3.jpg");
+        }
+
+        #footer {
+            background: transparent;
+        }
+
+        @media screen and (max-width: 980px) {
+            #footer {
+                background-image: url("../assets/css/images/overlay.png"), url("../images/bg3.jpg");
+                background-color: #1f1815;
+                background-position: top left, bottom center;
+                background-repeat: repeat, no-repeat;
+                background-size: auto, cover;
+            }
+        }
+    </style>
+</head>
+
+<body class="is-preload">
+
+    <!-- Navigation -->
+    <nav class="page-nav">
+        <a href="../">About</a>
+        <a href="../projects/">Projects</a>
+        <a href="../games/">Games</a>
+        <a href="./" class="active">Contact</a>
+    </nav>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="inner">
+            <a href="../" class="image avatar"><img src="../images/avatar.jpg" alt="" /></a>
+            <h1><strong style="font-size: 1.5em;">Contact Me</strong></h1>
+            <p>Let's Connect!</p>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <div id="main">
+
+        <section id="contact">
+            <h2>Get In Touch</h2>
+            <p>Feel free to reach out if you'd like to collaborate on a project, discuss ideas, or just say hi.</p>
+            <ul class="labeled-icons">
+                <li>
+                    <h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
+                    <a href="mailto:linjiamu49@gmail.com">linjiamu49@gmail.com</a>
+                </li>
+                <li>
+                    <h3 class="icon brands fa-github"><span class="label">GitHub</span></h3>
+                    <a href="https://github.com/mu142857" target="_blank">github.com/mu142857</a>
+                </li>
+                <li>
+                    <h3 class="icon brands fa-linkedin"><span class="label">LinkedIn</span></h3>
+                    <a href="https://www.linkedin.com/in/jiamu-shangguan-464092399/"
+                        target="_blank">linkedin.com/in/jiamu-shangguan-464092399</a>
+                </li>
+            </ul>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                <li><a href="mailto:linjiamu49@gmail.com" class="icon solid fa-envelope"><span
+                            class="label">Email</span></a></li>
+                <li><a href="https://github.com/mu142857" class="icon brands fa-github" target="_blank"><span
+                            class="label">Github</span></a></li>
+                <li><a href="https://www.linkedin.com/in/jiamu-shangguan-464092399" class="icon brands fa-linkedin"
+                        target="_blank"><span class="label">LinkedIn</span></a></li>
+                <li><a href="https://safari-mu.itch.io/" class="icon brands fa-itch-io" target="_blank"><span
+                            class="label">itch.io</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Jiamu Shangguan</li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/jquery.poptrox.min.js"></script>
+    <script src="../assets/js/browser.min.js"></script>
+    <script src="../assets/js/breakpoints.min.js"></script>
+    <script src="../assets/js/util.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/typewriter.js"></script>
+
+</body>
+
+</html>
