@@ -147,6 +147,54 @@
         .page-nav a {
             color: #fff;
         }
+
+        /* Section Intro Styles - Warm tones for Games page */
+        .section-subtitle {
+            font-size: 1.1em;
+            color: rgba(255, 179, 219, 0.9);
+            margin-bottom: 0.5em;
+            font-style: normal;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .section-intro {
+            color: rgba(252, 237, 252, 0.85);
+            line-height: 1.6;
+            margin-bottom: 1.5em;
+        }
+
+        /* Soft Divider */
+        .soft-divider {
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255, 179, 219, 0.3), transparent);
+            margin: 2em 0;
+        }
+
+        /* Card Hover Effects */
+        .work-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px;
+            padding: 1em;
+            margin-bottom: 2em;
+        }
+
+        .work-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 140, 198, 0.15);
+        }
+
+        /* Increase main content padding */
+        #main {
+            padding: 5em 5em 4em 5em;
+        }
+
+        @media screen and (max-width: 1280px) {
+            #main {
+                padding: 6em 3em 3em 3em;
+            }
+        }
     </style>
 </head>
 
@@ -174,6 +222,12 @@
 
         <section>
             <h2>Games & Creative Experiments</h2>
+            <p class="section-subtitle">"Where Hand-Drawn Art Meets Programmatic Logic"</p>
+            <p class="section-intro">In my creative philosophy, games represent the ultimate medium for integrating
+                programming, visual art, and musical composition into a unified experience. Each project here
+                is a personal journey — independently crafted from initial logic design through atmospheric
+                sound design — exploring how code can breathe life into hand-drawn worlds.</p>
+            <hr class="soft-divider">
             <div class="row">
                 <article class="col-6 col-12-xsmall work-item">
                     <a href="../images/fulls/01.jpg" class="image fit thumb"><img src="../images/thumbs/01.jpg"
