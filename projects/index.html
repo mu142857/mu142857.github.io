@@ -145,6 +145,46 @@
         .page-nav a {
             color: #fff;
         }
+
+        /* Section Intro Styles */
+        .section-subtitle {
+            font-size: 1.1em;
+            color: rgba(224, 230, 237, 0.7);
+            margin-bottom: 0.5em;
+            font-style: normal;
+            font-weight: 300;
+            letter-spacing: 0.02em;
+        }
+
+        .section-intro {
+            color: rgba(224, 230, 237, 0.85);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* Card Hover Effects */
+        .work-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px;
+            padding: 1em;
+            margin-bottom: 2em;
+        }
+
+        .work-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(84, 160, 255, 0.15);
+        }
+
+        /* Increase main content padding */
+        #main {
+            padding: 5em 5em 4em 5em;
+        }
+
+        @media screen and (max-width: 1280px) {
+            #main {
+                padding: 6em 3em 3em 3em;
+            }
+        }
     </style>
 </head>
 
@@ -172,6 +212,12 @@
 
         <section>
             <h2>Code & Innovations</h2>
+            <p class="section-subtitle">Bridging Mathematical Theory and Computational Execution</p>
+            <p class="section-intro">These projects represent my explorations in scientific computing and machine
+                learning —
+                where abstract mathematical models become interactive simulations and practical data tools. Each one
+                demonstrates how rigorous theory can be transformed into tangible, executable code that solves
+                real problems and reveals hidden patterns in complex systems.</p>
             <div class="row">
                 <article class="col-6 col-12-xsmall work-item">
                     <a href="../images/fulls/07.jpg" class="image fit thumb"><img src="../images/thumbs/07.jpg"
