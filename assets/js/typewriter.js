@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    const TYPING_SPEED = 35; // milliseconds per character
+    const TYPING_SPEED = 15; // milliseconds per character (faster)
 
     function typeWriter(element, html, index, callback) {
         if (index < html.length) {
@@ -27,17 +27,30 @@
     }
 
     function initTypewriter() {
-        const headerInner = document.querySelector('#header .inner h1');
-        if (!headerInner) return;
+        // For pages with p tag in header (projects, games, contact), apply to p
+        const headerP = document.querySelector('#header .inner p');
+        if (headerP) {
+            const originalHTML = headerP.innerHTML;
+            headerP.innerHTML = '';
+            headerP.style.visibility = 'visible';
+            
+            setTimeout(() => {
+                typeWriter(headerP, originalHTML, 0);
+            }, 300);
+            return;
+        }
 
-        const originalHTML = headerInner.innerHTML;
-        headerInner.innerHTML = '';
-        headerInner.style.visibility = 'visible';
-
-        // Small delay before starting
-        setTimeout(() => {
-            typeWriter(headerInner, originalHTML, 0);
-        }, 300);
+        // For homepage, apply to .typewriter-text span
+        const typewriterSpan = document.querySelector('.typewriter-text');
+        if (typewriterSpan) {
+            const originalHTML = typewriterSpan.innerHTML;
+            typewriterSpan.innerHTML = '';
+            typewriterSpan.style.visibility = 'visible';
+            
+            setTimeout(() => {
+                typeWriter(typewriterSpan, originalHTML, 0);
+            }, 300);
+        }
     }
 
     // Run when DOM is ready
