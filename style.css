@@ -1,0 +1,244 @@
+@font-face {
+  font-family: 'PixelFont';
+  src: url('Assets/shared/PixelFont.ttf') format('truetype');
+  font-display: block;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+}
+
+#stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#game {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  /* JS sets the exact integer-scaled width/height on resize. */
+}
+
+/* HUD: social links + classic-site toggle, over the canvas. */
+#hud {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#social {
+  display: flex;
+  gap: 10px;
+}
+
+.hud-icon {
+  color: rgba(244, 233, 193, 0.78);
+  font-size: 22px;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.hud-icon:hover {
+  color: #ffe066;
+  transform: translateY(-2px);
+}
+
+#classic-toggle {
+  font-family: 'PixelFont', monospace;
+  font-size: 15px;
+  color: #14131f;
+  background: #ffe066;
+  padding: 7px 12px;
+  border: 2px solid #f4e9c1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#classic-toggle:hover {
+  background: #fff0a0;
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10; /* above the vignette and HUD */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  font-family: 'PixelFont', monospace;
+}
+
+#overlay.hidden {
+  display: none;
+}
+
+#overlay-panel {
+  position: relative;
+  background: #14131f;
+  color: #f4e9c1;
+  padding: 28px 30px;
+  border: 4px solid #ffe066; /* sharp pixel frame, no rounded corners */
+  border-radius: 0;
+  box-shadow: 0 0 0 4px #14131f; /* inset gap for a double-border pixel look */
+  max-width: 720px;
+  width: 92%;
+  max-height: 84vh;
+  overflow-y: auto;
+  image-rendering: pixelated;
+}
+
+#overlay-content h2 {
+  margin: 0 0 16px;
+  font-size: 30px;
+  font-weight: normal;
+  letter-spacing: 1px;
+  color: #ffe066;
+}
+
+#overlay-content p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+#overlay-close {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #f4e9c1;
+  font-family: 'PixelFont', monospace;
+  font-size: 26px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* ---- Rich section content ---- */
+#overlay-content h3 {
+  margin: 24px 0 8px;
+  font-size: 18px;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  color: #ffe066;
+}
+
+#overlay-content p { margin: 0 0 12px; }
+#overlay-content p.lead { font-size: 17px; color: #fff; }
+#overlay-content .meta { font-size: 13px; color: #9aa0b8; }
+#overlay-content strong { color: #fff; }
+
+#overlay-content ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+  font-size: 15px;
+  line-height: 1.9;
+}
+#overlay-content li { margin-bottom: 4px; }
+
+#overlay-content a {
+  color: #ffe066;
+  text-decoration: none;
+}
+
+/* Image placeholder — swap for <img> later (img inherits the frame). */
+.img-ph, #overlay-content img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 140px;
+  margin: 0 0 16px;
+  border: 2px dashed rgba(244, 233, 193, 0.35);
+  background: rgba(255, 255, 255, 0.03);
+  color: #6f7590;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  box-sizing: border-box;
+}
+#overlay-content img { border-style: solid; border-color: rgba(244, 233, 193, 0.25); min-height: 0; height: 200px; object-fit: cover; }
+.img-ph.portrait { max-width: 180px; min-height: 180px; }
+#overlay-content img.portrait { max-width: 200px; height: 200px; }
+
+/* Skill chips */
+.skill-block { margin-bottom: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-size: 13px;
+  padding: 5px 10px;
+  background: rgba(255, 224, 102, 0.12);
+  border: 1px solid rgba(255, 224, 102, 0.4);
+  color: #f4e9c1;
+}
+
+/* Project cards */
+.card-grid { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.card {
+  display: flex;
+  gap: 14px;
+  padding: 12px;
+  border: 2px solid rgba(244, 233, 193, 0.2);
+  background: rgba(255, 255, 255, 0.02);
+  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+}
+.card:hover { border-color: #ffe066; transform: translateY(-2px); background: rgba(255, 224, 102, 0.06); }
+.card .card-thumb { flex: 0 0 150px; min-height: 96px; height: 96px; margin: 0; object-fit: cover; }
+.card .card-text { flex: 1; }
+.card .card-text h3 { margin: 0 0 4px; color: #fff; }
+.card .card-text p { margin: 6px 0 0; font-size: 14px; line-height: 1.7; }
+.badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  margin-left: 6px;
+  vertical-align: middle;
+  background: #ffe066;
+  color: #14131f;
+}
+
+/* bilibili progress + CTA */
+.cta-block { margin-top: 24px; }
+.progress { margin-bottom: 14px; }
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #9aa0b8;
+  margin-bottom: 6px;
+}
+.progress-track {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(244, 233, 193, 0.25);
+}
+.progress-fill {
+  height: 100%;
+  background: repeating-linear-gradient(90deg, #ffe066 0, #ffe066 6px, #ffd23a 6px, #ffd23a 12px);
+}
+.cta {
+  display: inline-block;
+  font-family: 'PixelFont', monospace;
+  font-size: 16px;
+  color: #14131f !important;
+  background: #ffe066;
+  padding: 10px 18px;
+  border: 2px solid #f4e9c1;
+}
+.cta:hover { background: #fff0a0; }
+
+@media (max-width: 560px) {
+  .card { flex-direction: column; }
+  .card .card-thumb { flex-basis: auto; }
+}
