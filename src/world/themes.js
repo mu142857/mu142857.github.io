@@ -22,6 +22,25 @@ export const THEMES = {
       'Assets/rust_city_style/building6.png',
     ],
   },
-  // Reserved: a second theme is a pure data addition here, nothing else changes.
-  forestTown: null,
+  silvaron: {
+    layers: [
+      { src: 'Assets/silvaron_style/0.0background.png', factor: 0.0 },
+      { src: 'Assets/silvaron_style/0.2background.png', factor: 0.2 },
+      { src: 'Assets/silvaron_style/0.4background.png', factor: 0.4 },
+      { src: 'Assets/silvaron_style/0.6background.png', factor: 0.6 },
+      { src: 'Assets/silvaron_style/0.8background.png', factor: 0.8 },
+    ],
+    ground: { src: 'Assets/silvaron_style/silvaron_ground.png', factor: 1.0 },
+    // Standing stone marker placed between adjacent buildings (rust city's lamp equivalent).
+    lamp: 'Assets/silvaron_style/silvaron_stone.png',
+    // One building image per section, index-aligned to the BUILDINGS array order.
+    buildings: [
+      'Assets/silvaron_style/building1.png',
+      'Assets/silvaron_style/building2.png',
+      'Assets/silvaron_style/building3.png',
+      'Assets/silvaron_style/building4.png',
+      'Assets/silvaron_style/building5.png',
+      'Assets/silvaron_style/building6.png',
+    ],
+  },
 };

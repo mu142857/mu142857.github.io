@@ -54,7 +54,8 @@ html, body {
   transform: translateY(-2px);
 }
 
-#classic-toggle {
+#classic-toggle,
+#skin-toggle {
   font-family: 'PixelFont', monospace;
   font-size: 15px;
   color: #14131f;
@@ -63,9 +64,11 @@ html, body {
   border: 2px solid #f4e9c1;
   text-decoration: none;
   white-space: nowrap;
+  cursor: pointer;
 }
 
-#classic-toggle:hover {
+#classic-toggle:hover,
+#skin-toggle:hover {
   background: #fff0a0;
 }
 

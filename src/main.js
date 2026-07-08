@@ -34,6 +34,10 @@ resizeCanvas();
 
 const CONTROLS = 'Walk A / D    Shift Sprint    Jump Space    Enter Up / Click';
 
+const THEME_LABELS = { rustCity: 'Rust City', silvaron: 'Silvaron' };
+const THEME_ORDER = ['rustCity', 'silvaron'];
+const SKIN_STORAGE_KEY = 'skin-theme';
+
 // Text sizes, in world px (multiplied by renderScale to get the device font size).
 const TITLE_H = 16;
 const BODY_H = 10;
@@ -137,7 +141,9 @@ async function main() {
     loadPixelFont(),
   ]);
   const world = new World();
-  await world.setTheme('rustCity');
+  const savedTheme = localStorage.getItem(SKIN_STORAGE_KEY);
+  const initialTheme = THEME_ORDER.includes(savedTheme) ? savedTheme : 'rustCity';
+  await world.setTheme(initialTheme);
 
   const input = new InputManager();
   const player = new Player(playerSheet, PLAYER_SPAWN_X);
@@ -146,6 +152,23 @@ async function main() {
   const dust = new Particles();
   let dustTimer = 0;
   let promptTime = 0;
+
+  const skinToggle = document.getElementById('skin-toggle');
+  function updateSkinToggleLabel() {
+    const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(world.theme) + 1) % THEME_ORDER.length];
+    skinToggle.textContent = `${THEME_LABELS[nextTheme]} Style ›`;
+  }
+  updateSkinToggleLabel();
+  skinToggle.addEventListener('click', async () => {
+    const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(world.theme) + 1) % THEME_ORDER.length];
+    await world.setTheme(nextTheme);
+    localStorage.setItem(SKIN_STORAGE_KEY, nextTheme);
+    player.x = Math.max(PLAYER_SPAWN_X, Math.min(player.x, world.worldWidth));
+    camera.worldWidth = world.worldWidth;
+    camera.update(player.x);
+    world.update(player.x);
+    updateSkinToggleLabel();
+  });
 
   // Click a nearby building (inside its box) to enter it, as an alternative to the Enter key.
   canvas.addEventListener('click', (e) => {
