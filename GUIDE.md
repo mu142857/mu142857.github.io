@@ -106,7 +106,8 @@ src/
   engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles.
   entities/   player.js (state machine + sprint), playerAnimations.js (frame ranges).
   world/      world.js (layout/draw/proximity), camera, parallax, buildings.js, themes.js.
-  ui/         overlay.js (section modal), pixelText.js (canvas text).
+  ui/         overlay.js (section modal), pixelText.js (canvas text),
+              touchControls.js (on-screen gamepad for phones).
 Home/         The "classic" HTML5-UP template (self-contained; has its own assets + Font Awesome).
 ```
 
@@ -129,8 +130,33 @@ building — no art changes needed.
 
 ### Controls
 
-Walk **A/D** or arrows · Sprint **hold Shift** (kicks up pixel dust) · Jump **Space** ·
-Enter a building **↑ / Enter / click the box**.
+**Desktop** — Walk **A/D** or arrows · Sprint **hold Shift** (kicks up pixel dust) ·
+Jump **Space** · Enter a building **↑ / Enter / click the box**.
+
+**Phone / tablet** — an on-screen gamepad appears: **◀ ▶** bottom-left to walk, **≫** (sprint)
+and **^** (jump) bottom-right, plus an **ENTER** button that pops up only when the character is
+standing next to a building. Tapping the building itself works too. Multi-touch is supported,
+so you can hold *right* + *sprint* and still tap *jump*.
+
+### Mobile / responsive layout
+
+The side-scroller only makes sense wide, so the site always plays in landscape:
+
+- **Phone held upright** → CSS rotates the whole app a quarter turn (`body.rotated` in
+  `style.css`), so it fills the screen sideways *even if the phone's rotation lock is on*.
+  Turn the phone counter-clockwise and it reads normally. A "turn your phone" hint fades out
+  after 5s.
+- Everything visible lives inside `#app`, which `layout()` in `src/main.js` sizes in pixels;
+  the rotation makes `#app` the containing block for the HUD, gamepad, and section overlay, so
+  they all turn together.
+- Body classes replace media queries — a rotated app's CSS viewport reports the *wrong* axis,
+  so `layout()` sets `.touch`, `.rotated`, `.compact` (shrinks the HUD and the overlay text)
+  and `.narrow` from the app's own dimensions instead.
+- The canvas backing store stays an integer multiple of 160×90 (crisp pixels); on touch
+  devices its *displayed* size takes the fractional fit so it fills the small screen.
+
+Test it by resizing a desktop browser window to phone size — anything with a short side of
+520px or less switches into touch mode.
 
 ---
 

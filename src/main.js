@@ -11,28 +11,75 @@ import { Camera } from './world/camera.js';
 import { Overlay } from './ui/overlay.js';
 import { loadPixelFont, drawText, wrapText } from './ui/pixelText.js';
 import { Particles } from './engine/particles.js';
+import { TouchControls } from './ui/touchControls.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
+const app = document.getElementById('app');
+const rotateHint = document.getElementById('rotate-hint');
 
-// Render at an integer multiple of the 160x90 logical resolution (canvas_item-style): the
-// world is drawn with the context scaled by RENDER_SCALE (smoothing off) for crisp, smooth
-// pixel art. Text is drawn in a separate device-space pass (see the render function).
+const KEY_CONTROLS = 'Walk A / D    Shift Sprint    Jump Space    Enter Up / Click';
+const TOUCH_CONTROLS = 'Walk and jump with the buttons    Tap a building to enter';
+
+// --- Responsive layout ------------------------------------------------------
+// The stage is the drawable area. On a phone held upright it is the viewport turned on its
+// side (CSS rotates #app a quarter turn — see body.rotated in style.css), so the site is
+// always played in landscape, rotation lock or not.
 let renderScale = 1;
-function resizeCanvas() {
-  renderScale = Math.max(1, Math.floor(Math.min(
-    window.innerWidth / CANVAS_WIDTH,
-    window.innerHeight / CANVAS_HEIGHT,
-  )));
+let touchMode = false;
+let rotated = false;
+let controlsText = KEY_CONTROLS;
+
+function layout() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  // Coarse pointer = finger. The size check also covers a desktop window shrunk to phone size.
+  touchMode = window.matchMedia('(pointer: coarse)').matches || Math.min(vw, vh) <= 520;
+  rotated = touchMode && vh > vw;
+
+  const stageW = rotated ? vh : vw;
+  const stageH = rotated ? vw : vh;
+  document.body.classList.toggle('rotated', rotated);
+  document.body.classList.toggle('touch', touchMode);
+  // A phone in landscape is wide but short: either axis being small means "shrink the UI".
+  document.body.classList.toggle('compact', stageW < 760 || stageH < 500);
+  document.body.classList.toggle('narrow', stageW < 560);
+  app.style.width = `${stageW}px`;
+  app.style.height = `${stageH}px`;
+  controlsText = touchMode ? TOUCH_CONTROLS : KEY_CONTROLS;
+
+  // Backing store stays an integer multiple of 160x90 so the world pass draws crisp pixels.
+  const fit = Math.min(stageW / CANVAS_WIDTH, stageH / CANVAS_HEIGHT);
+  renderScale = Math.max(1, touchMode ? Math.ceil(fit) : Math.floor(fit));
   canvas.width = CANVAS_WIDTH * renderScale;
   canvas.height = CANVAS_HEIGHT * renderScale;
-  canvas.style.width = `${canvas.width}px`;
-  canvas.style.height = `${canvas.height}px`;
+  // Desktop keeps the exact integer-scaled size; on a phone the screen is small enough that
+  // filling it beats a pixel-perfect multiple, so the CSS size takes the fractional fit
+  // (drawn from a larger backing store, so nothing is upscaled).
+  const cssScale = touchMode ? fit : renderScale;
+  canvas.style.width = `${Math.round(CANVAS_WIDTH * cssScale)}px`;
+  canvas.style.height = `${Math.round(CANVAS_HEIGHT * cssScale)}px`;
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', layout);
+window.addEventListener('orientationchange', layout);
+layout();
 
-const CONTROLS = 'Walk A / D    Shift Sprint    Jump Space    Enter Up / Click';
+// Client coords -> 0..1 across the canvas. getBoundingClientRect gives the on-screen box, so
+// when #app is rotated a quarter turn the canvas's local axes are swapped: its local +x runs
+// down the screen and its local +y runs right-to-left.
+function canvasNorm(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  if (rotated) {
+    return {
+      nx: (clientY - rect.top) / rect.height,
+      ny: (rect.right - clientX) / rect.width,
+    };
+  }
+  return {
+    nx: (clientX - rect.left) / rect.width,
+    ny: (clientY - rect.top) / rect.height,
+  };
+}
 
 const THEME_LABELS = { rustCity: 'Rust City', silvaron: 'Silvaron' };
 const THEME_ORDER = ['rustCity', 'silvaron'];
@@ -52,7 +99,7 @@ function drawIntro(ctx, cameraX, S) {
   y += TITLE_H + 2;
   drawText(ctx, 'Jiamu Shangguan', dx, y * S, { sizePx: TITLE_H * S, color: '#f4e9c1' });
   y += TITLE_H + 3;
-  wrapText(ctx, CONTROLS, 150 * S, BODY_H * S).forEach((line) => {
+  wrapText(ctx, controlsText, 150 * S, BODY_H * S).forEach((line) => {
     drawText(ctx, line, dx, y * S, { sizePx: BODY_H * S, color: '#c8ccda' });
     y += BODY_H + 1.5;
   });
@@ -150,8 +197,29 @@ async function main() {
   const camera = new Camera(world.worldWidth, CANVAS_WIDTH);
   const overlay = new Overlay();
   const dust = new Particles();
+  const touch = new TouchControls(input);
   let dustTimer = 0;
   let promptTime = 0;
+
+  // Show the gamepad only on touch devices, and re-check whenever the stage changes (a phone
+  // being turned, or a desktop window resized down). These run after the module-level layout()
+  // listener, so touchMode / rotated are already up to date.
+  let hintDismissed = false;
+  function dismissHint() {
+    if (hintDismissed) return;
+    hintDismissed = true;
+    rotateHint.classList.add('fading');
+    setTimeout(() => rotateHint.classList.add('hidden'), 700);
+  }
+  function syncTouchUI() {
+    touch.setVisible(touchMode);
+    const showHint = rotated && !hintDismissed;
+    rotateHint.classList.toggle('hidden', !showHint);
+    if (showHint) setTimeout(dismissHint, 5000); // it has made its point by then
+  }
+  window.addEventListener('resize', syncTouchUI);
+  window.addEventListener('orientationchange', syncTouchUI);
+  syncTouchUI();
 
   const skinToggle = document.getElementById('skin-toggle');
   function updateSkinToggleLabel() {
@@ -170,14 +238,14 @@ async function main() {
     updateSkinToggleLabel();
   });
 
-  // Click a nearby building (inside its box) to enter it, as an alternative to the Enter key.
+  // Click/tap a nearby building (inside its box) to enter it, as an alternative to Enter.
   canvas.addEventListener('click', (e) => {
     if (overlay.isOpen) return;
     const b = world.nearbyBuilding;
     if (!b) return;
-    const rect = canvas.getBoundingClientRect();
-    const wx = ((e.clientX - rect.left) / rect.width) * CANVAS_WIDTH + camera.x;
-    const wy = ((e.clientY - rect.top) / rect.height) * CANVAS_HEIGHT;
+    const { nx, ny } = canvasNorm(e.clientX, e.clientY);
+    const wx = nx * CANVAS_WIDTH + camera.x;
+    const wy = ny * CANVAS_HEIGHT;
     const img = world.imageFor(b);
     const top = BUILDING_BASE_Y - img.height;
     if (wx >= b.worldX && wx <= b.worldX + img.width && wy >= top && wy <= BUILDING_BASE_Y) {
@@ -197,6 +265,8 @@ async function main() {
     camera.update(player.x);
     world.update(player.x);
     promptTime += dt;
+    // The ENTER button only exists while there's something to enter.
+    touch.setEnterVisible(touchMode && !!world.nearbyBuilding);
 
     // Kick up pixel dust behind the character while sprinting on the ground.
     if (player.sprinting && player.state === 'WALK') {

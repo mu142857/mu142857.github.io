@@ -2,33 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <title>Jiamu Shangguan</title>
   <link rel="icon" type="image/png" href="Assets/content/favicon.png" />
   <link rel="stylesheet" href="Home/assets/css/fontawesome-all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="stage">
-    <canvas id="game" width="160" height="90"></canvas>
-  </div>
-
-  <div id="hud">
-    <div id="social">
-      <a class="hud-icon" href="mailto:linjiamu49@gmail.com" title="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
-      <a class="hud-icon" href="https://github.com/mu142857" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><i class="fab fa-github"></i></a>
-      <a class="hud-icon" href="https://www.linkedin.com/in/jiamu-shangguan-464092399" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      <a class="hud-icon" href="https://safari-mu.itch.io" target="_blank" rel="noopener" title="itch.io" aria-label="itch.io"><i class="fab fa-itch-io"></i></a>
-      <a class="hud-icon" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
+  <!--
+    Everything visible lives inside #app. On a phone held upright, #app is rotated 90deg by
+    CSS (body.rotated) so the site always plays in landscape — even with rotation lock on.
+    JS (src/main.js `layout`) sets #app's pixel size and the body mode classes.
+  -->
+  <div id="app">
+    <div id="stage">
+      <canvas id="game" width="160" height="90"></canvas>
     </div>
-    <button id="skin-toggle" type="button" title="Switch skin">Silvaron Style &rsaquo;</button>
-    <a id="classic-toggle" href="Home/index.html">Classic Site &rsaquo;</a>
-  </div>
 
-  <div id="overlay" class="hidden">
-    <div id="overlay-panel">
-      <button id="overlay-close" aria-label="Close">&times;</button>
-      <div id="overlay-content"></div>
+    <div id="hud">
+      <div id="social">
+        <a class="hud-icon" href="mailto:linjiamu49@gmail.com" title="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a class="hud-icon" href="https://github.com/mu142857" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a class="hud-icon" href="https://www.linkedin.com/in/jiamu-shangguan-464092399" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a class="hud-icon" href="https://safari-mu.itch.io" target="_blank" rel="noopener" title="itch.io" aria-label="itch.io"><i class="fab fa-itch-io"></i></a>
+        <a class="hud-icon" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
+      </div>
+      <button id="skin-toggle" type="button" title="Switch skin">Silvaron Style &rsaquo;</button>
+      <a id="classic-toggle" href="Home/index.html">Classic Site &rsaquo;</a>
+    </div>
+
+    <!-- Touch gamepad: walk on the left, sprint / jump on the right (shown on touch devices). -->
+    <div id="touch-controls" class="hidden">
+      <div class="pad pad-left">
+        <button class="tbtn" type="button" data-action="left" aria-label="Walk left"><i class="fas fa-chevron-left"></i></button>
+        <button class="tbtn" type="button" data-action="right" aria-label="Walk right"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="pad pad-right">
+        <button class="tbtn tbtn-enter hidden" type="button" data-action="interact" aria-label="Enter building"><i class="fas fa-sign-in-alt"></i>&nbsp;ENTER</button>
+        <div class="pad-row">
+          <button class="tbtn" type="button" data-action="sprint" aria-label="Sprint"><i class="fas fa-angle-double-right"></i></button>
+          <button class="tbtn" type="button" data-action="jump" aria-label="Jump"><i class="fas fa-chevron-up"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="rotate-hint" class="hidden"><i class="fas fa-redo"></i>&nbsp; Turn your phone sideways</div>
+
+    <div id="overlay" class="hidden">
+      <div id="overlay-panel">
+        <button id="overlay-close" aria-label="Close">&times;</button>
+        <div id="overlay-content"></div>
+      </div>
     </div>
   </div>
 

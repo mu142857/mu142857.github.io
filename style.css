@@ -9,6 +9,33 @@ html, body {
   height: 100%;
   background: #000;
   overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Everything visible sits in #app; JS sizes it in px (see `layout` in src/main.js). */
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Phone held upright: rotate the whole app a quarter turn so the site is always played in
+   landscape. Works even when the device's rotation lock is on — turning the phone
+   counter-clockwise brings it upright. The transform also makes #app the containing block
+   for the fixed-position HUD / controls / overlay inside it, so they rotate along with it. */
+body.rotated #app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  transform: rotate(90deg) translateY(-100%);
+}
+
+body.touch {
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #stage {
@@ -72,6 +99,110 @@ html, body {
   background: #fff0a0;
 }
 
+/* Narrow stage (phone in landscape): shrink the HUD so it doesn't eat the scene. */
+body.compact #hud {
+  top: 8px;
+  right: 10px;
+  gap: 9px;
+}
+
+body.compact #social { gap: 8px; }
+body.compact .hud-icon { font-size: 17px; }
+
+body.compact #classic-toggle,
+body.compact #skin-toggle {
+  font-size: 12px;
+  padding: 5px 8px;
+  border-width: 1px;
+}
+
+/* ---- Touch gamepad ---- */
+#touch-controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 7; /* above the canvas, below the overlay */
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 18px 18px;
+  pointer-events: none; /* only the buttons themselves are tappable */
+}
+
+#touch-controls.hidden,
+body.overlay-open #touch-controls {
+  display: none;
+}
+
+.pad { display: flex; gap: 12px; align-items: flex-end; }
+.pad-right { flex-direction: column; align-items: flex-end; }
+.pad-row { display: flex; gap: 12px; }
+
+.tbtn {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  font-family: 'PixelFont', monospace;
+  font-size: 24px;
+  color: #f4e9c1;
+  background: rgba(20, 19, 31, 0.5);
+  border: 2px solid rgba(255, 224, 102, 0.7);
+  border-radius: 0;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tbtn.active {
+  background: rgba(255, 224, 102, 0.85);
+  color: #14131f;
+  border-color: #f4e9c1;
+}
+
+.tbtn.hidden { display: none; }
+
+/* Contextual "enter this building" button — only shown when the player is next to one. */
+.tbtn-enter {
+  width: auto;
+  height: 44px;
+  padding: 0 14px;
+  font-size: 15px;
+  background: rgba(255, 224, 102, 0.9);
+  color: #14131f;
+  margin-bottom: 4px;
+}
+
+body.compact .tbtn { width: 52px; height: 52px; font-size: 20px; }
+body.compact .tbtn-enter { width: auto; height: 40px; font-size: 13px; }
+
+/* ---- Rotate-your-phone hint (drawn inside the already-rotated frame) ---- */
+#rotate-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 8;
+  padding: 8px 14px;
+  font-family: 'PixelFont', monospace;
+  font-size: 14px;
+  white-space: nowrap;
+  color: #14131f;
+  background: #ffe066;
+  border: 2px solid #f4e9c1;
+  transition: opacity 0.6s ease;
+}
+
+#rotate-hint.hidden { display: none; }
+#rotate-hint.fading { opacity: 0; }
+
 #overlay {
   position: fixed;
   inset: 0;
@@ -97,8 +228,12 @@ html, body {
   box-shadow: 0 0 0 4px #14131f; /* inset gap for a double-border pixel look */
   max-width: 720px;
   width: 92%;
-  max-height: 84vh;
+  /* % of #overlay (which fills #app) rather than vh — under body.rotated the viewport's
+     height is the app's *width*, so vh would be wrong. */
+  max-height: 84%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y; /* body.touch disables gestures; the panel still needs to scroll */
   image-rendering: pixelated;
 }
 
@@ -241,7 +376,37 @@ html, body {
 }
 .cta:hover { background: #fff0a0; }
 
-@media (max-width: 560px) {
-  .card { flex-direction: column; }
-  .card .card-thumb { flex-basis: auto; }
+/* ---- Compact stage (phone landscape) ----
+   Driven by a body class instead of a media query: when the app is force-rotated the CSS
+   viewport is still portrait, so `max-width` would describe the wrong axis. `layout()` in
+   src/main.js sets .compact from the app's own width. */
+body.compact #overlay-panel {
+  width: 94%;
+  max-height: 88%;
+  padding: 18px 20px;
+  border-width: 3px;
 }
+
+body.compact #overlay-content h2 { font-size: 22px; margin-bottom: 10px; }
+body.compact #overlay-content h3 { font-size: 16px; margin: 16px 0 6px; }
+body.compact #overlay-content p { font-size: 13px; line-height: 1.7; }
+body.compact #overlay-content p.lead { font-size: 14px; }
+body.compact #overlay-content ul { font-size: 13px; line-height: 1.7; }
+body.compact #overlay-content img { height: 140px; }
+body.compact #overlay-content img.portrait { max-width: 140px; height: 140px; }
+body.compact .card .card-thumb { flex: 0 0 110px; height: 74px; min-height: 74px; }
+body.compact .cta { font-size: 14px; padding: 8px 14px; }
+
+/* Bigger tap target for the close button on touch. */
+body.touch #overlay-close {
+  top: 0;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  font-size: 30px;
+}
+
+/* Very narrow app: stack card thumbs above their text. (A `max-width` media query can't be
+   used here — when rotated, the CSS viewport width is the app's height.) */
+body.narrow .card { flex-direction: column; }
+body.narrow .card .card-thumb { flex-basis: auto; width: 100%; }
