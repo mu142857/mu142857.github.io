@@ -5,7 +5,11 @@ Two views of the same portfolio, switchable by a button:
 1. **Interactive** (`index.html`) — a pixel side-scroller. Walk right past buildings; each building
    opens a portfolio section. Keep walking past the last one and an **ENTER GAME** arrow drops you
    into an endless runner. This is the main site.
-2. **Classic** (`Home/index.html`) — a normal responsive template ("Twenty" by HTML5 UP).
+2. **Classic** (`classic.html` + `classic.css`) — a normal scrolling one-pager: sticky nav,
+   text-only hero, then About / Skills / Experience / Games / Projects / Music / Contact.
+   Same palette as the interactive site; typography follows the old HTML5 UP "Twenty" template
+   (Lato, light weights, uppercase headings with wide letter-spacing). **No rounded corners
+   anywhere** — `classic.css` enforces `border-radius: 0 !important` on every element.
 
 ---
 
@@ -14,49 +18,48 @@ Two views of the same portfolio, switchable by a button:
 You can't just double-click `index.html` (ES modules are blocked on `file://`). Serve it:
 
 ```bash
-cd "/Users/jiamulin/Desktop/程序programs/Web/Jiamu Website"
+cd "/Users/jiamulin/Desktop/程序programs/Web/Personal Website/mu142857.github.io"
 python3 -m http.server 5500
 ```
 
-Open **http://localhost:5500** . Classic view: **http://localhost:5500/Home/** . Stop with `Ctrl+C`.
+Open **http://localhost:5500** . Classic view: **http://localhost:5500/classic.html** .
+Stop with `Ctrl+C`.
 
 > ⚠️ **After editing code, the browser often caches the old version.** Hard-refresh with
 > **`Cmd + Shift + R`** to see changes. (This plain server doesn't send no-cache headers.)
 
 ---
 
-## 2. ✅ WHAT YOU STILL NEED TO ADD
+## 2. Keeping the content up to date
 
-### A. Images
+**Content lives in two places and must be edited in both:**
 
-All images are currently dashed **placeholder boxes** (labelled with what goes there).
+| | Interactive site | Classic site |
+|---|---|---|
+| File | `index.html`, inside the `<template id="section-…">` blocks | `classic.html`, inside `<section id="…">` |
+| Game cards | `section-gameProjects` | `#games` |
+| Other projects | `section-projects` | `#projects` |
 
-1. Put image files in a new folder **`Assets/content/`**.
-2. Name them **lowercase-with-hyphens**, matching the list below (e.g. `phage.png`).
-   - Screenshots: PNG. Photos: JPG. Keep them small (they display small) — ~600px wide is plenty.
-3. In `index.html`, find the placeholder and **replace the whole `<div ...>…</div>` with an `<img>`**.
-   The image automatically inherits the framed styling.
+Card markup is nearly identical between them — the interactive one puts `class="card-thumb"` on
+the `<img>`; the classic one doesn't need a class. When you add a project, add it to both.
 
-| Section (`<template>` in `index.html`) | Placeholder label | Suggested filename | Replace with |
-|---|---|---|---|
-| `section-gameProjects` | Phage screenshot | `phage.png` | `<img class="card-thumb" src="Assets/content/phage.png" alt="Phage">` |
-| `section-gameProjects` | Signal Split screenshot | `signal-split.png` | `<img class="card-thumb" src="Assets/content/signal-split.png" alt="Signal Split">` |
-| `section-projects` | Physics sim screenshot | `physics-sim.png` | `<img class="card-thumb" src="Assets/content/physics-sim.png" alt="Physics Simulation">` |
-| `section-projects` | Sentiment Flow screenshot | `sentiment-flow.png` | `<img class="card-thumb" src="Assets/content/sentiment-flow.png" alt="Sentiment Flow">` |
-| `section-projects` | Loo-k screenshot | `look.png` | `<img class="card-thumb" src="Assets/content/look.png" alt="Loo-k">` |
-| `section-projects` | Open Prince George screenshot | `open-pg.png` | `<img class="card-thumb" src="Assets/content/open-pg.png" alt="Open Prince George">` |
-| `section-projects` | DonaTrust screenshot | `donatrust.png` | `<img class="card-thumb" src="Assets/content/donatrust.png" alt="DonaTrust">` |
-| `section-about` | Portrait / avatar | `about-portrait.jpg` | `<img class="portrait" src="Assets/content/about-portrait.jpg" alt="Jiamu Shangguan">` |
-| `section-experience` | Drone show photo | `experience-drone.jpg` | `<img src="Assets/content/experience-drone.jpg" alt="AUAV drone show">` |
-| `section-music` | Studio / piano photo | `music-studio.jpg` | `<img src="Assets/content/music-studio.jpg" alt="R&S Studio">` |
+### A. Images — done
 
-- Inside a **project card**, keep `class="card-thumb"` on the `<img>`.
-- For the **About portrait**, keep `class="portrait"` so it stays small.
-- Other section images (drone, studio) need no class — they fill the width.
+All images live in **`Assets/content/`**, lowercase-with-hyphens (`phage.png`,
+`until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
+`physics-sim.png`, `sentiment-flow.png`, `open-pg.png`, `donatrust.png`,
+`about-portrait.jpg`, `experience-drone.jpg`, `music-studio.jpg`, `favicon.png`).
+
+- **Screenshots are portrait by design** (the games are all vertical-composition). Cards crop
+  them to a wide thumbnail with `object-fit: cover` — that is intentional, leave it.
+- New image → drop it in `Assets/content/` and point the card's `src` at it. No other wiring.
+- The About portrait is used by the interactive site only; the classic hero is text-only
+  (name → role → rule → blurb → social icons) and deliberately shows no photo.
 
 ### B. Project links to fill
 
-Some project cards link to `href="#"` (do nothing). Replace `#` with the real URL in `index.html`:
+Some project cards link to `href="#"` (do nothing). Replace `#` in **both** `index.html` and
+`classic.html`:
 
 | Section | Card | Current link | Fill in |
 |---|---|---|---|
@@ -66,26 +69,45 @@ Some project cards link to `href="#"` (do nothing). Replace `#` with the real UR
 | `section-projects` | Open Prince George | `#` | repo or site URL |
 | `section-projects` | DonaTrust Portal | `#` | prototype or repo URL |
 
-Already wired (no action needed): Phage → bilibili, Signal Split → itch.io, Music → R&S Studio,
-and the top-right social icons (email, GitHub, LinkedIn, itch.io).
+Already wired (no action needed): Phage → bilibili, Until Someone Passes / Signal Split →
+their itch.io pages, Eight For Long → `maggieeeeem.itch.io/eight-for-long`, Music → R&S Studio,
+and the social icons (email, GitHub, LinkedIn, itch.io, bilibili).
 
-### C. bilibili follower count (manual)
+### C. Game card order
+
+Games are listed **most-important-first** and the order is currently:
+
+1. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code)
+2. **Phage** — the long-running main project
+3. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code)
+4. **Signal Split** — UW Game Jam
+
+Both 2026 GMTK entries were made in the same jam with a three-person team each; on both you were
+team lead — you assembled and coordinated the team, did the design, and wrote all the code.
+Keep the two lists (`index.html` and `classic.html`) in the same order.
+
+### D. bilibili follower count (manual)
 
 Auto-fetch from the browser is **not possible** (bilibili blocks cross-origin requests + returns 403
-to public proxies). Update it by hand in `index.html`, `section-gameProjects`:
+to public proxies). Update it by hand in **both** files (`section-gameProjects` / `#games`):
 
 ```html
-<span>5,912 / 10,000</span>              <!-- update the number -->
-<div class="progress-fill" style="width: 59%"></div>   <!-- update % = followers / 100 -->
+<span>6,500 / 10,000</span>              <!-- update the number -->
+<div class="progress-fill" style="width: 65%"></div>   <!-- update % = followers / 100 -->
 ```
 
 > If you deploy to GitHub Pages and want true auto-update, ask me to set up a scheduled GitHub
 > Action that fetches the count server-side and writes it to a JSON the page reads. (It *might*
 > still be 403'd on the runner's IP — worth a try.)
 
-### D. Optional / later
+### E. Optional / later
 
-- **Text content**: all section copy lives in the `<template>` blocks in `index.html`. Edit freely.
+- **Text content**: section copy lives in the `<template>` blocks in `index.html` and the
+  `<section>`s in `classic.html`. Edit freely.
+- **`Home/`** is the leftover HTML5 UP "Twenty" template plus a "coming soon" placeholder page.
+  Nothing links to it any more except Font Awesome (`Home/assets/css/fontawesome-all.min.css`,
+  loaded by both sites) — if you delete the folder, move the Font Awesome CSS + `webfonts/`
+  out first.
 - **Forest-town theme**: a second world skin is scaffolded but has no art yet (see `themes.js`
   `forestTown: null`). Drop in art + a theme-toggle button when ready.
 
@@ -95,7 +117,9 @@ to public proxies). Update it by hand in `index.html`, `section-gameProjects`:
 
 ```
 index.html      Interactive site: canvas, HUD (social + Classic Site button), section <template>s.
-style.css       All styling (game canvas, HUD, overlay cards, chips, progress bar, vignette).
+style.css       Interactive-site styling (canvas, HUD, overlay cards, chips, progress bar, vignette).
+classic.html    Classic site: one scrolling page, same content as the templates in index.html.
+classic.css     Classic-site styling (Lato typography, cards, chips; border-radius: 0 everywhere).
 GUIDE.md        This file.
 Assets/
   player/player-Sheet.png          Character sprite sheet (5×12 grid, 128×80/frame).
@@ -103,7 +127,7 @@ Assets/
   rust_city_style/                 Parallax layers, ground, building1–6.png, lamp, PixelFont note.
   silvaron_style/                  The second skin (same layout).
   shared/PixelFont.ttf             The pixel font (used on canvas + in overlays).
-  content/                         ← PUT YOUR IMAGES HERE (create this folder).
+  content/                         All site photos + screenshots (see §2A).
 src/
   main.js                          Boot + game loop + scene switching + HUD/text/vignette/dust.
   engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles.
@@ -112,8 +136,21 @@ src/
   runner/     runner.js (the minigame scene), stones.js (obstacle sheet spec).
   ui/         overlay.js (section modal), pixelText.js (canvas text),
               touchControls.js (on-screen gamepad for phones).
-Home/         The "classic" HTML5-UP template (self-contained; has its own assets + Font Awesome).
+Home/         Leftover HTML5-UP "Twenty" template. Only still needed for the Font Awesome CSS
+              + webfonts that both sites link to (see §2E).
 ```
+
+### The classic site (`classic.html` / `classic.css`)
+
+Plain HTML, no JS, no build step. Anchor nav (`#about`, `#skills`, …) with `scroll-behavior:
+smooth`; the top bar is `position: sticky`. Two rules matter when editing:
+
+- **`border-radius: 0 !important`** is set on `*` — the whole design is square on purpose.
+- **No pixel font.** PixelFont belongs to the game; the classic site is Lato throughout so it
+  reads as a normal professional page. Headings are uppercase with wide letter-spacing, and
+  buttons (`.cta`, `.game-link`) are outlined rather than filled, inverting on hover.
+
+Breakpoints: 880px (two-column grids collapse to one) and 640px (nav wraps to its own row).
 
 ### Building order & sections
 
@@ -217,8 +254,8 @@ Test it by resizing a desktop browser window to phone size — anything with a s
 ## 4. Deploy (GitHub Pages)
 
 Push this whole folder to a repo (e.g. as the source of `mu142857.github.io`, or a project repo
-with Pages enabled). `index.html` at the root is the interactive site; `Home/` is the classic one.
-No build step — it's plain HTML/CSS/JS.
+with Pages enabled). `index.html` at the root is the interactive site; `classic.html` is the
+classic one. No build step — it's plain HTML/CSS/JS.
 
 ---
 

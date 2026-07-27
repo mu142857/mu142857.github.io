@@ -399,6 +399,7 @@ body.compact #touch-controls.runner .tbtn[data-action="jump"] { width: 74px; hei
   border: 2px solid #f4e9c1;
 }
 .cta:hover { background: #fff0a0; }
+.cta + .cta { margin-left: 10px; } /* itch.io + bilibili sit side by side */
 
 /* ---- Compact stage (phone landscape) ----
    Driven by a body class instead of a media query: when the app is force-rotated the CSS

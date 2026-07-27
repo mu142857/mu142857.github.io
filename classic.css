@@ -220,7 +220,10 @@ li { margin-bottom: 8px; }
 .entry img { flex: 0 0 320px; width: 320px; height: 214px; object-fit: cover; border: 1px solid var(--line); }
 
 /* Progress + CTA */
-.cta-block { margin-top: 36px; max-width: 420px; }
+.cta-block { margin-top: 36px; }
+.cta-block .progress-head,
+.cta-block .progress-track { max-width: 420px; }
+.cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
 .progress-head {
   display: flex;
   justify-content: space-between;
