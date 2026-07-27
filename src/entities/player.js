@@ -4,6 +4,7 @@ import {
   IDLE_TO_LONG_DELAY,
   GRAVITY,
   JUMP_VELOCITY,
+  DOUBLE_JUMP_VELOCITY,
   GROUND_Y,
   FRAME_W,
   PLAYER_ANCHOR_X,
@@ -26,6 +27,31 @@ export class Player {
     this.animDone = false; // true once a non-looping clip has played its last frame
     this.idleTimer = 0; // seconds spent in IDLE_STAND with no input
     this.sprinting = false; // moving with Shift held
+    this.jumpsUsed = 0; // 1 after the ground jump, 2 after the mid-air one
+
+    // Per-scene knobs. The city uses the defaults; the runner minigame swaps in a much
+    // stronger jump, runs the walk cycle faster, and pins x (the ground scrolls instead).
+    this.gravity = GRAVITY;
+    this.jumpVelocity = JUMP_VELOCITY;
+    this.doubleJumpVelocity = DOUBLE_JUMP_VELOCITY;
+    this.animSpeed = 1;
+    this.lockX = false;
+    this.onDoubleJump = null; // called with (x, y) so the caller can puff out particles
+  }
+
+  // Drop the character back on the ground in a known state (used when a scene starts).
+  reset(x) {
+    this.x = x;
+    this.y = GROUND_Y;
+    this.vy = 0;
+    this.facing = 1;
+    this.jumpsUsed = 0;
+    this.idleTimer = 0;
+    this.sprinting = false;
+    this.state = 'IDLE_STAND';
+    this.animIndex = 0;
+    this.animTimer = 0;
+    this.animDone = false;
   }
 
   update(dt, input) {
@@ -53,7 +79,7 @@ export class Player {
         this._updateWalk(dt, moving, dir, jumpPressed);
         break;
       case 'JUMP':
-        this._updateJump(dt, moving, dir);
+        this._updateJump(dt, moving, dir, jumpPressed);
         break;
     }
 
@@ -113,21 +139,32 @@ export class Player {
     this._moveHorizontal(dir, dt);
   }
 
-  _updateJump(dt, moving, dir) {
+  _updateJump(dt, moving, dir, jumpPressed) {
     if (moving) this._moveHorizontal(dir, dt); // air control
 
-    this.vy += GRAVITY * dt;
+    // Double jump: one extra hop per airborne stretch. It *replaces* the current velocity
+    // rather than adding to it, so the height gained is the same no matter how fast you were
+    // already falling — press it near the top of the first hop for the full reach.
+    if (jumpPressed && this.jumpsUsed < 2) {
+      this.jumpsUsed = 2;
+      this.vy = this.doubleJumpVelocity;
+      if (this.onDoubleJump) this.onDoubleJump(this.x, this.y);
+    }
+
+    this.vy += this.gravity * dt;
     this.y += this.vy * dt;
 
     if (this.y >= GROUND_Y) {
       this.y = GROUND_Y;
       this.vy = 0;
+      this.jumpsUsed = 0;
       this._setState(moving ? 'WALK' : 'IDLE_STAND');
     }
   }
 
   _moveHorizontal(dir, dt) {
     this.facing = dir;
+    if (this.lockX) return; // runner minigame: the world moves, the character doesn't
     const speed = WALK_SPEED * (this.sprinting ? SPRINT_MULTIPLIER : 1);
     this.x += dir * speed * dt;
   }
@@ -139,14 +176,18 @@ export class Player {
     this.animTimer = 0;
     this.animDone = false;
     if (state === 'IDLE_STAND') this.idleTimer = 0;
-    if (state === 'JUMP') this.vy = JUMP_VELOCITY;
+    if (state === 'JUMP') {
+      this.vy = this.jumpVelocity;
+      this.jumpsUsed = 1;
+    }
   }
 
   _advanceAnim(dt) {
     const clip = ANIM[this.state];
+    const frameTime = ANIM_FRAME_DURATION / this.animSpeed;
     this.animTimer += dt;
-    while (this.animTimer >= ANIM_FRAME_DURATION) {
-      this.animTimer -= ANIM_FRAME_DURATION;
+    while (this.animTimer >= frameTime) {
+      this.animTimer -= frameTime;
       if (this.animIndex < clip.frames.length - 1) {
         this.animIndex++;
       } else if (clip.loop) {

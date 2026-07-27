@@ -1,6 +1,7 @@
 import {
   CANVAS_WIDTH, CANVAS_HEIGHT, GROUND_Y, BUILDING_BASE_Y, PLAYER_SPAWN_X,
   HIGHLIGHT_COLOR, HIGHLIGHT_BOX_COLOR, ARROW_COLOR, VIGNETTE_SIZE, VIGNETTE_ALPHA,
+  SCENE_FADE_TIME,
 } from './engine/config.js';
 import { loadImage } from './engine/assets.js';
 import { GameLoop } from './engine/loop.js';
@@ -9,17 +10,18 @@ import { Player } from './entities/player.js';
 import { World } from './world/world.js';
 import { Camera } from './world/camera.js';
 import { Overlay } from './ui/overlay.js';
-import { loadPixelFont, drawText, wrapText } from './ui/pixelText.js';
+import { loadPixelFont, drawText, wrapText, measureText } from './ui/pixelText.js';
 import { Particles } from './engine/particles.js';
 import { TouchControls } from './ui/touchControls.js';
+import { Runner } from './runner/runner.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const app = document.getElementById('app');
 const rotateHint = document.getElementById('rotate-hint');
 
-const KEY_CONTROLS = 'Walk A / D    Shift Sprint    Jump Space    Enter Up / Click';
-const TOUCH_CONTROLS = 'Walk and jump with the buttons    Tap a building to enter';
+const KEY_CONTROLS = 'Walk A / D    Sprint Shift    Jump Space x2    Enter Up / Click';
+const TOUCH_CONTROLS = 'Buttons to walk and jump    Tap jump twice in the air    Tap a building to enter';
 
 // --- Responsive layout ------------------------------------------------------
 // The stage is the drawable area. On a phone held upright it is the viewport turned on its
@@ -170,6 +172,31 @@ function drawStartArrow(ctx, player, cameraX, time) {
   ctx.fillRect(bx + 4, by - 1, 2, 2);
 }
 
+// The gate into the runner minigame: a big bobbing chevron standing past the last building,
+// pointing on down the road (scaled pass). Its label is drawn in the text pass.
+function drawGateArrow(ctx, world, cameraX, time) {
+  const bx = world.gateX - cameraX + Math.sin(time * 5) * 2;
+  if (bx < -12 || bx > CANVAS_WIDTH) return;
+  const by = GROUND_Y - 16;
+  ctx.fillStyle = ARROW_COLOR;
+  ctx.fillRect(bx, by - 6, 3, 12);
+  ctx.fillRect(bx + 3, by - 4, 3, 8);
+  ctx.fillRect(bx + 6, by - 2, 3, 4);
+}
+
+function drawGateLabel(ctx, world, cameraX, S) {
+  const cx = world.gateX + 4 - cameraX;
+  if (cx < -40 || cx > CANVAS_WIDTH + 40) return;
+  // Kept fully on screen: the camera stops at the end of the world, so a label centred on the
+  // gate would otherwise hang off the right edge.
+  const half = measureText(ctx, 'ENTER GAME', LABEL_H * S) / 2;
+  const margin = half + 3 * S;
+  const x = Math.max(margin, Math.min(cx * S, CANVAS_WIDTH * S - margin));
+  drawText(ctx, 'ENTER GAME', x, (GROUND_Y - 22) * S, {
+    sizePx: LABEL_H * S, color: ARROW_COLOR, align: 'center', baseline: 'bottom',
+  });
+}
+
 // Bouncing chevron just above the player's head when near a building (scaled pass).
 function drawPrompt(ctx, world, player, cameraX, time) {
   if (!world.nearbyBuilding) return;
@@ -198,8 +225,80 @@ async function main() {
   const overlay = new Overlay();
   const dust = new Particles();
   const touch = new TouchControls(input);
+  const runner = new Runner(player, input, dust);
+  await runner.load(THEME_ORDER);
   let dustTimer = 0;
   let promptTime = 0;
+  let lastBlack = 0; // last --ui-fade written to the DOM (see render)
+
+  // A flat fan of sparks kicked out from under the feet on the mid-air hop, so the second
+  // jump reads as a push off something rather than a glitch.
+  player.onDoubleJump = (x, y) => {
+    for (let i = 0; i < 12; i++) {
+      const angle = Math.PI * (i / 11); // 0..PI sweeps right to left, always downward
+      const speed = 24 + Math.random() * 26;
+      const life = 0.26 + Math.random() * 0.16;
+      dust.emit({
+        x, y: y - 1,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed * 0.5,
+        g: 150, life, maxLife: life,
+        size: Math.random() < 0.5 ? 2 : 1, color: ARROW_COLOR,
+      });
+    }
+  };
+
+  // --- Scenes ---------------------------------------------------------------
+  // Two scenes share one player and one particle system: the city, and the runner minigame
+  // reached by walking off the right end of the street. Swapping between them happens behind
+  // a full-screen fade, at the moment the screen is fully black.
+  const GATE_RADIUS = 26; // how close to the gate you must stand for it to accept "enter"
+  let scene = 'city';
+  let cityX = PLAYER_SPAWN_X; // where to set the character back down on return
+  let transition = null; // { t, phase: 'out' | 'in', swap }
+
+  const atGate = () => player.x >= world.gateX - GATE_RADIUS;
+
+  function startTransition(swap) {
+    if (transition) return;
+    transition = { t: 0, phase: 'out', swap };
+  }
+
+  // Returns true while the world should stay frozen (the fade-to-black half).
+  function advanceTransition(dt) {
+    if (!transition) return false;
+    transition.t += dt;
+    if (transition.t < SCENE_FADE_TIME) return transition.phase === 'out';
+    if (transition.phase === 'out') {
+      transition.swap();
+      transition = { t: 0, phase: 'in', swap: null }; // the new scene runs as it fades in
+      return false;
+    }
+    transition = null;
+    return false;
+  }
+
+  function fadeAlpha() {
+    if (!transition) return 0;
+    const t = Math.min(1, transition.t / SCENE_FADE_TIME);
+    return transition.phase === 'out' ? t : 1 - t;
+  }
+
+  function enterRunner() {
+    scene = 'runner';
+    cityX = player.x;
+    touch.setMode('runner');
+    runner.enter(world.theme);
+  }
+
+  function exitRunner() {
+    scene = 'city';
+    runner.leave();
+    touch.setMode('city');
+    dust.list.length = 0;
+    player.reset(cityX);
+    camera.update(player.x);
+    world.update(player.x);
+  }
 
   // Show the gamepad only on touch devices, and re-check whenever the stage changes (a phone
   // being turned, or a desktop window resized down). These run after the module-level layout()
@@ -231,21 +330,35 @@ async function main() {
     const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(world.theme) + 1) % THEME_ORDER.length];
     await world.setTheme(nextTheme);
     localStorage.setItem(SKIN_STORAGE_KEY, nextTheme);
-    player.x = Math.max(PLAYER_SPAWN_X, Math.min(player.x, world.worldWidth));
     camera.worldWidth = world.worldWidth;
-    camera.update(player.x);
-    world.update(player.x);
+    // The new skin's buildings are different widths, so the street ends somewhere else. In
+    // the runner the character's x is a fixed screen position, not a place in the city —
+    // clamp the spot we'll put it back down on instead of the live one.
+    if (scene === 'city') {
+      player.x = Math.max(PLAYER_SPAWN_X, Math.min(player.x, world.worldWidth));
+      camera.update(player.x);
+      world.update(player.x);
+    } else {
+      cityX = Math.max(PLAYER_SPAWN_X, Math.min(cityX, world.worldWidth));
+    }
     updateSkinToggleLabel();
   });
 
   // Click/tap a nearby building (inside its box) to enter it, as an alternative to Enter.
+  // The gate arrow at the end of the street is clickable the same way.
   canvas.addEventListener('click', (e) => {
-    if (overlay.isOpen) return;
-    const b = world.nearbyBuilding;
-    if (!b) return;
+    if (overlay.isOpen || scene !== 'city' || transition) return;
     const { nx, ny } = canvasNorm(e.clientX, e.clientY);
     const wx = nx * CANVAS_WIDTH + camera.x;
     const wy = ny * CANVAS_HEIGHT;
+
+    if (atGate() && wx >= world.gateX - 8 && wx <= world.gateX + 17 && wy >= GROUND_Y - 30 && wy <= GROUND_Y) {
+      startTransition(enterRunner);
+      return;
+    }
+
+    const b = world.nearbyBuilding;
+    if (!b) return;
     const img = world.imageFor(b);
     const top = BUILDING_BASE_Y - img.height;
     if (wx >= b.worldX && wx <= b.worldX + img.width && wy >= top && wy <= BUILDING_BASE_Y) {
@@ -254,8 +367,21 @@ async function main() {
   });
 
   function update(dt) {
+    if (advanceTransition(dt)) {
+      input.endFrame(); // the world is frozen behind the black, but presses must not pile up
+      return;
+    }
+
     if (overlay.isOpen) {
       if (input.wasPressed('interact')) overlay.hide();
+      input.endFrame();
+      return;
+    }
+
+    if (scene === 'runner') {
+      if (runner.update(dt) === 'exit') startTransition(exitRunner);
+      touch.setEnter(touchMode, 'BACK');
+      dust.update(dt);
       input.endFrame();
       return;
     }
@@ -266,7 +392,7 @@ async function main() {
     world.update(player.x);
     promptTime += dt;
     // The ENTER button only exists while there's something to enter.
-    touch.setEnterVisible(touchMode && !!world.nearbyBuilding);
+    touch.setEnter(touchMode && (!!world.nearbyBuilding || atGate()), 'ENTER');
 
     // Kick up pixel dust behind the character while sprinting on the ground.
     if (player.sprinting && player.state === 'WALK') {
@@ -292,8 +418,9 @@ async function main() {
     }
     dust.update(dt);
 
-    if (world.nearbyBuilding && input.wasPressed('interact')) {
-      overlay.show(world.nearbyBuilding.sectionId);
+    if (input.wasPressed('interact')) {
+      if (world.nearbyBuilding) overlay.show(world.nearbyBuilding.sectionId);
+      else if (atGate()) startTransition(enterRunner);
     }
 
     input.endFrame();
@@ -306,19 +433,47 @@ async function main() {
     ctx.setTransform(S, 0, 0, S, 0, 0);
     ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    world.draw(ctx, camera.x, CANVAS_WIDTH, CANVAS_HEIGHT);
-    if (!overlay.isOpen) drawHighlightBox(ctx, world, camera.x);
-    dust.draw(ctx, camera.x); // behind the player
-    player.draw(ctx, camera.x);
-    if (!overlay.isOpen) drawPrompt(ctx, world, player, camera.x, promptTime);
-    if (!overlay.isOpen) drawStartArrow(ctx, player, camera.x, promptTime);
+    if (scene === 'runner') {
+      runner.draw(ctx); // draws its own backdrop, stones, dust and player
+    } else {
+      world.draw(ctx, camera.x, CANVAS_WIDTH, CANVAS_HEIGHT);
+      if (!overlay.isOpen) drawHighlightBox(ctx, world, camera.x);
+      dust.draw(ctx, camera.x); // behind the player
+      player.draw(ctx, camera.x);
+      if (!overlay.isOpen) {
+        drawPrompt(ctx, world, player, camera.x, promptTime);
+        drawStartArrow(ctx, player, camera.x, promptTime);
+        drawGateArrow(ctx, world, camera.x, promptTime);
+      }
+    }
     drawVignette(ctx); // edge band, on top of the scene but under the UI text
 
     // Text pass — device space, anti-aliased so glyphs stay solid and readable.
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = true;
-    drawIntro(ctx, camera.x, S);
-    if (!overlay.isOpen) drawBuildingLabel(ctx, world, camera.x, S);
+    if (scene === 'runner') {
+      runner.drawHud(ctx, S, touchMode);
+    } else {
+      drawIntro(ctx, camera.x, S);
+      if (!overlay.isOpen) {
+        drawBuildingLabel(ctx, world, camera.x, S);
+        drawGateLabel(ctx, world, camera.x, S);
+      }
+    }
+
+    // Both blackouts land here, last of all, so they cover the HUD text too: the scene fade
+    // and the runner's venue swap.
+    const black = Math.max(fadeAlpha(), scene === 'runner' ? runner.blackout : 0);
+    if (black > 0) {
+      ctx.fillStyle = `rgba(0, 0, 0, ${black})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    // The DOM UI floats above the canvas, so it has to be faded separately or it stays lit
+    // over a black screen. Only written when it actually moves, to avoid a style recalc a frame.
+    if (Math.abs(black - lastBlack) > 0.005 || (black === 0 && lastBlack !== 0)) {
+      app.style.setProperty('--ui-fade', String(1 - black));
+      lastBlack = black;
+    }
   }
 
   new GameLoop(update, render).start();

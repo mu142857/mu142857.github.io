@@ -23,6 +23,9 @@ export const IDLE_TO_LONG_DELAY = 3.0; // seconds of no input before idle-long k
 
 export const GRAVITY = 560; // px/s^2 — heavy so the hop lands quickly
 export const JUMP_VELOCITY = -140; // px/s, negative = up (keeps ~17px apex despite the heavy gravity)
+// One extra mid-air hop, available in both scenes. Deliberately weaker than the first so the
+// city's little jump stays a little jump; the runner swaps in its own, far stronger pair.
+export const DOUBLE_JUMP_VELOCITY = -118; // adds ~12px on top of the first hop's ~17px
 
 // Canvas-y of the ground surface / the player's feet-anchor rest line (79 so the character
 // sits ON the floor, not 1px into it).
@@ -56,3 +59,19 @@ export const HIGHLIGHT_COLOR = '#ffffff';
 export const HIGHLIGHT_BOX_COLOR = 'rgba(255, 255, 255, 0.32)';
 // The "enter" chevron above the player stays yellow.
 export const ARROW_COLOR = '#ffe066';
+
+// ---- Runner minigame (the endless run past the end of the street) ----------------------
+// The cursed stones are drawn at their native art size (6x20 and 28x48). That matches this
+// world's tiny-character/huge-props scale (buildings are 100px, lamps 33px, the character is
+// 8px) but it means a 48px wall to clear, so the run needs its own physics: a much stronger
+// jump, and heavier gravity so the big leap still feels snappy instead of floaty.
+export const RUNNER_GRAVITY = 1150;
+export const RUNNER_JUMP_VELOCITY = -256; // apex ~28px — clears the 20px stone on its own
+export const RUNNER_DOUBLE_JUMP_VELOCITY = -296; // +38px, so a timed double clears the 48px one
+export const RUNNER_PLAYER_X = 30; // fixed screen x — the character runs on the spot
+export const RUNNER_START_SPEED = 100; // px/s the ground scrolls at
+export const RUNNER_MAX_SPEED = 205;
+export const RUNNER_ACCELERATION = 2.4; // px/s of scroll speed gained per second of running
+export const RUNNER_VENUE_SECONDS = 22; // running time between blackout venue swaps
+export const RUNNER_FADE_TIME = 0.4; // seconds for each half of a venue blackout
+export const SCENE_FADE_TIME = 0.35; // seconds for each half of the city <-> runner fade

@@ -3,7 +3,8 @@
 Two views of the same portfolio, switchable by a button:
 
 1. **Interactive** (`index.html`) — a pixel side-scroller. Walk right past buildings; each building
-   opens a portfolio section. This is the main site.
+   opens a portfolio section. Keep walking past the last one and an **ENTER GAME** arrow drops you
+   into an endless runner. This is the main site.
 2. **Classic** (`Home/index.html`) — a normal responsive template ("Twenty" by HTML5 UP).
 
 ---
@@ -98,14 +99,17 @@ style.css       All styling (game canvas, HUD, overlay cards, chips, progress ba
 GUIDE.md        This file.
 Assets/
   player/player-Sheet.png          Character sprite sheet (5×12 grid, 128×80/frame).
+  cursed_stone-Sheet.png           Runner obstacles (5×10 grid, 63×61/frame).
   rust_city_style/                 Parallax layers, ground, building1–6.png, lamp, PixelFont note.
+  silvaron_style/                  The second skin (same layout).
   shared/PixelFont.ttf             The pixel font (used on canvas + in overlays).
   content/                         ← PUT YOUR IMAGES HERE (create this folder).
 src/
-  main.js                          Boot + game loop + HUD/text/vignette/dust orchestration.
+  main.js                          Boot + game loop + scene switching + HUD/text/vignette/dust.
   engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles.
-  entities/   player.js (state machine + sprint), playerAnimations.js (frame ranges).
-  world/      world.js (layout/draw/proximity), camera, parallax, buildings.js, themes.js.
+  entities/   player.js (state machine + sprint + double jump), playerAnimations.js.
+  world/      world.js (layout/draw/proximity/gate), camera, parallax, buildings.js, themes.js.
+  runner/     runner.js (the minigame scene), stones.js (obstacle sheet spec).
   ui/         overlay.js (section modal), pixelText.js (canvas text),
               touchControls.js (on-screen gamepad for phones).
 Home/         The "classic" HTML5-UP template (self-contained; has its own assets + Font Awesome).
@@ -121,7 +125,11 @@ building — no art changes needed.
 
 ### Handy tunables (`src/engine/config.js`)
 
-- `WALK_SPEED` (84), `SPRINT_MULTIPLIER` (2.0 — hold Shift), `JUMP_VELOCITY`, `GRAVITY`.
+- `WALK_SPEED` (84), `SPRINT_MULTIPLIER` (2.0 — hold Shift), `JUMP_VELOCITY`, `GRAVITY`,
+  `DOUBLE_JUMP_VELOCITY`.
+- Runner: `RUNNER_START_SPEED`/`RUNNER_MAX_SPEED`/`RUNNER_ACCELERATION` (how fast it ramps),
+  `RUNNER_JUMP_VELOCITY`/`RUNNER_DOUBLE_JUMP_VELOCITY`/`RUNNER_GRAVITY` (jump feel — if you
+  change these, check they still clear a 48px stone), `RUNNER_VENUE_SECONDS` (blackout interval).
 - `GROUND_Y` (79, feet line), `BUILDING_BASE_Y` (80, building bases).
 - `PLAYER_SPAWN_X`, `LAYOUT_START_X`, `BUILDING_GAP` (spacing), `PROXIMITY_RADIUS`.
 - `MODULATE_COLOR` (background dimming), `VIGNETTE_SIZE`/`VIGNETTE_ALPHA`, `ARROW_COLOR`,
@@ -131,12 +139,39 @@ building — no art changes needed.
 ### Controls
 
 **Desktop** — Walk **A/D** or arrows · Sprint **hold Shift** (kicks up pixel dust) ·
-Jump **Space** · Enter a building **↑ / Enter / click the box**.
+Jump **Space**, press it again in mid-air for a **double jump** · Enter a building or the game
+gate **↑ / Enter / click**.
 
 **Phone / tablet** — an on-screen gamepad appears: **◀ ▶** bottom-left to walk, **≫** (sprint)
 and **^** (jump) bottom-right, plus an **ENTER** button that pops up only when the character is
-standing next to a building. Tapping the building itself works too. Multi-touch is supported,
-so you can hold *right* + *sprint* and still tap *jump*.
+standing next to a building (or at the game gate). Tapping the building itself works too.
+Multi-touch is supported, so you can hold *right* + *sprint* and still tap *jump*.
+
+### The runner minigame (`src/runner/`)
+
+Walk past the last building and a bobbing **ENTER GAME** arrow appears; Enter (or a tap) fades
+to black and drops you into an endless runner. Enter again returns you to the exact spot in the
+city you left from.
+
+- **The character runs on the spot** at `RUNNER_PLAYER_X` and the world scrolls past, reusing
+  the city's parallax layers — so the run gets a proper parallax backdrop for free.
+- **Obstacles** are the two cursed stones in `Assets/cursed_stone-Sheet.png`: a 6×20 spike
+  (frames 2–4) and a 28×48 monolith (frames 28–30), both at native size, both looping at 10fps.
+  `stones.js` carries each type's measured crop rect, which doubles as its collision box.
+- **The monolith needs the double jump** — it is taller than half the screen. The runner swaps
+  in its own physics (`RUNNER_*` in `config.js`): a ~28px first hop and a ~38px second one, under
+  heavier gravity so the big leap still lands quickly.
+- **It is always solvable.** Every stone is placed at least `clearTime + reaction` seconds of
+  travel behind the previous one, at the *current* scroll speed plus headroom, so there is always
+  room to land, see the next one, and jump it. No monolith appears in the first 320px.
+- **Blackout venue swaps** — every `RUNNER_VENUE_SECONDS` the whole screen fades to black and a
+  completely different place fades in (Rust City ↔ Silvaron). Spawning stops the moment a swap is
+  queued and the swap waits for the stones already on screen to scroll away, so the blackout can
+  never hide an obstacle; a further grace period keeps the road clear after the lights come back.
+- **Crashing** ends the run with your score and best (kept in `localStorage` under `runner-best`).
+  Space retries, Enter goes back to the city.
+- On a phone the gamepad switches to runner mode: the walk pad and sprint step aside and **^**
+  becomes one big jump button, next to a **BACK** button.
 
 ### Mobile / responsive layout
 

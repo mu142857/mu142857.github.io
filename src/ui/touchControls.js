@@ -9,6 +9,8 @@ export class TouchControls {
   constructor(input) {
     this.root = document.getElementById('touch-controls');
     this.enterBtn = this.root.querySelector('.tbtn-enter');
+    this.enterIcon = this.enterBtn.querySelector('i');
+    this.enterLabel = this.enterBtn.querySelector('.tbtn-label');
     this._input = input;
     this._active = new Map(); // pointerId -> { btn, action }
 
@@ -41,8 +43,21 @@ export class TouchControls {
     if (!visible) this.releaseAll();
   }
 
-  setEnterVisible(visible) {
+  // In the runner the only thing that matters is jumping, so the walk pad and the sprint
+  // button step aside (see #touch-controls.runner in style.css) and jump gets the big target.
+  setMode(mode) {
+    const runner = mode === 'runner';
+    this.root.classList.toggle('runner', runner);
+    if (runner) this.releaseAll(); // nothing should stay held across a scene change
+  }
+
+  setEnter(visible, label = 'ENTER') {
     this.enterBtn.classList.toggle('hidden', !visible);
+    if (this.enterLabel.textContent === label) return;
+    this.enterLabel.textContent = label;
+    const back = label === 'BACK';
+    this.enterIcon.className = back ? 'fas fa-sign-out-alt' : 'fas fa-sign-in-alt';
+    this.enterBtn.setAttribute('aria-label', back ? 'Back to the city' : 'Enter');
   }
 
   releaseAll() {

@@ -7,7 +7,13 @@ import { ParallaxLayer } from './parallax.js';
 import { THEMES } from './themes.js';
 import { BUILDINGS } from './buildings.js';
 
-const WORLD_END_MARGIN = 80; // walkable space past the last building
+// Walkable space past the last building. It holds the gate into the runner minigame, so
+// there's room to see the arrow and its label before the world ends.
+const WORLD_END_MARGIN = 104;
+// How far short of the world's end the gate stands. The camera is hard-clamped once it
+// reaches the end, so this also decides where on screen the gate finally sits — far enough
+// in that its label has room.
+const GATE_INSET = 52;
 
 export class World {
   constructor() {
@@ -19,6 +25,7 @@ export class World {
     this.lampImage = null;
     this.lamps = []; // { worldX } for lamps placed between buildings
     this.worldWidth = 0;
+    this.gateX = 0; // where the "enter the game" arrow stands, past the last building
     this.nearbyBuilding = null;
   }
 
@@ -58,6 +65,7 @@ export class World {
       }
     });
     this.worldWidth = x + WORLD_END_MARGIN;
+    this.gateX = this.worldWidth - GATE_INSET;
   }
 
   imageFor(building) {

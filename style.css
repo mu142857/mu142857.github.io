@@ -52,6 +52,14 @@ body.touch {
   /* JS sets the exact integer-scaled width/height on resize. */
 }
 
+/* The canvas blackouts (city <-> runner, and the runner's venue swap) are painted into the
+   canvas, which can't reach the DOM UI sitting on top of it. render() in src/main.js drives
+   --ui-fade so these go dark in step instead of staying lit over a black screen. */
+#hud,
+#touch-controls {
+  opacity: var(--ui-fade, 1);
+}
+
 /* HUD: social links + classic-site toggle, over the canvas. */
 #hud {
   position: fixed;
@@ -182,6 +190,14 @@ body.overlay-open #touch-controls {
 
 body.compact .tbtn { width: 52px; height: 52px; font-size: 20px; }
 body.compact .tbtn-enter { width: auto; height: 40px; font-size: 13px; }
+
+/* Runner minigame: there is nothing to walk toward and nothing to sprint past, so the walk
+   pad and the sprint button go away and jump takes over the whole right side. */
+#touch-controls.runner { justify-content: flex-end; }
+#touch-controls.runner .pad-left,
+#touch-controls.runner .tbtn[data-action="sprint"] { display: none; }
+#touch-controls.runner .tbtn[data-action="jump"] { width: 88px; height: 88px; font-size: 32px; }
+body.compact #touch-controls.runner .tbtn[data-action="jump"] { width: 74px; height: 74px; font-size: 28px; }
 
 /* ---- Rotate-your-phone hint (drawn inside the already-rotated frame) ---- */
 #rotate-hint {
