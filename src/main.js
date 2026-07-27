@@ -130,15 +130,21 @@ function drawVignette(ctx) {
   }
 }
 
+// World-y of the baseline the nearby building's name sits on: just above the highlight box,
+// clamped so a building taller than the screen still gets a readable label. The prompt
+// chevron hangs off the same number so the two always read as one stacked hint.
+function labelBottomY(world) {
+  const img = world.imageFor(world.nearbyBuilding);
+  return Math.max(LABEL_H + 2, BUILDING_BASE_Y - img.height - 1);
+}
+
 // Section name above the nearby building (device-space pass).
 function drawBuildingLabel(ctx, world, cameraX, S) {
   const b = world.nearbyBuilding;
   if (!b) return;
   const img = world.imageFor(b);
-  const top = BUILDING_BASE_Y - img.height;
-  const bottomWorldY = Math.max(LABEL_H + 2, top - 1); // sit above the box, clamped on-screen
   const cx = (b.worldX + img.width / 2 - cameraX) * S;
-  drawText(ctx, b.label, cx, bottomWorldY * S, {
+  drawText(ctx, b.label, cx, labelBottomY(world) * S, {
     sizePx: LABEL_H * S, color: HIGHLIGHT_COLOR, align: 'center', baseline: 'bottom',
   });
 }
@@ -197,12 +203,14 @@ function drawGateLabel(ctx, world, cameraX, S) {
   });
 }
 
-// Bouncing chevron just above the player's head when near a building (scaled pass).
+// Bouncing chevron over the player when near a building (scaled pass). It sits directly
+// under the building's name rather than over the character's head, so the name and the
+// "press to enter" hint read as one thing.
 function drawPrompt(ctx, world, player, cameraX, time) {
   if (!world.nearbyBuilding) return;
   const screenX = player.x - cameraX;
   const bounce = Math.sin(time * 6) * 2;
-  const baseY = GROUND_Y - 24 + bounce;
+  const baseY = labelBottomY(world) + 3 + bounce;
   ctx.fillStyle = ARROW_COLOR;
   ctx.fillRect(screenX - 3, baseY, 6, 2);
   ctx.fillRect(screenX - 2, baseY + 2, 4, 2);
@@ -232,14 +240,17 @@ async function main() {
   let lastBlack = 0; // last --ui-fade written to the DOM (see render)
 
   // A flat fan of sparks kicked out from under the feet on the mid-air hop, so the second
-  // jump reads as a push off something rather than a glitch.
+  // jump reads as a push off something rather than a glitch. The character is 8px tall and
+  // tucks its legs up in the jump pose — only the top 4px are drawn — so the sparks come off
+  // 4px above the feet anchor, where the tucked-up feet actually are.
+  const DOUBLE_JUMP_PUFF_Y = 5; // 4px for the tuck, +1 so the fan sits just under the sprite
   player.onDoubleJump = (x, y) => {
     for (let i = 0; i < 12; i++) {
       const angle = Math.PI * (i / 11); // 0..PI sweeps right to left, always downward
       const speed = 24 + Math.random() * 26;
       const life = 0.26 + Math.random() * 0.16;
       dust.emit({
-        x, y: y - 1,
+        x, y: y - DOUBLE_JUMP_PUFF_Y,
         vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed * 0.5,
         g: 150, life, maxLife: life,
         size: Math.random() < 0.5 ? 2 : 1, color: ARROW_COLOR,
@@ -283,9 +294,13 @@ async function main() {
     return transition.phase === 'out' ? t : 1 - t;
   }
 
+  // The two skin/site switches are city furniture: mid-run they are a stray click away from
+  // reskinning the world under you or leaving the page entirely, and they crowd the score.
+  // Both scene swaps happen at full black, so they appear and disappear unseen.
   function enterRunner() {
     scene = 'runner';
     cityX = player.x;
+    document.body.classList.add('in-runner');
     touch.setMode('runner');
     runner.enter(world.theme);
   }
@@ -293,6 +308,7 @@ async function main() {
   function exitRunner() {
     scene = 'city';
     runner.leave();
+    document.body.classList.remove('in-runner');
     touch.setMode('city');
     dust.list.length = 0;
     player.reset(cityX);

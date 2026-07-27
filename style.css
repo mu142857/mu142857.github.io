@@ -107,6 +107,14 @@ body.touch {
   background: #fff0a0;
 }
 
+/* In the runner minigame the two switches are hidden: a stray click would reskin the world
+   mid-run or leave the page, and they sit right where the score reads. src/main.js adds
+   body.in-runner at the moment the scene swap is fully black, so they never blink out. */
+body.in-runner #skin-toggle,
+body.in-runner #classic-toggle {
+  display: none;
+}
+
 /* Narrow stage (phone in landscape): shrink the HUD so it doesn't eat the scene. */
 body.compact #hud {
   top: 8px;

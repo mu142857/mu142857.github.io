@@ -4,6 +4,7 @@
 import {
   CANVAS_WIDTH, CANVAS_HEIGHT, GROUND_Y, BUILDING_BASE_Y, MODULATE_COLOR, ARROW_COLOR,
   ANIM_FRAME_DURATION, GRAVITY, JUMP_VELOCITY, DOUBLE_JUMP_VELOCITY,
+  PLAYER_BODY_H, PLAYER_TUCKED_BOTTOM,
   RUNNER_GRAVITY, RUNNER_JUMP_VELOCITY, RUNNER_DOUBLE_JUMP_VELOCITY, RUNNER_PLAYER_X,
   RUNNER_START_SPEED, RUNNER_MAX_SPEED, RUNNER_ACCELERATION, RUNNER_VENUE_SECONDS,
   RUNNER_FADE_TIME,
@@ -12,21 +13,24 @@ import { loadImage } from '../engine/assets.js';
 import { ParallaxLayer } from '../world/parallax.js';
 import { THEMES } from '../world/themes.js';
 import { drawText } from '../ui/pixelText.js';
-import { STONE_TYPES, stoneSource } from './stones.js';
+import { STONE_TYPES, stoneSource, measureStoneSpans } from './stones.js';
 
 const BEST_KEY = 'runner-best';
 
 // Spacing. A stone is only ever placed far enough ahead that the player can finish the jump
 // it demands AND still have REACTION_TIME of warning before it arrives — so the run is always
 // solvable, however fast it has got. HEADROOM covers the speed-up during the approach.
-const REACTION_TIME = 0.42;
+const REACTION_TIME = 0.5;
 const GAP_HEADROOM = 1.15;
-const MIN_GAP = 72;
+const MIN_GAP = 84;
 
-const OPENING_GRACE = 1.2; // clear road at the start of a run
-const VENUE_GRACE = 0.8; // clear road after the lights come back on
+const OPENING_GRACE = 1.4; // clear road at the start of a run
+const VENUE_GRACE = 1.0; // clear road after the lights come back on
 const DEATH_INPUT_LOCK = 0.4; // ignore input right after a crash so mashing doesn't skip it
-const LARGE_AFTER = 320; // px of distance before the big stone can show up at all
+const LARGE_AFTER = 480; // px of distance before the big stone can show up at all
+const LARGE_CHANCE_START = 0.1;
+const LARGE_CHANCE_MAX = 0.32;
+const LARGE_CHANCE_RAMP = 6000; // px of distance over which the monolith reaches its max share
 
 export class Runner {
   constructor(player, input, particles) {
@@ -59,6 +63,7 @@ export class Runner {
 
   async load(themeKeys) {
     this.stoneSheet = await loadImage('Assets/cursed_stone-Sheet.png');
+    measureStoneSpans(this.stoneSheet); // shaped hitboxes, read straight off the art
     // Both venues are loaded up front: the blackout swap has to be instant, with no chance of
     // a half-loaded backdrop appearing when the lights come back.
     this.venues = await Promise.all(themeKeys.map(async (key) => {
@@ -216,20 +221,38 @@ export class Runner {
   _pickType() {
     // No monolith until the run has settled and the player has met a small one first.
     if (this.distance < LARGE_AFTER) return STONE_TYPES.small;
-    const chance = Math.min(0.42, 0.12 + (this.distance - LARGE_AFTER) / 5000);
+    const ramp = (this.distance - LARGE_AFTER) / LARGE_CHANCE_RAMP;
+    const chance = Math.min(LARGE_CHANCE_MAX, LARGE_CHANCE_START + ramp * LARGE_CHANCE_MAX);
     return Math.random() < chance ? STONE_TYPES.large : STONE_TYPES.small;
   }
 
-  // Both boxes are pulled in slightly — the classic runner fudge, so a near miss reads as a
-  // miss. The character is ~6px wide and 8px tall above its feet anchor.
+  // Boxes are pulled in by 1px all round — the classic runner fudge, so a near miss reads as
+  // a miss — and both sides are shaped rather than rectangular: the stone is tested row by
+  // row against its real silhouette (see measureStoneSpans), and the character's box stops at
+  // its tucked-up feet while it is airborne instead of at the anchor its legs have left.
   _hitStone() {
     const left = this.player.x - 2;
     const right = this.player.x + 2;
-    const feet = this.player.y;
+    const tuck = this.player.state === 'JUMP' ? PLAYER_TUCKED_BOTTOM : 0;
+    const bottom = this.player.y - tuck;
+    const top = this.player.y - PLAYER_BODY_H;
+
     for (const s of this.stones) {
+      const { type } = s;
       const sx = s.x - this.scrollX;
-      if (right <= sx + 1 || left >= sx + s.type.w - 1) continue;
-      if (feet > BUILDING_BASE_Y - s.type.h + 1) return true;
+      if (right <= sx + 1 || left >= sx + type.w - 1) continue; // nowhere near it
+
+      const stoneTop = BUILDING_BASE_Y - type.h;
+      if (!type.spans) { // pixels unreadable — fall back to the crop rect
+        if (bottom > stoneTop + 1) return true;
+        continue;
+      }
+      const first = Math.max(0, Math.floor(top - stoneTop));
+      const last = Math.min(type.h - 1, Math.floor(bottom - stoneTop));
+      for (let r = first; r <= last; r++) {
+        const span = type.spans[r];
+        if (span && right > sx + span.min + 1 && left < sx + span.max) return true;
+      }
     }
     return false;
   }

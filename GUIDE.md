@@ -157,10 +157,17 @@ city you left from.
   the city's parallax layers — so the run gets a proper parallax backdrop for free.
 - **Obstacles** are the two cursed stones in `Assets/cursed_stone-Sheet.png`: a 6×20 spike
   (frames 2–4) and a 28×48 monolith (frames 28–30), both at native size, both looping at 10fps.
-  `stones.js` carries each type's measured crop rect, which doubles as its collision box.
+  `stones.js` carries each type's measured crop rect.
+- **Hitboxes follow the art, not the crop rect.** The monolith is an obelisk — 27px wide at
+  the base, 10px at the tip — so a rectangular box would have ~4px of solid air at each top
+  corner, right where a jump that just clears it passes. `measureStoneSpans` reads the sprite's
+  opaque extent row by row at load time and the collision tests those rows. The character's box
+  shrinks too: its JUMP pose tucks its legs up into the top 4px of its 8px frame, so while it is
+  airborne only that tucked body counts (`PLAYER_TUCKED_BOTTOM` in `config.js`).
 - **The monolith needs the double jump** — it is taller than half the screen. The runner swaps
-  in its own physics (`RUNNER_*` in `config.js`): a ~28px first hop and a ~38px second one, under
-  heavier gravity so the big leap still lands quickly.
+  in its own physics (`RUNNER_*` in `config.js`): a ~30px first hop and a ~40px second one, under
+  *lighter* gravity than the city's. That last part is the difficulty dial — under heavy gravity
+  a tall jump means a brutally fast drop and almost no time to place the mid-air hop.
 - **It is always solvable.** Every stone is placed at least `clearTime + reaction` seconds of
   travel behind the previous one, at the *current* scroll speed plus headroom, so there is always
   room to land, see the next one, and jump it. No monolith appears in the first 320px.
@@ -172,6 +179,18 @@ city you left from.
   Space retries, Enter goes back to the city.
 - On a phone the gamepad switches to runner mode: the walk pad and sprint step aside and **^**
   becomes one big jump button, next to a **BACK** button.
+- The **Silvaron Style** and **Classic Site** buttons hide during a run (`body.in-runner` in
+  `style.css`) — mid-run they are one stray click away from reskinning the world under you or
+  leaving the page. The social icons stay. The class is added and removed at full black, so
+  they never blink in or out on screen.
+
+**Tuning the difficulty.** Making the run easier or harder is mostly two numbers:
+`RUNNER_GRAVITY` (lower = more hang time = more room to place the double jump) and
+`RUNNER_MAX_SPEED` (a stone is only visible for `CANVAS_WIDTH - RUNNER_PLAYER_X` = 130px
+before it arrives, so top speed is really a cap on reaction time). If you change the jump
+velocities, keep `v² / (2 × RUNNER_GRAVITY)` at ≥22px for the first hop and ≥52px for the two
+combined, or the monolith stops being clearable. Obstacle spacing follows automatically from
+each type's `clearTime` in `stones.js`, which should equal the airtime of the jump it demands.
 
 ### Mobile / responsive layout
 
