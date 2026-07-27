@@ -4,8 +4,26 @@
     {
       "name": "dev",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "serve", "-l", "5173", "."],
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "5173",
+        "."
+      ],
       "port": 5173
+    },
+    {
+      "name": "dev-classic",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "--yes",
+        "serve",
+        "-l",
+        "5199",
+        "."
+      ],
+      "port": 5199
     }
   ]
 }

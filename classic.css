@@ -1,0 +1,282 @@
+/* Classic (formal) view of the portfolio.
+   Typography follows the old "Twenty" template: Lato, light weights, uppercase headings with
+   wide letter-spacing, generous line-height. Palette is the interactive site's.
+   Hard rule: no rounded corners anywhere. */
+
+@import url("https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap");
+
+:root {
+  --bg: #14131f;
+  --bg-raised: #1b1a29;
+  --ink: #d8d3c2;
+  --ink-bright: #f4e9c1;
+  --muted: #8b90a6;
+  --accent: #ffe066;
+  --line: rgba(244, 233, 193, 0.16);
+  --sans: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; border-radius: 0 !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 0.025em;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: var(--accent); text-decoration: none; transition: color 0.2s, border-color 0.2s, background-color 0.2s; }
+strong, b { font-weight: 400; color: var(--ink-bright); }
+img { max-width: 100%; display: block; }
+
+h1, h2, h3, h4 {
+  color: var(--ink-bright);
+  font-weight: 300;
+  text-transform: uppercase;
+  margin: 0 0 0.75em;
+  line-height: 1.5;
+}
+
+.wrap { width: 100%; max-width: 1000px; margin: 0 auto; padding: 0 28px; }
+
+/* ---- Top bar ---- */
+#topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(20, 19, 31, 0.95);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(6px);
+}
+
+#topbar .wrap {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  height: 62px;
+}
+
+.brand {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-bright);
+}
+.brand:hover { color: var(--accent); }
+
+#nav { display: flex; gap: 20px; margin-left: auto; flex-wrap: wrap; }
+
+#nav a {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 3px 0;
+  border-bottom: 1px solid transparent;
+}
+#nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.game-link {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 9px 14px;
+  border: 1px solid var(--accent);
+  white-space: nowrap;
+}
+.game-link:hover { background: var(--accent); color: #14131f; }
+
+/* ---- Hero ---- */
+#hero {
+  border-bottom: 1px solid var(--line);
+  padding: 110px 0 96px;
+  text-align: center;
+}
+
+#hero h1 {
+  font-size: 40px;
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  margin: 0 0 18px;
+  color: var(--ink-bright);
+}
+
+#hero .role {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 26px;
+}
+
+#hero .rule {
+  width: 64px;
+  height: 1px;
+  background: var(--accent);
+  margin: 0 auto 26px;
+}
+
+#hero p.lead {
+  margin: 0 auto 28px;
+  max-width: 58ch;
+  font-size: 17px;
+}
+
+.social { display: flex; justify-content: center; gap: 22px; }
+.social a { font-size: 19px; color: var(--muted); line-height: 1; }
+.social a:hover { color: var(--accent); }
+
+/* ---- Sections ---- */
+section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+
+section > .wrap > h2 {
+  font-size: 22px;
+  letter-spacing: 0.2em;
+  margin: 0 0 10px;
+}
+
+.section-sub {
+  margin: 0 0 40px;
+  color: var(--muted);
+  font-size: 15px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+h3 { font-size: 16px; letter-spacing: 0.1em; margin: 0 0 6px; }
+.meta {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+p { margin: 0 0 1.4em; }
+ul { padding-left: 18px; margin: 0 0 1.4em; }
+li { margin-bottom: 8px; }
+
+/* Two-column grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+
+.panel { padding: 26px 28px; background: var(--bg-raised); border: 1px solid var(--line); }
+.panel p:last-child { margin-bottom: 0; }
+
+/* Skills */
+.skill-block { margin-bottom: 28px; }
+.skill-block:last-child { margin-bottom: 0; }
+.skill-block h3 { font-size: 13px; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  background: rgba(255, 224, 102, 0.07);
+  border: 1px solid rgba(255, 224, 102, 0.32);
+  color: var(--ink-bright);
+}
+
+/* Cards */
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.card {
+  display: block;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-3px); }
+.card img { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid var(--line); }
+.card .card-text { padding: 22px 24px 24px; }
+.card p:last-child { margin-bottom: 0; font-size: 14.5px; }
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 3px 8px;
+  margin-left: 10px;
+  vertical-align: middle;
+  background: var(--accent);
+  color: #14131f;
+}
+
+/* Experience / music entry */
+.entry { display: flex; gap: 36px; align-items: flex-start; }
+.entry img { flex: 0 0 320px; width: 320px; height: 214px; object-fit: cover; border: 1px solid var(--line); }
+
+/* Progress + CTA */
+.cta-block { margin-top: 36px; max-width: 420px; }
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.progress-track { height: 8px; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line); }
+.progress-fill { height: 100%; background: var(--accent); }
+
+.cta {
+  display: inline-block;
+  margin-top: 22px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 12px 22px;
+  border: 1px solid var(--accent);
+}
+.cta:hover { background: var(--accent); color: #14131f; }
+
+/* Contact */
+.contact-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 36px; margin: 0; padding: 0; list-style: none; }
+.contact-list li { margin: 0; font-size: 15px; }
+.contact-list i { color: var(--accent); width: 22px; }
+
+/* Footer */
+footer { padding: 34px 0 48px; border-bottom: none; }
+footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 880px) {
+  .grid-2, .card-grid, .contact-list { grid-template-columns: 1fr; }
+  #hero { padding: 72px 0 60px; }
+  #hero h1 { font-size: 30px; }
+  .entry { flex-direction: column; gap: 24px; }
+  .entry img { flex: none; width: 100%; height: 220px; }
+}
+
+@media (max-width: 640px) {
+  #topbar .wrap { height: auto; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; gap: 12px 18px; }
+  #nav { margin-left: 0; order: 3; width: 100%; gap: 16px; }
+  .game-link { margin-left: auto; }
+  section { padding: 52px 0; }
+  #hero h1 { font-size: 26px; letter-spacing: 0.15em; }
+}
