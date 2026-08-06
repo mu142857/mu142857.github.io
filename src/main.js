@@ -14,6 +14,7 @@ import { loadPixelFont, drawText, wrapText, measureText } from './ui/pixelText.j
 import { Particles } from './engine/particles.js';
 import { TouchControls } from './ui/touchControls.js';
 import { Runner } from './runner/runner.js';
+import { Music } from './engine/music.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -83,9 +84,13 @@ function canvasNorm(clientX, clientY) {
   };
 }
 
-const THEME_LABELS = { rustCity: 'Rust City', silvaron: 'Silvaron' };
+const THEME_LABELS = { rustCity: 'City', silvaron: 'Forest' };
 const THEME_ORDER = ['rustCity', 'silvaron'];
 const SKIN_STORAGE_KEY = 'skin-theme';
+const MUSIC_TRACKS = {
+  rustCity: 'Assets/music/glitch.mp3',
+  silvaron: 'Assets/music/Silvaron.m4a',
+};
 
 // Text sizes, in world px (multiplied by renderScale to get the device font size).
 const TITLE_H = 16;
@@ -226,6 +231,7 @@ async function main() {
   const savedTheme = localStorage.getItem(SKIN_STORAGE_KEY);
   const initialTheme = THEME_ORDER.includes(savedTheme) ? savedTheme : 'rustCity';
   await world.setTheme(initialTheme);
+  const music = new Music(MUSIC_TRACKS, initialTheme);
 
   const input = new InputManager();
   const player = new Player(playerSheet, PLAYER_SPAWN_X);
@@ -235,6 +241,7 @@ async function main() {
   const touch = new TouchControls(input);
   const runner = new Runner(player, input, dust);
   await runner.load(THEME_ORDER);
+  runner.onVenueChange = (key) => music.setTheme(key); // crossfade with the blackout venue swap
   let dustTimer = 0;
   let promptTime = 0;
   let lastBlack = 0; // last --ui-fade written to the DOM (see render)
@@ -308,6 +315,7 @@ async function main() {
   function exitRunner() {
     scene = 'city';
     runner.leave();
+    music.setTheme(world.theme); // the runner's venue may have cycled away from the city's skin
     document.body.classList.remove('in-runner');
     touch.setMode('city');
     dust.list.length = 0;
@@ -336,6 +344,17 @@ async function main() {
   window.addEventListener('orientationchange', syncTouchUI);
   syncTouchUI();
 
+  // Like the skin toggle, the label shows what clicking gets you, not the current state.
+  const musicToggle = document.getElementById('music-toggle');
+  function updateMusicToggleLabel() {
+    musicToggle.textContent = `Music ${music.enabled ? 'Off' : 'On'} ›`;
+  }
+  updateMusicToggleLabel();
+  musicToggle.addEventListener('click', () => {
+    music.setEnabled(!music.enabled);
+    updateMusicToggleLabel();
+  });
+
   const skinToggle = document.getElementById('skin-toggle');
   function updateSkinToggleLabel() {
     const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(world.theme) + 1) % THEME_ORDER.length];
@@ -344,6 +363,7 @@ async function main() {
   updateSkinToggleLabel();
   skinToggle.addEventListener('click', async () => {
     const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(world.theme) + 1) % THEME_ORDER.length];
+    music.setTheme(nextTheme);
     await world.setTheme(nextTheme);
     localStorage.setItem(SKIN_STORAGE_KEY, nextTheme);
     camera.worldWidth = world.worldWidth;

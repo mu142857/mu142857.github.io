@@ -116,7 +116,7 @@ to public proxies). Update it by hand in **both** files (`section-gameProjects` 
 ## 3. Project structure
 
 ```
-index.html      Interactive site: canvas, HUD (social + Classic Site button), section <template>s.
+index.html      Interactive site: canvas, HUD (social + Music/skin/Classic buttons), section <template>s.
 style.css       Interactive-site styling (canvas, HUD, overlay cards, chips, progress bar, vignette).
 classic.html    Classic site: one scrolling page, same content as the templates in index.html.
 classic.css     Classic-site styling (Lato typography, cards, chips; border-radius: 0 everywhere).
@@ -130,7 +130,8 @@ Assets/
   content/                         All site photos + screenshots (see §2A).
 src/
   main.js                          Boot + game loop + scene switching + HUD/text/vignette/dust.
-  engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles.
+  engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles,
+              music.js (per-skin looping tracks, crossfaded on theme changes).
   entities/   player.js (state machine + sprint + double jump), playerAnimations.js.
   world/      world.js (layout/draw/proximity/gate), camera, parallax, buildings.js, themes.js.
   runner/     runner.js (the minigame scene), stones.js (obstacle sheet spec).
@@ -216,10 +217,16 @@ city you left from.
   Space retries, Enter goes back to the city.
 - On a phone the gamepad switches to runner mode: the walk pad and sprint step aside and **^**
   becomes one big jump button, next to a **BACK** button.
-- The **Silvaron Style** and **Classic Site** buttons hide during a run (`body.in-runner` in
-  `style.css`) — mid-run they are one stray click away from reskinning the world under you or
-  leaving the page. The social icons stay. The class is added and removed at full black, so
-  they never blink in or out on screen.
+- The **skin** ("Forest Style" / "City Style") and **Classic Site** buttons hide during a run
+  (`body.in-runner` in `style.css`) — mid-run they are one stray click away from reskinning the
+  world under you or leaving the page. The social icons and the **Music** toggle stay. The class
+  is added and removed at full black, so they never blink in or out on screen.
+- **Theme music** (`src/engine/music.js`, tracks in `Assets/music/`): one looping track per skin
+  — `glitch.mp3` for Rust City ("City"), `Silvaron.m4a` for Silvaron ("Forest"). The music
+  follows the active theme with a crossfade: the skin toggle, the runner's venue swap
+  (`runner.onVenueChange`), and stepping back out into the city all retarget it. Playback can
+  only start after the first click/keypress (browser autoplay policy); the on/off state is kept
+  in `localStorage` under `music-on`, default on.
 
 **Tuning the difficulty.** Making the run easier or harder is mostly two numbers:
 `RUNNER_GRAVITY` (lower = more hang time = more room to place the double jump) and

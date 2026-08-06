@@ -50,6 +50,7 @@ export class Runner {
     this.stoneSheet = null;
     this._dustTimer = 0;
     this._stoneAnimTime = 0;
+    this.onVenueChange = null; // called with the new venue's theme key at full black
 
     // The player's state machine is written for the city, where holding "right" walks. Here
     // the character runs on the spot, so it gets a permanently-held "right" (with lockX on)
@@ -190,6 +191,7 @@ export class Runner {
         if (this.blackout >= 1) {
           this.venueIndex = (this.venueIndex + 1) % this.venues.length;
           this.venuePhase = 'in';
+          if (this.onVenueChange) this.onVenueChange(this.venues[this.venueIndex].key);
         }
         break;
       case 'in':

@@ -90,7 +90,8 @@ body.touch {
 }
 
 #classic-toggle,
-#skin-toggle {
+#skin-toggle,
+#music-toggle {
   font-family: 'PixelFont', monospace;
   font-size: 15px;
   color: #14131f;
@@ -103,13 +104,15 @@ body.touch {
 }
 
 #classic-toggle:hover,
-#skin-toggle:hover {
+#skin-toggle:hover,
+#music-toggle:hover {
   background: #fff0a0;
 }
 
 /* In the runner minigame the two switches are hidden: a stray click would reskin the world
    mid-run or leave the page, and they sit right where the score reads. src/main.js adds
-   body.in-runner at the moment the scene swap is fully black, so they never blink out. */
+   body.in-runner at the moment the scene swap is fully black, so they never blink out.
+   The music toggle deliberately stays: muting mid-run is harmless and useful. */
 body.in-runner #skin-toggle,
 body.in-runner #classic-toggle {
   display: none;
@@ -126,7 +129,8 @@ body.compact #social { gap: 8px; }
 body.compact .hud-icon { font-size: 17px; }
 
 body.compact #classic-toggle,
-body.compact #skin-toggle {
+body.compact #skin-toggle,
+body.compact #music-toggle {
   font-size: 12px;
   padding: 5px 8px;
   border-width: 1px;
