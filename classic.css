@@ -57,11 +57,14 @@ h1, h2, h3, h4 {
   backdrop-filter: blur(6px);
 }
 
+/* The bar holds more than the 1000px content column can fit on one line in English,
+   so it gets a wider wrap; below 1120px the nav drops to its own full-width row. */
 #topbar .wrap {
   display: flex;
   align-items: center;
   gap: 22px;
   height: 62px;
+  max-width: 1280px;
 }
 
 .brand {
@@ -70,6 +73,7 @@ h1, h2, h3, h4 {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-bright);
+  white-space: nowrap;
 }
 .brand:hover { color: var(--accent); }
 
@@ -83,6 +87,7 @@ h1, h2, h3, h4 {
   color: var(--ink);
   padding: 3px 0;
   border-bottom: 1px solid transparent;
+  white-space: nowrap;
 }
 #nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
@@ -367,6 +372,12 @@ footer .wrap {
 .setting-row button.danger.confirm { background: #b53a3a; border-color: #b53a3a; color: #fff; }
 
 /* ---- Responsive ---- */
+@media (max-width: 1120px) {
+  #topbar .wrap { height: auto; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; gap: 12px 18px; }
+  #nav { margin-left: 0; order: 3; width: 100%; }
+  .game-link { margin-left: auto; }
+}
+
 @media (max-width: 880px) {
   .grid-2, .card-grid, .contact-list { grid-template-columns: 1fr; }
   #hero { padding: 72px 0 60px; }
@@ -376,9 +387,7 @@ footer .wrap {
 }
 
 @media (max-width: 640px) {
-  #topbar .wrap { height: auto; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; gap: 12px 18px; }
-  #nav { margin-left: 0; order: 3; width: 100%; gap: 16px; }
-  .game-link { margin-left: auto; }
+  #nav { gap: 12px 16px; }
   section { padding: 52px 0; }
   #hero h1 { font-size: 26px; letter-spacing: 0.15em; }
 }
