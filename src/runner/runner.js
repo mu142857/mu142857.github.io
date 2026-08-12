@@ -13,6 +13,7 @@ import { loadImage } from '../engine/assets.js';
 import { ParallaxLayer } from '../world/parallax.js';
 import { THEMES } from '../world/themes.js';
 import { drawText } from '../ui/pixelText.js';
+import { t } from '../i18n.js';
 import { STONE_TYPES, stoneSource, measureStoneSpans } from './stones.js';
 
 const BEST_KEY = 'runner-best';
@@ -313,17 +314,17 @@ export class Runner {
   // Device-space pass (crisp text), drawn by the caller after the world.
   drawHud(ctx, S, touchMode) {
     const pad = (n) => String(n).padStart(5, '0');
-    drawText(ctx, `HI ${pad(this.best)}   ${pad(this.score)}`, 5 * S, 5 * S, {
+    drawText(ctx, `${t('run.hi')} ${pad(this.best)}   ${pad(this.score)}`, 5 * S, 5 * S, {
       sizePx: 10 * S, color: '#c8ccda',
     });
 
     if (this.phase !== 'dead') return;
     const cx = (CANVAS_WIDTH / 2) * S;
-    drawText(ctx, 'GAME OVER', cx, 24 * S, { sizePx: 16 * S, color: ARROW_COLOR, align: 'center' });
-    drawText(ctx, `SCORE ${pad(this.score)}    BEST ${pad(this.best)}`, cx, 44 * S, {
+    drawText(ctx, t('run.gameOver'), cx, 24 * S, { sizePx: 16 * S, color: ARROW_COLOR, align: 'center' });
+    drawText(ctx, `${t('run.score')} ${pad(this.score)}    ${t('run.best')} ${pad(this.best)}`, cx, 44 * S, {
       sizePx: 10 * S, color: '#f4e9c1', align: 'center',
     });
-    const hint = touchMode ? 'JUMP  retry        BACK  to the city' : 'SPACE  retry        ENTER  back to the city';
+    const hint = t(touchMode ? 'run.retryTouch' : 'run.retryKey');
     drawText(ctx, hint, cx, 58 * S, { sizePx: 9 * S, color: '#9aa0b8', align: 'center' });
   }
 }

@@ -6,7 +6,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <title>Jiamu Shangguan</title>
+  <title data-i18n="doc.titleIndex">Jiamu Shangguan</title>
   <link rel="icon" type="image/png" href="Assets/content/favicon.png" />
   <link rel="stylesheet" href="Home/assets/css/fontawesome-all.min.css" />
   <link rel="stylesheet" href="style.css" />
@@ -30,9 +30,9 @@
         <a class="hud-icon" href="https://safari-mu.itch.io" target="_blank" rel="noopener" title="itch.io" aria-label="itch.io"><i class="fab fa-itch-io"></i></a>
         <a class="hud-icon" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
       </div>
-      <a id="classic-toggle" href="classic.html">Classic Site &rsaquo;</a>
+      <a id="classic-toggle" href="classic.html" data-i18n="hud.classic">Classic Site &rsaquo;</a>
       <button id="skin-toggle" type="button" title="Switch skin">Forest Style &rsaquo;</button>
-      <button id="settings-toggle" type="button" title="Settings">Settings &rsaquo;</button>
+      <button id="settings-toggle" type="button" title="Settings" data-i18n="hud.settings">Settings &rsaquo;</button>
     </div>
 
     <!-- Touch gamepad: walk on the left, sprint / jump on the right (shown on touch devices). -->
@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <div id="rotate-hint" class="hidden"><i class="fas fa-redo"></i>&nbsp; Turn your phone sideways</div>
+    <div id="rotate-hint" class="hidden"><i class="fas fa-redo"></i>&nbsp; <span data-i18n="hud.rotate">Turn your phone sideways</span></div>
 
     <div id="overlay" class="hidden">
       <div id="overlay-panel">
@@ -63,22 +63,26 @@
          skin-theme (a cleared save counts as a first visit). The third cover is sealed:
          clicking it only flashes the red ACCESS DENIED line. -->
     <div id="theme-picker" class="hidden">
-      <h1>CHOOSE YOUR WORLD</h1>
+      <header id="picker-head">
+        <h1 data-i18n="picker.name">JIAMU SHANGGUAN</h1>
+        <p data-i18n="picker.sub">Personal site &amp; portfolio — pick a world to explore it in</p>
+        <h2 data-i18n="picker.choose">CHOOSE YOUR WORLD</h2>
+      </header>
       <div class="theme-options">
         <button class="theme-option" type="button" data-theme="silvaron">
           <img src="Assets/theme/Silvaron.png" alt="Forest" draggable="false">
-          <span class="theme-name">Forest</span>
+          <span class="theme-name" data-i18n="picker.forest">Forest</span>
         </button>
         <button class="theme-option" type="button" data-theme="rustCity">
           <img src="Assets/theme/rust_city.png" alt="City" draggable="false">
-          <span class="theme-name">City</span>
+          <span class="theme-name" data-i18n="picker.city">City</span>
         </button>
         <button class="theme-option locked" type="button" aria-disabled="true">
           <img src="Assets/theme/CrimsonSanctum.png" alt="???" draggable="false">
           <span class="theme-name">???</span>
         </button>
       </div>
-      <div id="theme-denied" aria-live="polite">ACCESS DENIED</div>
+      <div id="theme-denied" aria-live="polite" data-i18n="picker.denied">ACCESS DENIED</div>
     </div>
   </div>
 
@@ -88,180 +92,180 @@
     To wire a project: replace the card's href="#" with the real URL.
   -->
   <template id="section-about">
-    <h2>About Me</h2>
+    <h2 data-i18n="about.title">About Me</h2>
     <img class="portrait" src="Assets/content/about-portrait.jpg" alt="Jiamu Shangguan">
-    <p class="lead">Second-year Mathematics student at the University of Waterloo, focused on applied math, scientific computing, and machine learning.</p>
-    <p>I build games in Godot and compose music as a keyboardist — applying mathematical rigor to creative work, blending harmonic theory with number-theory principles.</p>
-    <h3>Education</h3>
-    <p><strong>University of Waterloo</strong> — Bachelor of Mathematics (Co-op)<br />
+    <p class="lead" data-i18n="about.lead">Second-year student at the University of Waterloo in Applied Mathematics with Scientific Computing and Scientific Machine Learning.</p>
+    <p data-i18n="about.body">I build games in Godot and compose music as a keyboardist — applying mathematical rigor to creative work, blending harmonic theory with number-theory principles.</p>
+    <h3 data-i18n="about.eduTitle">Education</h3>
+    <p data-i18n="about.eduBody"><strong>University of Waterloo</strong> — Bachelor of Mathematics (Co-op)<br />
       <span class="meta">Sept. 2025 – Present · Waterloo, ON</span></p>
-    <p>Major: Applied Mathematics with Scientific Computing &amp; Scientific Machine Learning (AM-SciML).</p>
-    <h3>Beyond the desk</h3>
-    <p>10+ years of classical piano and an original composer; co-founder of R&amp;S Studio. Fluent in Mandarin Chinese (native) and English.</p>
+    <p data-i18n="about.eduMajor">Major: Applied Mathematics with Scientific Computing &amp; Scientific Machine Learning (AM-SciML).</p>
+    <h3 data-i18n="about.beyondTitle">Beyond the desk</h3>
+    <p data-i18n="about.beyondBody">10+ years of classical piano and an original composer; co-founder of R&amp;S Studio. Fluent in Mandarin Chinese (native) and English.</p>
   </template>
 
   <template id="section-skills">
-    <h2>Technical Skills</h2>
-    <p class="lead">The tools I reach for across web, creative, and data work.</p>
+    <h2 data-i18n="skills.title">Technical Skills</h2>
+    <p class="lead" data-i18n="skills.lead">The tools I reach for across web, creative, and data work.</p>
     <div class="skill-block">
-      <h3>Frontend &amp; Web</h3>
-      <div class="chips"><span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">JavaScript</span><span class="chip">Responsive Design</span><span class="chip">UI/UX</span><span class="chip">Data Visualization</span></div>
+      <h3 data-i18n="skills.web">Frontend &amp; Web</h3>
+      <div class="chips"><span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">JavaScript</span><span class="chip" data-i18n="chip.responsive">Responsive Design</span><span class="chip">UI/UX</span><span class="chip" data-i18n="chip.dataviz">Data Visualization</span></div>
     </div>
     <div class="skill-block">
-      <h3>Languages</h3>
+      <h3 data-i18n="skills.langs">Languages</h3>
       <div class="chips"><span class="chip">Python</span><span class="chip">GDScript</span></div>
     </div>
     <div class="skill-block">
-      <h3>Tools &amp; Platforms</h3>
-      <div class="chips"><span class="chip">Godot Engine</span><span class="chip">Git / GitHub</span><span class="chip">VS Code</span><span class="chip">Blender</span><span class="chip">LaTeX</span><span class="chip">API Integration</span><span class="chip">Web Deployment</span></div>
+      <h3 data-i18n="skills.tools">Tools &amp; Platforms</h3>
+      <div class="chips"><span class="chip">Godot Engine</span><span class="chip">Git / GitHub</span><span class="chip">VS Code</span><span class="chip">Blender</span><span class="chip">LaTeX</span><span class="chip" data-i18n="chip.api">API Integration</span><span class="chip" data-i18n="chip.deploy">Web Deployment</span></div>
     </div>
     <div class="skill-block">
-      <h3>AI &amp; Data</h3>
+      <h3 data-i18n="skills.ai">AI &amp; Data</h3>
       <div class="chips"><span class="chip">MediaPipe</span><span class="chip">Streamlit</span><span class="chip">OpenAI API</span></div>
     </div>
   </template>
 
   <template id="section-experience">
-    <h2>Work Experience</h2>
+    <h2 data-i18n="exp.title">Work Experience</h2>
     <article class="entry">
       <img src="Assets/content/experience-drone.jpg" alt="AUAV drone show">
-      <h3>AUAV — Technical Intern</h3>
-      <p class="meta">Drone Show Technology · Calgary, AB · Jul. 2024 – Aug. 2024</p>
+      <h3 data-i18n="exp.role">AUAV — Technical Intern</h3>
+      <p class="meta" data-i18n="exp.meta">Drone Show Technology · Calgary, AB · Jul. 2024 – Aug. 2024</p>
       <ul>
-        <li>Simulated drone swarm formations with Python and Skybrush, optimizing flight paths for collision avoidance and visual impact.</li>
-        <li>Created 3D pre-visualization assets in Blender to align technical flight constraints with artistic design.</li>
-        <li>Executed automated flight tests and analyzed telemetry data to improve fleet synchronization and battery efficiency.</li>
+        <li data-i18n="exp.b1">Simulated drone swarm formations with Python and Skybrush, optimizing flight paths for collision avoidance and visual impact.</li>
+        <li data-i18n="exp.b2">Created 3D pre-visualization assets in Blender to align technical flight constraints with artistic design.</li>
+        <li data-i18n="exp.b3">Executed automated flight tests and analyzed telemetry data to improve fleet synchronization and battery efficiency.</li>
       </ul>
     </article>
   </template>
 
   <template id="section-gameProjects">
-    <h2>Game Projects</h2>
-    <p class="lead">I make games in Godot — writing gameplay, physics, and state machines in GDScript, and drawing the pixel art myself.</p>
+    <h2 data-i18n="games.title">Game Projects</h2>
+    <p class="lead" data-i18n="games.lead">I make games in Godot — writing gameplay, physics, and state machines in GDScript, and drawing the pixel art myself.</p>
     <div class="card-grid">
       <a class="card" href="https://safari-mu.itch.io/until-someone-passes" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/until-someone-passes.png" alt="Until Someone Passes">
         <div class="card-text">
-          <h3>Until Someone Passes <span class="badge">GMTK 2026</span></h3>
-          <p class="meta">Narrative / Art Game · Team Lead · Design &amp; All Programming</p>
-          <p class="jam-results"><span class="of">Among ~10,500 entries · 37,000+ jammers:</span> <strong>#53 worldwide in Audio · #126 Narrative · #140 Artwork</strong></p>
-          <p>Five days until the party. A short game about social anxiety, made in 4 days for GMTK Game Jam 2026 (theme: Count Down). Three ways to play — walking, defending, dodging — and when something gets past you, you hear yourself say something unkind. I led the three-person team, designed the game, and wrote all the code.</p>
+          <h3 data-i18n="games.usp.title">Until Someone Passes <span class="badge">GMTK 2026</span></h3>
+          <p class="meta" data-i18n="games.usp.meta">Narrative / Art Game · Team Lead · Design &amp; All Programming</p>
+          <p class="jam-results" data-i18n="games.usp.results"><span class="of">Among ~10,500 entries · 37,000+ jammers:</span> <strong>#53 worldwide in Audio · #126 Narrative · #140 Artwork</strong></p>
+          <p data-i18n="games.usp.desc">Five days until the party. A short game about social anxiety, made in 4 days for GMTK Game Jam 2026 (theme: Count Down). Three ways to play — walking, defending, dodging — and when something gets past you, you hear yourself say something unkind. I led the three-person team, designed the game, and wrote all the code.</p>
         </div>
       </a>
       <a class="card" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/phage.png" alt="Phage">
         <div class="card-text">
-          <h3>Phage <span class="badge">In Development</span></h3>
-          <p class="meta">Action-Adventure · 2D pixel side-scroller</p>
-          <p>My main project: a hand-drawn pixel action-adventure taken to an extreme — the hero is just 8&times;4 pixels, yet every frame is drawn by hand. Follow the (rather fun) dev-log series on bilibili: 240K+ total views and ~60K likes so far.</p>
+          <h3 data-i18n="games.phage.title">Phage <span class="badge">In Development</span></h3>
+          <p class="meta" data-i18n="games.phage.meta">Action-Adventure · 2D pixel side-scroller</p>
+          <p data-i18n="games.phage.desc">My main project: a hand-drawn pixel action-adventure taken to an extreme — the hero is just 8&times;4 pixels, yet every frame is drawn by hand. Follow the (rather fun) dev-log series on bilibili: 240K+ total views and ~60K likes so far.</p>
         </div>
       </a>
       <a class="card" href="https://maggieeeeem.itch.io/eight-for-long" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/eight-for-long.png" alt="Eight For Long">
         <div class="card-text">
-          <h3>Eight For Long <span class="badge">GMTK 2026</span></h3>
-          <p class="meta">Puzzle / Strategy · Team Lead · Design &amp; All Programming</p>
-          <p class="jam-results"><span class="of">Among ~10,500 entries · 37,000+ jammers:</span> <strong>#476 worldwide in Narrative · #1,849 Artwork · #3,354 Audio</strong></p>
-          <p>Eight minutes to escape an underwater facility. Every action spends the countdown, so the real puzzle is deciding who you help — you can never help everyone. My second entry to the same jam: again team lead, design, and all the code.</p>
+          <h3 data-i18n="games.efl.title">Eight For Long <span class="badge">GMTK 2026</span></h3>
+          <p class="meta" data-i18n="games.efl.meta">Puzzle / Strategy · Team Lead · Design &amp; All Programming</p>
+          <p class="jam-results" data-i18n="games.efl.results"><span class="of">Among ~10,500 entries · 37,000+ jammers:</span> <strong>#476 worldwide in Narrative · #1,849 Artwork · #3,354 Audio</strong></p>
+          <p data-i18n="games.efl.desc">Eight minutes to escape an underwater facility. Every action spends the countdown, so the real puzzle is deciding who you help — you can never help everyone. My second entry to the same jam: again team lead, design, and all the code.</p>
         </div>
       </a>
       <a class="card" href="https://safari-mu.itch.io/signal-split" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/signal-split.png" alt="Signal Split">
         <div class="card-text">
-          <h3>Signal Split</h3>
-          <p class="meta">UW Game Jam · Team Lead &amp; Sole Programmer</p>
-          <p>A polished 2D platformer shipped in 72 hours — 4th overall with the top score in Visuals. Wrote 100% of the GDScript (physics, state machines, level design) and made all the art.</p>
+          <h3 data-i18n="games.ss.title">Signal Split</h3>
+          <p class="meta" data-i18n="games.ss.meta">UW Game Jam · Team Lead &amp; Sole Programmer</p>
+          <p data-i18n="games.ss.desc">A polished 2D platformer shipped in 72 hours — 4th overall with the top score in Visuals. Wrote 100% of the GDScript (physics, state machines, level design) and made all the art.</p>
         </div>
       </a>
     </div>
 
     <div class="cta-block">
       <div class="progress">
-        <div class="progress-head"><span>bilibili followers</span><span>6,500 / 10,000</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width: 65%"></div></div>
+        <div class="progress-head"><span data-i18n="games.progress">bilibili followers</span><span>6,600 / 10,000</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width: 66%"></div></div>
       </div>
-      <a class="cta" href="https://safari-mu.itch.io/" target="_blank" rel="noopener"><i class="fab fa-itch-io"></i>&nbsp; Play my games on itch.io</a>
-      <a class="cta" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener"><i class="fas fa-play"></i>&nbsp; Subscribe at bilibili</a>
+      <a class="cta" href="https://safari-mu.itch.io/" target="_blank" rel="noopener"><i class="fab fa-itch-io"></i>&nbsp; <span data-i18n="games.ctaItch">Play my games on itch.io</span></a>
+      <a class="cta" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener"><i class="fas fa-play"></i>&nbsp; <span data-i18n="games.ctaBili">Subscribe at bilibili</span></a>
     </div>
   </template>
 
   <template id="section-projects">
-    <h2>Projects</h2>
-    <p class="lead">Hackathon wins, civic tech, and web builds.</p>
+    <h2 data-i18n="proj.title">Projects</h2>
+    <p class="lead" data-i18n="proj.lead">Hackathon wins, civic tech, and web builds.</p>
     <div class="card-grid">
       <a class="card" href="#" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/look.png" alt="Loo-k">
         <div class="card-text">
           <h3>Loo-k</h3>
-          <p class="meta">Cost-of-Living Comparison Tool · Team Lead</p>
-          <p>Led a team of four building a neighborhood-livability aggregator comparing cost-of-living and housing metrics across Canadian cities. Presented at Hack Canada 2026; migrating from web to mobile.</p>
+          <p class="meta" data-i18n="proj.look.meta">Cost-of-Living Comparison Tool · Team Lead</p>
+          <p data-i18n="proj.look.desc">Led a team of four building a neighborhood-livability aggregator comparing cost-of-living and housing metrics across Canadian cities. Presented at Hack Canada 2026; migrating from web to mobile.</p>
         </div>
       </a>
       <a class="card" href="#" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/physics-sim.png" alt="Physics Simulation">
         <div class="card-text">
-          <h3>Physics Simulation <span class="badge">1st Place</span></h3>
-          <p class="meta">Claude Create-A-Thon · Data Viz Track</p>
-          <p>1st place among 30 teams — interactive simulations of Hooke's Law and pendulum energy conversion with real-time visualization.</p>
+          <h3 data-i18n="proj.phys.title">Physics Simulation <span class="badge">1st Place</span></h3>
+          <p class="meta" data-i18n="proj.phys.meta">Claude Create-A-Thon · Data Viz Track</p>
+          <p data-i18n="proj.phys.desc">1st place among 30 teams — interactive simulations of Hooke's Law and pendulum energy conversion with real-time visualization.</p>
         </div>
       </a>
       <a class="card" href="#" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/sentiment-flow.png" alt="Sentiment Flow">
         <div class="card-text">
           <h3>Sentiment Flow</h3>
-          <p class="meta">uOttaHack 8 · Developer</p>
-          <p>Real-time facial-signal monitoring with MediaPipe and a Streamlit dashboard; integrated the OpenAI API for automated insights and SurveyMonkey for survey distribution.</p>
+          <p class="meta" data-i18n="proj.sf.meta">uOttaHack 8 · Developer</p>
+          <p data-i18n="proj.sf.desc">Real-time facial-signal monitoring with MediaPipe and a Streamlit dashboard; integrated the OpenAI API for automated insights and SurveyMonkey for survey distribution.</p>
         </div>
       </a>
       <a class="card" href="#" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/open-pg.png" alt="Open Prince George">
         <div class="card-text">
           <h3>Open Prince George</h3>
-          <p class="meta">Civic Tech Developer</p>
-          <p>An open-source city-council tracker aggregating public-hearing schedules and decisions, with an AI-assisted pipeline that classifies and summarizes agenda items.</p>
+          <p class="meta" data-i18n="proj.opg.meta">Civic Tech Developer</p>
+          <p data-i18n="proj.opg.desc">An open-source city-council tracker aggregating public-hearing schedules and decisions, with an AI-assisted pipeline that classifies and summarizes agenda items.</p>
         </div>
       </a>
       <a class="card" href="#" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/donatrust.png" alt="DonaTrust">
         <div class="card-text">
           <h3>DonaTrust Portal</h3>
-          <p class="meta">Humanitarian Tech · Frontend</p>
-          <p>A frontend prototype for a charity-transparency platform, with a clean interface presenting project goals and features.</p>
+          <p class="meta" data-i18n="proj.dt.meta">Humanitarian Tech · Frontend</p>
+          <p data-i18n="proj.dt.desc">A frontend prototype for a charity-transparency platform, with a clean interface presenting project goals and features.</p>
         </div>
       </a>
     </div>
   </template>
 
   <template id="section-music">
-    <h2>Music Composing</h2>
+    <h2 data-i18n="musicSec.title">Music Composing</h2>
     <img src="Assets/content/music-studio.jpg" alt="R&amp;S Studio">
-    <p class="lead">10+ years of classical piano and an original composer. I co-founded R&amp;S Studio, a music-production project showcasing original works.</p>
-    <p>The full catalogue of tracks, releases, and the studio site lives over at R&amp;S Studio.</p>
-    <a class="cta" href="https://r-s-studio.github.io/" target="_blank" rel="noopener">Visit R&amp;S Studio&nbsp; <i class="fas fa-arrow-right"></i></a>
+    <p class="lead" data-i18n="musicSec.lead">10+ years of classical piano and an original composer. I co-founded R&amp;S Studio, a music-production project showcasing original works.</p>
+    <p data-i18n="musicSec.body">The full catalogue of tracks, releases, and the studio site lives over at R&amp;S Studio.</p>
+    <a class="cta" href="https://r-s-studio.github.io/" target="_blank" rel="noopener"><span data-i18n="musicSec.cta">Visit R&amp;S Studio</span>&nbsp; <i class="fas fa-arrow-right"></i></a>
   </template>
 
   <!-- Settings modal content. Shown through the same overlay as the sections; the buttons
        are wired up in src/main.js each time it opens (the template is cloned fresh). -->
   <template id="section-settings">
-    <h2>Settings</h2>
+    <h2 data-i18n="settings.title">Settings</h2>
     <div class="setting-row">
       <div class="setting-info">
-        <h3>Music</h3>
-        <p class="meta">Theme music, one track per world.</p>
+        <h3 data-i18n="settings.music">Music</h3>
+        <p class="meta" data-i18n="settings.musicDesc">Theme music, one track per world.</p>
       </div>
       <button id="setting-music" class="setting-btn" type="button">On</button>
     </div>
     <div class="setting-row">
       <div class="setting-info">
-        <h3>Language</h3>
-        <p class="meta">Translations coming soon.</p>
+        <h3 data-i18n="settings.language">Language</h3>
+        <p class="meta" data-i18n="settings.langDesc">Switches the language of the whole site.</p>
       </div>
       <button id="setting-lang" class="setting-btn" type="button">English</button>
     </div>
     <div class="setting-row">
       <div class="setting-info">
-        <h3>Clear saved data</h3>
-        <p class="meta">Wipes the world choice, music &amp; language settings, and the runner best score, then reloads.</p>
+        <h3 data-i18n="settings.clearTitle">Clear saved data</h3>
+        <p class="meta" data-i18n="settings.clearDesc">Wipes the world choice, music &amp; language settings, and the runner best score, then reloads.</p>
       </div>
       <button id="setting-clear" class="setting-btn danger" type="button">Clear</button>
     </div>

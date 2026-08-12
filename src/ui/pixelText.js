@@ -5,6 +5,9 @@
 // transform to identity and pass device coordinates + a device font size.
 
 const FAMILY = 'PixelFont';
+// PixelFont has Latin glyphs only; CJK characters (the 中文 UI) fall through to the system
+// sans-serif, which the AA text pass renders cleanly enough to read as intentional.
+const FONT_STACK = `"${FAMILY}", sans-serif`;
 
 export async function loadPixelFont() {
   const face = new FontFace(FAMILY, "url('Assets/shared/PixelFont.ttf')");
@@ -13,12 +16,12 @@ export async function loadPixelFont() {
 }
 
 export function measureText(ctx, text, sizePx) {
-  ctx.font = `${sizePx}px "${FAMILY}"`;
+  ctx.font = `${sizePx}px ${FONT_STACK}`;
   return ctx.measureText(text).width;
 }
 
 export function drawText(ctx, text, x, y, { sizePx, color = '#ffffff', align = 'left', baseline = 'top' } = {}) {
-  ctx.font = `${sizePx}px "${FAMILY}"`;
+  ctx.font = `${sizePx}px ${FONT_STACK}`;
   ctx.fillStyle = color;
   ctx.textAlign = align;
   ctx.textBaseline = baseline;

@@ -94,8 +94,8 @@ Auto-fetch from the browser is **not possible** (bilibili blocks cross-origin re
 to public proxies). Update it by hand in **both** files (`section-gameProjects` / `#games`):
 
 ```html
-<span>6,500 / 10,000</span>              <!-- update the number -->
-<div class="progress-fill" style="width: 65%"></div>   <!-- update % = followers / 100 -->
+<span>6,600 / 10,000</span>              <!-- update the number -->
+<div class="progress-fill" style="width: 66%"></div>   <!-- update % = followers / 100 -->
 ```
 
 > If you deploy to GitHub Pages and want true auto-update, ask me to set up a scheduled GitHub
@@ -133,6 +133,8 @@ Assets/
   content/                         All site photos + screenshots (see §2A).
 src/
   main.js                          Boot + game loop + scene switching + HUD/text/vignette/dust.
+  i18n.js                          The bilingual dictionary (see "Language" below) — every 中文
+                                   string on both sites lives here.
   engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles,
               music.js (per-skin looping tracks, crossfaded on theme changes).
   entities/   player.js (state machine + sprint + double jump), playerAnimations.js.
@@ -146,8 +148,8 @@ Home/         Leftover HTML5-UP "Twenty" template. Only still needed for the Fon
 
 ### The classic site (`classic.html` / `classic.css`)
 
-Plain HTML, no build step; the only JS is a small inline script at the bottom that drives the
-Settings modal. Anchor nav (`#about`, `#skills`, …) with `scroll-behavior: smooth`; the top bar
+Plain HTML, no build step; the only JS is a small inline module at the bottom that drives the
+Settings modal and the language pass (it imports `src/i18n.js`). Anchor nav (`#about`, `#skills`, …) with `scroll-behavior: smooth`; the top bar
 is `position: sticky`. Two rules matter when editing:
 
 - **`border-radius: 0 !important`** is set on `*` — the whole design is square on purpose.
@@ -245,9 +247,20 @@ each type's `clearTime` in `stones.js`, which should equal the airtime of the ju
 
 Both sites have a **Settings** button (HUD top-right on the interactive site, top bar on the
 classic one) opening a modal in that site's own style — pixel overlay vs. Lato/outlined. Three
-controls, in both: **Music** on/off, **Language** (English/中文 — only stored for now, the
-actual translation pass comes later), and **Clear saved data** (two clicks: `Clear` →
-`Confirm?`), which wipes `localStorage` and reloads.
+controls, in both: **Music** on/off, **Language** (English/中文, switches the whole site
+live), and **Clear saved data** (two clicks: `Clear` → `Confirm?`), which wipes
+`localStorage` and reloads.
+
+**Language (`src/i18n.js`).** English is the source of truth and lives in the HTML/JS;
+`i18n.js` holds only the Chinese, in two dictionaries: `ZH` (per `data-i18n` element key —
+both HTML files tag every translatable element) and `UI` (strings built in JS: canvas text,
+building labels, runner HUD, button labels — read via `t(key)`). Translation rules: proper
+nouns are not force-translated — companies, products (Godot, AUAV…), and English-born project
+names stay English; games use their official Chinese titles (直到经过, 8分钟, 信号分裂;
+Phage stays Phage); the name is 上官嘉木. To edit copy: change the English in the HTML *and*
+the matching key in `ZH`. New content needs a `data-i18n="key"` attribute + a `ZH` entry —
+missing keys just stay English rather than breaking. Canvas CJK glyphs render through a
+sans-serif fallback (PixelFont is Latin-only; see `FONT_STACK` in `pixelText.js`).
 
 Everything the site remembers lives in `localStorage` under four keys, shared by both views:
 

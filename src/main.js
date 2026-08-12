@@ -15,14 +15,14 @@ import { Particles } from './engine/particles.js';
 import { TouchControls } from './ui/touchControls.js';
 import { Runner } from './runner/runner.js';
 import { Music } from './engine/music.js';
+import { getLang, setLang, applyTranslations, t } from './i18n.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const app = document.getElementById('app');
 const rotateHint = document.getElementById('rotate-hint');
 
-const KEY_CONTROLS = 'Walk A / D    Sprint Shift    Jump Space x2    Enter Up / Click';
-const TOUCH_CONTROLS = 'Buttons to walk and jump    Tap jump twice in the air    Tap a building to enter';
+applyTranslations(); // before anything is seen, so a saved 中文 never flashes English
 
 // --- Responsive layout ------------------------------------------------------
 // The stage is the drawable area. On a phone held upright it is the viewport turned on its
@@ -31,7 +31,6 @@ const TOUCH_CONTROLS = 'Buttons to walk and jump    Tap jump twice in the air   
 let renderScale = 1;
 let touchMode = false;
 let rotated = false;
-let controlsText = KEY_CONTROLS;
 
 function layout() {
   const vw = window.innerWidth;
@@ -49,7 +48,6 @@ function layout() {
   document.body.classList.toggle('narrow', stageW < 560);
   app.style.width = `${stageW}px`;
   app.style.height = `${stageH}px`;
-  controlsText = touchMode ? TOUCH_CONTROLS : KEY_CONTROLS;
 
   // Backing store stays an integer multiple of 160x90 so the world pass draws crisp pixels.
   const fit = Math.min(stageW / CANVAS_WIDTH, stageH / CANVAS_HEIGHT);
@@ -84,10 +82,8 @@ function canvasNorm(clientX, clientY) {
   };
 }
 
-const THEME_LABELS = { rustCity: 'City', silvaron: 'Forest' };
 const THEME_ORDER = ['rustCity', 'silvaron'];
 const SKIN_STORAGE_KEY = 'skin-theme';
-const LANG_STORAGE_KEY = 'site-lang'; // 'en' | 'zh' — stored now, consumed once translations land
 const MUSIC_TRACKS = {
   rustCity: 'Assets/music/glitch.mp3',
   silvaron: 'Assets/music/Silvaron.m4a',
@@ -128,10 +124,11 @@ const LABEL_H = 12;
 function drawIntro(ctx, cameraX, S) {
   const dx = (8 - cameraX) * S;
   let y = 3;
-  drawText(ctx, 'Hi, I am', dx, y * S, { sizePx: TITLE_H * S, color: '#f4e9c1' });
+  drawText(ctx, t('game.hi'), dx, y * S, { sizePx: TITLE_H * S, color: '#f4e9c1' });
   y += TITLE_H + 2;
-  drawText(ctx, 'Jiamu Shangguan', dx, y * S, { sizePx: TITLE_H * S, color: '#f4e9c1' });
+  drawText(ctx, t('game.name'), dx, y * S, { sizePx: TITLE_H * S, color: '#f4e9c1' });
   y += TITLE_H + 3;
+  const controlsText = t(touchMode ? 'game.touchControls' : 'game.keyControls');
   wrapText(ctx, controlsText, 150 * S, BODY_H * S).forEach((line) => {
     drawText(ctx, line, dx, y * S, { sizePx: BODY_H * S, color: '#c8ccda' });
     y += BODY_H + 1.5;
@@ -175,7 +172,7 @@ function drawBuildingLabel(ctx, world, cameraX, S) {
   if (!b) return;
   const img = world.imageFor(b);
   const cx = (b.worldX + img.width / 2 - cameraX) * S;
-  drawText(ctx, b.label, cx, labelBottomY(world) * S, {
+  drawText(ctx, t(`building.${b.id}`), cx, labelBottomY(world) * S, {
     sizePx: LABEL_H * S, color: HIGHLIGHT_COLOR, align: 'center', baseline: 'bottom',
   });
 }
@@ -222,14 +219,18 @@ function drawGateArrow(ctx, world, cameraX, time) {
 }
 
 function drawGateLabel(ctx, world, cameraX, S) {
-  const cx = world.gateX + 4 - cameraX;
-  if (cx < -40 || cx > CANVAS_WIDTH + 40) return;
+  // Same visibility window as the gate chevron: the label is clamped on screen below, so
+  // drawing it any earlier would pin it to the screen edge with no arrow under it.
+  const gx = world.gateX - cameraX;
+  if (gx < -12 || gx > CANVAS_WIDTH) return;
+  const cx = gx + 4;
   // Kept fully on screen: the camera stops at the end of the world, so a label centred on the
   // gate would otherwise hang off the right edge.
-  const half = measureText(ctx, 'ENTER GAME', LABEL_H * S) / 2;
+  const label = t('game.enterGame');
+  const half = measureText(ctx, label, LABEL_H * S) / 2;
   const margin = half + 3 * S;
   const x = Math.max(margin, Math.min(cx * S, CANVAS_WIDTH * S - margin));
-  drawText(ctx, 'ENTER GAME', x, (GROUND_Y - 22) * S, {
+  drawText(ctx, label, x, (GROUND_Y - 22) * S, {
     sizePx: LABEL_H * S, color: ARROW_COLOR, align: 'center', baseline: 'bottom',
   });
 }
@@ -372,13 +373,12 @@ async function main() {
 
   // Settings opens through the same overlay as the sections. The template is cloned fresh
   // on every open, so the buttons are re-queried and re-wired each time — no stale handlers.
-  const settingsToggle = document.getElementById('settings-toggle');
-  settingsToggle.addEventListener('click', () => {
+  function openSettings() {
     overlay.show('settings');
 
     const musicBtn = document.getElementById('setting-music');
     const syncMusic = () => {
-      musicBtn.textContent = music.enabled ? 'On' : 'Off';
+      musicBtn.textContent = t(music.enabled ? 'ui.on' : 'ui.off');
       musicBtn.classList.toggle('off', !music.enabled);
     };
     syncMusic();
@@ -387,36 +387,36 @@ async function main() {
       syncMusic();
     });
 
-    // The language switch only stores the preference for now; translations come later.
+    // setLang retranslates the DOM and the templates in place; reopening then re-clones the
+    // settings panel in the new language and refreshes every JS-built label with it.
     const langBtn = document.getElementById('setting-lang');
-    const syncLang = () => {
-      langBtn.textContent = localStorage.getItem(LANG_STORAGE_KEY) === 'zh' ? '中文' : 'English';
-    };
-    syncLang();
+    langBtn.textContent = getLang() === 'zh' ? '中文' : 'English';
     langBtn.addEventListener('click', () => {
-      const next = localStorage.getItem(LANG_STORAGE_KEY) === 'zh' ? 'en' : 'zh';
-      localStorage.setItem(LANG_STORAGE_KEY, next);
-      syncLang();
+      setLang(getLang() === 'zh' ? 'en' : 'zh');
+      updateSkinToggleLabel();
+      openSettings();
     });
 
     // Two clicks to clear: the first arms the button, the second wipes and reloads. With no
     // saved skin left, the reload lands on the first-visit world picker.
     const clearBtn = document.getElementById('setting-clear');
+    clearBtn.textContent = t('ui.clear');
     clearBtn.addEventListener('click', () => {
       if (!clearBtn.classList.contains('confirm')) {
         clearBtn.classList.add('confirm');
-        clearBtn.textContent = 'Confirm?';
+        clearBtn.textContent = t('ui.confirm');
         return;
       }
       localStorage.clear();
       location.reload();
     });
-  });
+  }
+  document.getElementById('settings-toggle').addEventListener('click', openSettings);
 
   const skinToggle = document.getElementById('skin-toggle');
   function updateSkinToggleLabel() {
     const nextTheme = THEME_ORDER[(THEME_ORDER.indexOf(world.theme) + 1) % THEME_ORDER.length];
-    skinToggle.textContent = `${THEME_LABELS[nextTheme]} Style ›`;
+    skinToggle.textContent = t(`style.${nextTheme}`);
   }
   updateSkinToggleLabel();
   skinToggle.addEventListener('click', async () => {
@@ -474,7 +474,7 @@ async function main() {
 
     if (scene === 'runner') {
       if (runner.update(dt) === 'exit') startTransition(exitRunner);
-      touch.setEnter(touchMode, 'BACK');
+      touch.setEnter(touchMode, 'back');
       dust.update(dt);
       input.endFrame();
       return;
@@ -486,7 +486,7 @@ async function main() {
     world.update(player.x);
     promptTime += dt;
     // The ENTER button only exists while there's something to enter.
-    touch.setEnter(touchMode && (!!world.nearbyBuilding || atGate()), 'ENTER');
+    touch.setEnter(touchMode && (!!world.nearbyBuilding || atGate()), 'enter');
 
     // Kick up pixel dust behind the character while sprinting on the ground.
     if (player.sprinting && player.state === 'WALK') {

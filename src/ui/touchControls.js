@@ -5,6 +5,8 @@
 // "right" while tapping "jump" is the common case. Releases are tracked on `window` keyed by
 // pointerId, so a finger that slides off a button (or a button that hides mid-press) still
 // releases exactly its own action and never leaves one stuck down.
+import { t } from '../i18n.js';
+
 export class TouchControls {
   constructor(input) {
     this.root = document.getElementById('touch-controls');
@@ -51,11 +53,14 @@ export class TouchControls {
     if (runner) this.releaseAll(); // nothing should stay held across a scene change
   }
 
-  setEnter(visible, label = 'ENTER') {
+  // kind is 'enter' | 'back'; the visible label comes from the i18n dictionary, so it is
+  // re-resolved every call and follows a language switch on its own.
+  setEnter(visible, kind = 'enter') {
     this.enterBtn.classList.toggle('hidden', !visible);
+    const label = t(kind === 'back' ? 'game.back' : 'game.enter');
     if (this.enterLabel.textContent === label) return;
     this.enterLabel.textContent = label;
-    const back = label === 'BACK';
+    const back = kind === 'back';
     this.enterIcon.className = back ? 'fas fa-sign-out-alt' : 'fas fa-sign-in-alt';
     this.enterBtn.setAttribute('aria-label', back ? 'Back to the city' : 'Enter');
   }

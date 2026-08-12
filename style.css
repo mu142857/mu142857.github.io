@@ -513,13 +513,30 @@ body.compact .setting-btn { min-width: 80px; font-size: 12px; padding: 6px 10px;
 
 #theme-picker.hidden { display: none; }
 
-#theme-picker h1 {
+/* Header: this is a personal site first — the name leads, the world prompt follows. */
+#picker-head { text-align: center; }
+
+#picker-head h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  font-weight: normal;
+  letter-spacing: 3px;
+  color: #f4e9c1;
+}
+
+#picker-head p {
+  margin: 0 0 26px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #9aa0b8;
+}
+
+#picker-head h2 {
   margin: 0;
-  font-size: 30px;
+  font-size: 19px;
   font-weight: normal;
   letter-spacing: 3px;
   color: #ffe066;
-  text-align: center;
 }
 
 .theme-options {
@@ -590,7 +607,9 @@ body.compact .setting-btn { min-width: 80px; font-size: 12px; padding: 6px 10px;
   100% { opacity: 1; transform: translateX(0); }
 }
 
-body.compact #theme-picker { gap: 22px; }
-body.compact #theme-picker h1 { font-size: 20px; }
+body.compact #theme-picker { gap: 18px; }
+body.compact #picker-head h1 { font-size: 22px; margin-bottom: 6px; }
+body.compact #picker-head p { font-size: 10px; margin-bottom: 14px; }
+body.compact #picker-head h2 { font-size: 14px; }
 body.compact .theme-name { font-size: 13px; }
 body.compact #theme-denied { font-size: 14px; min-height: 17px; }
