@@ -30,9 +30,9 @@
         <a class="hud-icon" href="https://safari-mu.itch.io" target="_blank" rel="noopener" title="itch.io" aria-label="itch.io"><i class="fab fa-itch-io"></i></a>
         <a class="hud-icon" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
       </div>
-      <button id="music-toggle" type="button" title="Toggle music">Music Off &rsaquo;</button>
-      <button id="skin-toggle" type="button" title="Switch skin">Forest Style &rsaquo;</button>
       <a id="classic-toggle" href="classic.html">Classic Site &rsaquo;</a>
+      <button id="skin-toggle" type="button" title="Switch skin">Forest Style &rsaquo;</button>
+      <button id="settings-toggle" type="button" title="Settings">Settings &rsaquo;</button>
     </div>
 
     <!-- Touch gamepad: walk on the left, sprint / jump on the right (shown on touch devices). -->
@@ -57,6 +57,28 @@
         <button id="overlay-close" aria-label="Close">&times;</button>
         <div id="overlay-content"></div>
       </div>
+    </div>
+
+    <!-- First-visit world picker. Shown by src/main.js only when localStorage has no saved
+         skin-theme (a cleared save counts as a first visit). The third cover is sealed:
+         clicking it only flashes the red ACCESS DENIED line. -->
+    <div id="theme-picker" class="hidden">
+      <h1>CHOOSE YOUR WORLD</h1>
+      <div class="theme-options">
+        <button class="theme-option" type="button" data-theme="silvaron">
+          <img src="Assets/theme/Silvaron.png" alt="Forest" draggable="false">
+          <span class="theme-name">Forest</span>
+        </button>
+        <button class="theme-option" type="button" data-theme="rustCity">
+          <img src="Assets/theme/rust_city.png" alt="City" draggable="false">
+          <span class="theme-name">City</span>
+        </button>
+        <button class="theme-option locked" type="button" aria-disabled="true">
+          <img src="Assets/theme/CrimsonSanctum.png" alt="???" draggable="false">
+          <span class="theme-name">???</span>
+        </button>
+      </div>
+      <div id="theme-denied" aria-live="polite">ACCESS DENIED</div>
     </div>
   </div>
 
@@ -122,7 +144,8 @@
         <div class="card-text">
           <h3>Until Someone Passes <span class="badge">GMTK 2026</span></h3>
           <p class="meta">Narrative / Art Game · Team Lead · Design &amp; All Programming</p>
-          <p>Five days until the party. A short game about social anxiety, made in 4 days for GMTK Game Jam 2026 (theme: Count Down). Three rooms, three ways to play — walking, defending, dodging — none of them about winning: when something gets past you, you hear yourself say something unkind. I led a team of three: assembled and coordinated the group, designed the game, and wrote all of the code.</p>
+          <p class="jam-results"><span class="of">Among ~10,500 entries · 37,000+ jammers:</span> <strong>#53 worldwide in Audio · #126 Narrative · #140 Artwork</strong></p>
+          <p>Five days until the party. A short game about social anxiety, made in 4 days for GMTK Game Jam 2026 (theme: Count Down). Three ways to play — walking, defending, dodging — and when something gets past you, you hear yourself say something unkind. I led the three-person team, designed the game, and wrote all the code.</p>
         </div>
       </a>
       <a class="card" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener">
@@ -138,7 +161,8 @@
         <div class="card-text">
           <h3>Eight For Long <span class="badge">GMTK 2026</span></h3>
           <p class="meta">Puzzle / Strategy · Team Lead · Design &amp; All Programming</p>
-          <p>Eight minutes to escape an underwater facility. Every action spends the countdown, so the real puzzle is deciding who you help — you can never help everyone. My second entry to the same jam, again as team lead: I put the team together, designed the game, and wrote all of the code.</p>
+          <p class="jam-results"><span class="of">Among ~10,500 entries · 37,000+ jammers:</span> <strong>#476 worldwide in Narrative · #1,849 Artwork · #3,354 Audio</strong></p>
+          <p>Eight minutes to escape an underwater facility. Every action spends the countdown, so the real puzzle is deciding who you help — you can never help everyone. My second entry to the same jam: again team lead, design, and all the code.</p>
         </div>
       </a>
       <a class="card" href="https://safari-mu.itch.io/signal-split" target="_blank" rel="noopener">
@@ -214,6 +238,33 @@
     <p class="lead">10+ years of classical piano and an original composer. I co-founded R&amp;S Studio, a music-production project showcasing original works.</p>
     <p>The full catalogue of tracks, releases, and the studio site lives over at R&amp;S Studio.</p>
     <a class="cta" href="https://r-s-studio.github.io/" target="_blank" rel="noopener">Visit R&amp;S Studio&nbsp; <i class="fas fa-arrow-right"></i></a>
+  </template>
+
+  <!-- Settings modal content. Shown through the same overlay as the sections; the buttons
+       are wired up in src/main.js each time it opens (the template is cloned fresh). -->
+  <template id="section-settings">
+    <h2>Settings</h2>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3>Music</h3>
+        <p class="meta">Theme music, one track per world.</p>
+      </div>
+      <button id="setting-music" class="setting-btn" type="button">On</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3>Language</h3>
+        <p class="meta">Translations coming soon.</p>
+      </div>
+      <button id="setting-lang" class="setting-btn" type="button">English</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3>Clear saved data</h3>
+        <p class="meta">Wipes the world choice, music &amp; language settings, and the runner best score, then reloads.</p>
+      </div>
+      <button id="setting-clear" class="setting-btn danger" type="button">Clear</button>
+    </div>
   </template>
 
   <script type="module" src="src/main.js"></script>

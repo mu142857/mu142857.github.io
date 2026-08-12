@@ -8,8 +8,10 @@ import { THEMES } from './themes.js';
 import { BUILDINGS } from './buildings.js';
 
 // Walkable space past the last building. It holds the gate into the runner minigame, so
-// there's room to see the arrow and its label before the world ends.
-const WORLD_END_MARGIN = 104;
+// there's room to see the arrow and its label before the world ends. Wide enough that the
+// gate stays off screen (the camera shows ~half a canvas ahead of the player) until the
+// player has actually walked past the last building.
+const WORLD_END_MARGIN = 160;
 // How far short of the world's end the gate stands. The camera is hard-clamped once it
 // reaches the end, so this also decides where on screen the gate finally sits — far enough
 // in that its label has room.

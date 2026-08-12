@@ -77,9 +77,11 @@ and the social icons (email, GitHub, LinkedIn, itch.io, bilibili).
 
 Games are listed **most-important-first** and the order is currently:
 
-1. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code)
+1. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
+   Jam results (~10,500 entries, 37,000+ jammers): Audio **#53**, Narrative **#126**, Artwork **#140**
 2. **Phage** — the long-running main project
-3. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code)
+3. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
+   Jam results: Narrative **#476**, Artwork **#1,849**, Audio **#3,354**
 4. **Signal Split** — UW Game Jam
 
 Both 2026 GMTK entries were made in the same jam with a three-person team each; on both you were
@@ -116,7 +118,8 @@ to public proxies). Update it by hand in **both** files (`section-gameProjects` 
 ## 3. Project structure
 
 ```
-index.html      Interactive site: canvas, HUD (social + Music/skin/Classic buttons), section <template>s.
+index.html      Interactive site: canvas, HUD (social + Classic/skin/Settings buttons), section
+                <template>s, the first-visit world picker, and the Settings modal template.
 style.css       Interactive-site styling (canvas, HUD, overlay cards, chips, progress bar, vignette).
 classic.html    Classic site: one scrolling page, same content as the templates in index.html.
 classic.css     Classic-site styling (Lato typography, cards, chips; border-radius: 0 everywhere).
@@ -143,8 +146,9 @@ Home/         Leftover HTML5-UP "Twenty" template. Only still needed for the Fon
 
 ### The classic site (`classic.html` / `classic.css`)
 
-Plain HTML, no JS, no build step. Anchor nav (`#about`, `#skills`, …) with `scroll-behavior:
-smooth`; the top bar is `position: sticky`. Two rules matter when editing:
+Plain HTML, no build step; the only JS is a small inline script at the bottom that drives the
+Settings modal. Anchor nav (`#about`, `#skills`, …) with `scroll-behavior: smooth`; the top bar
+is `position: sticky`. Two rules matter when editing:
 
 - **`border-radius: 0 !important`** is set on `*` — the whole design is square on purpose.
 - **No pixel font.** PixelFont belongs to the game; the classic site is Lato throughout so it
@@ -219,8 +223,9 @@ city you left from.
   becomes one big jump button, next to a **BACK** button.
 - The **skin** ("Forest Style" / "City Style") and **Classic Site** buttons hide during a run
   (`body.in-runner` in `style.css`) — mid-run they are one stray click away from reskinning the
-  world under you or leaving the page. The social icons and the **Music** toggle stay. The class
-  is added and removed at full black, so they never blink in or out on screen.
+  world under you or leaving the page. The social icons and the **Settings** button stay (it
+  holds the music toggle, and opening it pauses the run). The class is added and removed at
+  full black, so they never blink in or out on screen.
 - **Theme music** (`src/engine/music.js`, tracks in `Assets/music/`): one looping track per skin
   — `glitch.mp3` for Rust City ("City"), `Silvaron.m4a` for Silvaron ("Forest"). The music
   follows the active theme with a crossfade: the skin toggle, the runner's venue swap
@@ -235,6 +240,32 @@ before it arrives, so top speed is really a cap on reaction time). If you change
 velocities, keep `v² / (2 × RUNNER_GRAVITY)` at ≥22px for the first hop and ≥52px for the two
 combined, or the monolith stops being clearable. Obstacle spacing follows automatically from
 each type's `clearTime` in `stones.js`, which should equal the airtime of the jump it demands.
+
+### Settings & saved data
+
+Both sites have a **Settings** button (HUD top-right on the interactive site, top bar on the
+classic one) opening a modal in that site's own style — pixel overlay vs. Lato/outlined. Three
+controls, in both: **Music** on/off, **Language** (English/中文 — only stored for now, the
+actual translation pass comes later), and **Clear saved data** (two clicks: `Clear` →
+`Confirm?`), which wipes `localStorage` and reloads.
+
+Everything the site remembers lives in `localStorage` under four keys, shared by both views:
+
+| Key | Meaning | Written by |
+|---|---|---|
+| `skin-theme` | chosen world (`rustCity` / `silvaron`) | world picker, skin toggle |
+| `music-on` | music on/off (`1` / `0`, default on) | Settings |
+| `site-lang` | UI language (`en` / `zh`, default `en`) | Settings |
+| `runner-best` | runner best score | the runner |
+
+**First-visit world picker** (`#theme-picker` in `index.html`, logic in `main.js`
+`pickTheme()`): when the interactive site loads with no `skin-theme` saved — a true first
+visit, or right after Clear saved data — a full-screen chooser shows three square covers from
+`Assets/theme/`: **Forest** (Silvaron), **City** (Rust City), and **???** (Crimson Sanctum).
+The third is sealed — clicking it flashes a red pixel-font **ACCESS DENIED** — until that
+world actually exists. Picking one records it and boots straight into that skin; the classic
+site never asks (it has no skins), so someone who lands on classic first only meets the picker
+when they switch over.
 
 ### Mobile / responsive layout
 

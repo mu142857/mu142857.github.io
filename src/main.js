@@ -87,10 +87,36 @@ function canvasNorm(clientX, clientY) {
 const THEME_LABELS = { rustCity: 'City', silvaron: 'Forest' };
 const THEME_ORDER = ['rustCity', 'silvaron'];
 const SKIN_STORAGE_KEY = 'skin-theme';
+const LANG_STORAGE_KEY = 'site-lang'; // 'en' | 'zh' — stored now, consumed once translations land
 const MUSIC_TRACKS = {
   rustCity: 'Assets/music/glitch.mp3',
   silvaron: 'Assets/music/Silvaron.m4a',
 };
+
+// First visit (no saved skin): a full-screen picker with the three world covers. Resolves
+// with the chosen theme key and records it, so the question is only ever asked once — until
+// the save is cleared, which deliberately counts as a first visit again. The third cover is
+// sealed: clicking it just flashes the red ACCESS DENIED line.
+function pickTheme() {
+  return new Promise((resolve) => {
+    const picker = document.getElementById('theme-picker');
+    const denied = document.getElementById('theme-denied');
+    picker.classList.remove('hidden');
+    picker.addEventListener('click', (e) => {
+      const btn = e.target.closest('.theme-option');
+      if (!btn) return;
+      if (!btn.dataset.theme) {
+        denied.classList.remove('flash');
+        void denied.offsetWidth; // restart the animation on every click
+        denied.classList.add('flash');
+        return;
+      }
+      localStorage.setItem(SKIN_STORAGE_KEY, btn.dataset.theme);
+      picker.classList.add('hidden');
+      resolve(btn.dataset.theme);
+    });
+  });
+}
 
 // Text sizes, in world px (multiplied by renderScale to get the device font size).
 const TITLE_H = 16;
@@ -229,7 +255,7 @@ async function main() {
   ]);
   const world = new World();
   const savedTheme = localStorage.getItem(SKIN_STORAGE_KEY);
-  const initialTheme = THEME_ORDER.includes(savedTheme) ? savedTheme : 'rustCity';
+  const initialTheme = THEME_ORDER.includes(savedTheme) ? savedTheme : await pickTheme();
   await world.setTheme(initialTheme);
   const music = new Music(MUSIC_TRACKS, initialTheme);
 
@@ -344,15 +370,47 @@ async function main() {
   window.addEventListener('orientationchange', syncTouchUI);
   syncTouchUI();
 
-  // Like the skin toggle, the label shows what clicking gets you, not the current state.
-  const musicToggle = document.getElementById('music-toggle');
-  function updateMusicToggleLabel() {
-    musicToggle.textContent = `Music ${music.enabled ? 'Off' : 'On'} ›`;
-  }
-  updateMusicToggleLabel();
-  musicToggle.addEventListener('click', () => {
-    music.setEnabled(!music.enabled);
-    updateMusicToggleLabel();
+  // Settings opens through the same overlay as the sections. The template is cloned fresh
+  // on every open, so the buttons are re-queried and re-wired each time — no stale handlers.
+  const settingsToggle = document.getElementById('settings-toggle');
+  settingsToggle.addEventListener('click', () => {
+    overlay.show('settings');
+
+    const musicBtn = document.getElementById('setting-music');
+    const syncMusic = () => {
+      musicBtn.textContent = music.enabled ? 'On' : 'Off';
+      musicBtn.classList.toggle('off', !music.enabled);
+    };
+    syncMusic();
+    musicBtn.addEventListener('click', () => {
+      music.setEnabled(!music.enabled);
+      syncMusic();
+    });
+
+    // The language switch only stores the preference for now; translations come later.
+    const langBtn = document.getElementById('setting-lang');
+    const syncLang = () => {
+      langBtn.textContent = localStorage.getItem(LANG_STORAGE_KEY) === 'zh' ? '中文' : 'English';
+    };
+    syncLang();
+    langBtn.addEventListener('click', () => {
+      const next = localStorage.getItem(LANG_STORAGE_KEY) === 'zh' ? 'en' : 'zh';
+      localStorage.setItem(LANG_STORAGE_KEY, next);
+      syncLang();
+    });
+
+    // Two clicks to clear: the first arms the button, the second wipes and reloads. With no
+    // saved skin left, the reload lands on the first-visit world picker.
+    const clearBtn = document.getElementById('setting-clear');
+    clearBtn.addEventListener('click', () => {
+      if (!clearBtn.classList.contains('confirm')) {
+        clearBtn.classList.add('confirm');
+        clearBtn.textContent = 'Confirm?';
+        return;
+      }
+      localStorage.clear();
+      location.reload();
+    });
   });
 
   const skinToggle = document.getElementById('skin-toggle');

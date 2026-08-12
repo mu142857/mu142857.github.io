@@ -91,7 +91,7 @@ body.touch {
 
 #classic-toggle,
 #skin-toggle,
-#music-toggle {
+#settings-toggle {
   font-family: 'PixelFont', monospace;
   font-size: 15px;
   color: #14131f;
@@ -105,14 +105,15 @@ body.touch {
 
 #classic-toggle:hover,
 #skin-toggle:hover,
-#music-toggle:hover {
+#settings-toggle:hover {
   background: #fff0a0;
 }
 
 /* In the runner minigame the two switches are hidden: a stray click would reskin the world
    mid-run or leave the page, and they sit right where the score reads. src/main.js adds
    body.in-runner at the moment the scene swap is fully black, so they never blink out.
-   The music toggle deliberately stays: muting mid-run is harmless and useful. */
+   Settings deliberately stays: it holds the music toggle, and muting mid-run is harmless
+   and useful (opening it pauses the run anyway). */
 body.in-runner #skin-toggle,
 body.in-runner #classic-toggle {
   display: none;
@@ -130,7 +131,7 @@ body.compact .hud-icon { font-size: 17px; }
 
 body.compact #classic-toggle,
 body.compact #skin-toggle,
-body.compact #music-toggle {
+body.compact #settings-toggle {
   font-size: 12px;
   padding: 5px 8px;
   border-width: 1px;
@@ -365,6 +366,9 @@ body.compact #touch-controls.runner .tbtn[data-action="jump"] { width: 74px; hei
 .card .card-text { flex: 1; }
 .card .card-text h3 { margin: 0 0 4px; color: #fff; }
 .card .card-text p { margin: 6px 0 0; font-size: 14px; line-height: 1.7; }
+.card .card-text .jam-results { font-size: 13.5px; line-height: 1.6; }
+.card .card-text .jam-results strong { color: #fff; }
+.card .card-text .jam-results .of { color: #cfd5e6; font-size: 13px; }
 .badge {
   font-size: 11px;
   padding: 2px 7px;
@@ -439,3 +443,154 @@ body.touch #overlay-close {
    used here — when rotated, the CSS viewport width is the app's height.) */
 body.narrow .card { flex-direction: column; }
 body.narrow .card .card-thumb { flex-basis: auto; width: 100%; }
+
+/* ---- Settings rows (inside the section overlay) ---- */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 2px solid rgba(244, 233, 193, 0.2);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.setting-row .setting-info h3 { margin: 0 0 4px; }
+.setting-row .setting-info p.meta { margin: 0; }
+
+.setting-btn {
+  flex: 0 0 auto;
+  min-width: 96px;
+  font-family: 'PixelFont', monospace;
+  font-size: 15px;
+  color: #14131f;
+  background: #ffe066;
+  padding: 8px 14px;
+  border: 2px solid #f4e9c1;
+  cursor: pointer;
+}
+.setting-btn:hover { background: #fff0a0; }
+
+/* An off toggle reads hollow, so the row's state is visible at a glance. */
+.setting-btn.off {
+  background: transparent;
+  color: #f4e9c1;
+  border-color: rgba(244, 233, 193, 0.5);
+}
+.setting-btn.off:hover { border-color: #f4e9c1; background: rgba(244, 233, 193, 0.08); }
+
+.setting-btn.danger {
+  background: transparent;
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.6);
+}
+.setting-btn.danger:hover { background: rgba(255, 107, 107, 0.12); border-color: #ff6b6b; }
+.setting-btn.danger.confirm {
+  background: #d43d3d;
+  color: #fff;
+  border-color: #ffb3b3;
+}
+
+body.compact .setting-row { padding: 10px 12px; gap: 12px; }
+body.compact .setting-btn { min-width: 80px; font-size: 12px; padding: 6px 10px; }
+
+/* ---- First-visit world picker ----
+   Fully opaque and above everything (HUD included): until a world is chosen there is no
+   world to peek at. Lives inside #app so it rotates with the phone like the rest. */
+#theme-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  background: #0d0c15;
+  font-family: 'PixelFont', monospace;
+}
+
+#theme-picker.hidden { display: none; }
+
+#theme-picker h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: normal;
+  letter-spacing: 3px;
+  color: #ffe066;
+  text-align: center;
+}
+
+.theme-options {
+  display: flex;
+  justify-content: center;
+  gap: 4%;
+  width: 92%;
+  max-width: 780px;
+}
+
+.theme-option {
+  flex: 0 1 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.theme-option img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border: 3px solid rgba(244, 233, 193, 0.35);
+  box-sizing: border-box;
+  image-rendering: pixelated;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.theme-name {
+  font-size: 17px;
+  letter-spacing: 1px;
+  color: #f4e9c1;
+  transition: color 0.15s;
+}
+
+.theme-option:hover img { border-color: #ffe066; transform: translateY(-3px); }
+.theme-option:hover .theme-name { color: #ffe066; }
+
+/* The sealed third world: dimmed, and its hover glow is red instead of gold. */
+.theme-option.locked { cursor: not-allowed; }
+.theme-option.locked img { filter: brightness(0.45) saturate(0.6); }
+.theme-option.locked .theme-name { color: rgba(244, 233, 193, 0.45); }
+.theme-option.locked:hover img { border-color: rgba(255, 77, 77, 0.8); transform: none; filter: brightness(0.55) saturate(0.7); }
+.theme-option.locked:hover .theme-name { color: #ff4d4d; }
+
+#theme-denied {
+  min-height: 22px; /* reserved so the flash doesn't shove the covers upward */
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #ff4d4d;
+  opacity: 0;
+}
+
+#theme-denied.flash { animation: denied-shake 0.5s steps(2) both; }
+
+@keyframes denied-shake {
+  0% { opacity: 1; transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+body.compact #theme-picker { gap: 22px; }
+body.compact #theme-picker h1 { font-size: 20px; }
+body.compact .theme-name { font-size: 13px; }
+body.compact #theme-denied { font-size: 14px; min-height: 17px; }
