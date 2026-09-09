@@ -117,7 +117,7 @@ const ZH = {
   'games.usp.desc': '距离聚会还有五天。一款关于社交焦虑的短篇游戏，用 4 天为 GMTK Game Jam 2026（主题：Count Down）制作。三种玩法——行走、防守、躲避——每当有什么越过了你，你都会听到自己说出一句不太友善的话。我带领三人团队，负责设计并编写了全部代码。',
   'games.phage.title': 'Phage <span class="badge">开发中</span>',
   'games.phage.meta': '动作冒险 · 2D 像素横版',
-  'games.phage.desc': '我的主项目：一款推向极致的手绘像素动作冒险——主角只有 8×4 像素，但每一帧都是手绘的。开发日志系列（还挺有意思的）在 bilibili 连载：目前累计 24 万+ 播放、约 6 万点赞。',
+  'games.phage.desc': '我的主项目：一款推向极致的手绘像素动作冒险——主角只有 8×4 像素，但每一帧都是手绘的。开发日志系列（还挺有意思的）在 bilibili 连载：目前累计 45 万+ 播放、约 10 万点赞。',
   'games.efl.title': '8分钟 <span class="badge">GMTK 2026</span>',
   'games.efl.meta': '解谜 / 策略 · 队长 · 设计与全部程序',
   'games.efl.results': '<span class="of">约 10,500 部作品 · 37,000+ 参赛者中：</span> <strong>叙事全球第 476 · 美术第 1,849 · 音频第 3,354</strong>',
