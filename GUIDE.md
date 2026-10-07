@@ -10,7 +10,9 @@ Two views of the same portfolio, switchable by a button:
    Games / Projects / Music / Contact. Same palette as the interactive site. Titles are set in
    a serif (Libre Baskerville, mixed case); body copy, labels, nav and the yellow outlined
    buttons stay in Lato uppercase. Each section uses a numbered left rail (`01 About` …) beside
-   the content. **No rounded corners anywhere** — `classic.css` enforces
+   the content. Behind it all runs a three.js particle wave that follows the cursor
+   (`src/classic/wave.js`, three.js loaded from jsDelivr; the page still works if it fails to
+   load), and blocks fade up as they scroll in. **No rounded corners anywhere** — `classic.css` enforces
    `border-radius: 0 !important` on every element.
 
 ---
@@ -127,7 +129,8 @@ index.html      Interactive site: canvas, HUD (social + Classic/skin/Settings bu
                 <template>s, the first-visit world picker, and the Settings modal template.
 style.css       Interactive-site styling (canvas, HUD, overlay cards, chips, progress bar, vignette).
 classic.html    Classic site: one scrolling page, same content as the templates in index.html.
-classic.css     Classic-site styling (serif titles + Lato, rail grid, cards, chips; border-radius: 0 everywhere).
+classic.css     Classic-site styling (serif titles + Lato, rail grid, glass panels, reveal animations; border-radius: 0 everywhere).
+src/classic/wave.js  Classic-site particle-wave backdrop (three.js).
 GUIDE.md        This file.
 Assets/
   player/player-Sheet.png          Character sprite sheet (5×12 grid, 128×80/frame).

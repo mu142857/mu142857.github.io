@@ -6,9 +6,11 @@
   <title data-i18n="doc.titleClassic">Jiamu Shangguan — Portfolio</title>
   <link rel="icon" type="image/png" href="Assets/content/favicon.png" />
   <link rel="stylesheet" href="Home/assets/css/fontawesome-all.min.css" />
-  <link rel="stylesheet" href="classic.css" />
+  <link rel="stylesheet" href="classic.css?v=4" />
 </head>
 <body>
+
+<canvas id="wave" aria-hidden="true"></canvas>
 
 <header id="topbar">
   <div class="wrap">
@@ -29,9 +31,12 @@
 
 <section id="hero">
   <div class="wrap">
-    <div class="hero-main">
+    <div class="hero-rule"></div>
+    <div class="hero-title">
       <p class="eyebrow" data-i18n="hero.role">Mathematics @ University of Waterloo · Game Developer · Composer</p>
       <h1 data-i18n="hero.name">Jiamu<br />Shangguan</h1>
+    </div>
+    <div class="hero-main">
       <p class="lead" data-i18n="hero.lead">Second-year student in Applied Mathematics with Scientific Computing and Scientific Machine Learning. I build games in Godot and compose music as a keyboardist.</p>
       <div class="hero-actions">
         <a class="btn btn-solid" href="#games" data-i18n="nav.games">Games</a>
@@ -348,6 +353,31 @@
   const MUSIC_KEY = 'music-on';
 
   applyTranslations(); // pick up a previously saved 中文 before anything is seen
+
+  // Particle-wave backdrop. Loaded lazily so a blocked CDN can't take the rest of the page down.
+  const waveCanvas = document.getElementById('wave');
+  import('./src/classic/wave.js')
+    .then((m) => m.startWave(waveCanvas))
+    .catch(() => waveCanvas.remove());
+
+  // Scroll reveal: blocks fade up as they enter the viewport, siblings slightly staggered.
+  const revealables = document.querySelectorAll(
+    '.sec-head, .panel, .skill-row, .entry, .card, .proj, .contact-list li, .cta-block');
+  if ('IntersectionObserver' in window) {
+    revealables.forEach((el) => {
+      const nth = [...el.parentElement.children].indexOf(el);
+      el.style.transitionDelay = `${Math.min(nth, 4) * 80}ms`;
+      el.classList.add('reveal');
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealables.forEach((el) => io.observe(el));
+  }
 
   const modal = document.getElementById('settings-modal');
   const musicBtn = document.getElementById('setting-music');
