@@ -6,10 +6,12 @@ Two views of the same portfolio, switchable by a button:
    opens a portfolio section. Keep walking past the last one and an **ENTER GAME** arrow drops you
    into an endless runner. This is the main site.
 2. **Classic** (`classic.html` + `classic.css`) — a normal scrolling one-pager: sticky nav,
-   text-only hero, then About / Skills / Experience / Games / Projects / Music / Contact.
-   Same palette as the interactive site; typography follows the old HTML5 UP "Twenty" template
-   (Lato, light weights, uppercase headings with wide letter-spacing). **No rounded corners
-   anywhere** — `classic.css` enforces `border-radius: 0 !important` on every element.
+   text-only editorial hero (with a "Current focus" panel), then About / Skills / Experience /
+   Games / Projects / Music / Contact. Same palette as the interactive site. Titles are set in
+   a serif (Libre Baskerville, mixed case); body copy, labels, nav and the yellow outlined
+   buttons stay in Lato uppercase. Each section uses a numbered left rail (`01 About` …) beside
+   the content. **No rounded corners anywhere** — `classic.css` enforces
+   `border-radius: 0 !important` on every element.
 
 ---
 
@@ -40,8 +42,10 @@ Stop with `Ctrl+C`.
 | Game cards | `section-gameProjects` | `#games` |
 | Other projects | `section-projects` | `#projects` |
 
-Card markup is nearly identical between them — the interactive one puts `class="card-thumb"` on
-the `<img>`; the classic one doesn't need a class. When you add a project, add it to both.
+Game card markup is nearly identical between them — the interactive one puts `class="card-thumb"`
+on the `<img>`; the classic one doesn't need a class. In the classic page, **other projects** are
+numbered rows instead (`<a class="proj">` with a `proj-num`, a `proj-body` and the image) — copy
+an existing row and bump the number. When you add a project, add it to both.
 
 ### A. Images — done
 
@@ -54,7 +58,8 @@ All images live in **`Assets/content/`**, lowercase-with-hyphens (`phage.png`,
   them to a wide thumbnail with `object-fit: cover` — that is intentional, leave it.
 - New image → drop it in `Assets/content/` and point the card's `src` at it. No other wiring.
 - The About portrait is used by the interactive site only; the classic hero is text-only
-  (name → role → rule → blurb → social icons) and deliberately shows no photo.
+  (role → name → blurb → buttons → social icons, plus the "Current focus" panel) and
+  deliberately shows no photo.
 
 ### B. Project links to fill
 
@@ -122,7 +127,7 @@ index.html      Interactive site: canvas, HUD (social + Classic/skin/Settings bu
                 <template>s, the first-visit world picker, and the Settings modal template.
 style.css       Interactive-site styling (canvas, HUD, overlay cards, chips, progress bar, vignette).
 classic.html    Classic site: one scrolling page, same content as the templates in index.html.
-classic.css     Classic-site styling (Lato typography, cards, chips; border-radius: 0 everywhere).
+classic.css     Classic-site styling (serif titles + Lato, rail grid, cards, chips; border-radius: 0 everywhere).
 GUIDE.md        This file.
 Assets/
   player/player-Sheet.png          Character sprite sheet (5×12 grid, 128×80/frame).

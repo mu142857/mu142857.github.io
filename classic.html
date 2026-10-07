@@ -12,7 +12,7 @@
 
 <header id="topbar">
   <div class="wrap">
-    <a class="brand" href="#hero" data-i18n="nav.brand">JIAMU SHANGGUAN</a>
+    <a class="brand" href="#hero" data-i18n="nav.brand">Jiamu Shangguan</a>
     <nav id="nav">
       <a href="#about" data-i18n="nav.about">About</a>
       <a href="#skills" data-i18n="nav.skills">Skills</a>
@@ -29,11 +29,15 @@
 
 <section id="hero">
   <div class="wrap">
-    <div>
-      <h1 data-i18n="hero.name">Jiamu Shangguan</h1>
-      <p class="role" data-i18n="hero.role">Mathematics @ University of Waterloo · Game Developer · Composer</p>
-      <div class="rule"></div>
+    <div class="hero-main">
+      <p class="eyebrow" data-i18n="hero.role">Mathematics @ University of Waterloo · Game Developer · Composer</p>
+      <h1 data-i18n="hero.name">Jiamu<br />Shangguan</h1>
       <p class="lead" data-i18n="hero.lead">Second-year student in Applied Mathematics with Scientific Computing and Scientific Machine Learning. I build games in Godot and compose music as a keyboardist.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="#games" data-i18n="nav.games">Games</a>
+        <a class="btn" href="#experience" data-i18n="nav.experience">Experience</a>
+        <a class="btn" href="#contact" data-i18n="nav.contact">Contact</a>
+      </div>
       <div class="social">
         <a href="mailto:linjiamu49@gmail.com" title="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
         <a href="https://github.com/mu142857" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><i class="fab fa-github"></i></a>
@@ -42,13 +46,26 @@
         <a href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
       </div>
     </div>
+    <aside class="focus">
+      <p class="focus-label" data-i18n="hero.focus">Current focus</p>
+      <ul>
+        <li data-i18n="hero.focus1">Scientific machine learning</li>
+        <li data-i18n="hero.focus2">Game development</li>
+        <li data-i18n="hero.focus3">Music composition</li>
+      </ul>
+    </aside>
   </div>
 </section>
 
 <section id="about">
   <div class="wrap">
-    <h2 data-i18n="about.title">About Me</h2>
-    <p class="section-sub" data-i18n="about.sub">Applied mathematics, built with a creative practice alongside it.</p>
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">01</span> <span data-i18n="nav.about">About</span></p>
+      <div>
+        <h2 data-i18n="about.title">About Me</h2>
+        <p class="section-sub" data-i18n="about.sub">Applied mathematics, built with a creative practice alongside it.</p>
+      </div>
+    </header>
     <div class="grid-2">
       <div class="panel">
         <h3 data-i18n="about.eduTitle">Education</h3>
@@ -68,28 +85,29 @@
 
 <section id="skills">
   <div class="wrap">
-    <h2 data-i18n="skills.title">Technical Skills</h2>
-    <p class="section-sub" data-i18n="skills.lead">The tools I reach for across web, creative, and data work.</p>
-    <div class="grid-2">
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">02</span> <span data-i18n="nav.skills">Skills</span></p>
       <div>
-        <div class="skill-block">
-          <h3 data-i18n="skills.web">Frontend &amp; Web</h3>
-          <div class="chips"><span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">JavaScript</span><span class="chip" data-i18n="chip.responsive">Responsive Design</span><span class="chip">UI/UX</span><span class="chip" data-i18n="chip.dataviz">Data Visualization</span></div>
-        </div>
-        <div class="skill-block">
-          <h3 data-i18n="skills.langs">Languages</h3>
-          <div class="chips"><span class="chip">Python</span><span class="chip">GDScript</span></div>
-        </div>
+        <h2 data-i18n="skills.title">Technical Skills</h2>
+        <p class="section-sub" data-i18n="skills.lead">The tools I reach for across web, creative, and data work.</p>
       </div>
-      <div>
-        <div class="skill-block">
-          <h3 data-i18n="skills.tools">Tools &amp; Platforms</h3>
-          <div class="chips"><span class="chip">Godot Engine</span><span class="chip">Git / GitHub</span><span class="chip">VS Code</span><span class="chip">Blender</span><span class="chip">LaTeX</span><span class="chip" data-i18n="chip.api">API Integration</span><span class="chip" data-i18n="chip.deploy">Web Deployment</span></div>
-        </div>
-        <div class="skill-block">
-          <h3 data-i18n="skills.ai">AI &amp; Data</h3>
-          <div class="chips"><span class="chip">MediaPipe</span><span class="chip">Streamlit</span><span class="chip">OpenAI API</span></div>
-        </div>
+    </header>
+    <div class="skill-table">
+      <div class="skill-row">
+        <h3 data-i18n="skills.web">Frontend &amp; Web</h3>
+        <div class="chips"><span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">JavaScript</span><span class="chip" data-i18n="chip.responsive">Responsive Design</span><span class="chip">UI/UX</span><span class="chip" data-i18n="chip.dataviz">Data Visualization</span></div>
+      </div>
+      <div class="skill-row">
+        <h3 data-i18n="skills.langs">Languages</h3>
+        <div class="chips"><span class="chip">Python</span><span class="chip">GDScript</span></div>
+      </div>
+      <div class="skill-row">
+        <h3 data-i18n="skills.tools">Tools &amp; Platforms</h3>
+        <div class="chips"><span class="chip">Godot Engine</span><span class="chip">Git / GitHub</span><span class="chip">VS Code</span><span class="chip">Blender</span><span class="chip">LaTeX</span><span class="chip" data-i18n="chip.api">API Integration</span><span class="chip" data-i18n="chip.deploy">Web Deployment</span></div>
+      </div>
+      <div class="skill-row">
+        <h3 data-i18n="skills.ai">AI &amp; Data</h3>
+        <div class="chips"><span class="chip">MediaPipe</span><span class="chip">Streamlit</span><span class="chip">OpenAI API</span></div>
       </div>
     </div>
   </div>
@@ -97,27 +115,42 @@
 
 <section id="experience">
   <div class="wrap">
-    <h2 data-i18n="exp.title">Work Experience</h2>
-    <p class="section-sub" data-i18n="exp.sub">Where the math met the hardware.</p>
-    <article class="entry">
-      <img src="Assets/content/experience-drone.jpg" alt="AUAV drone show" />
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">03</span> <span data-i18n="nav.experience">Experience</span></p>
       <div>
-        <h3 data-i18n="exp.role">AUAV — Technical Intern</h3>
-        <p class="meta" data-i18n="exp.meta">Drone Show Technology · Calgary, AB · Jul. 2024 – Aug. 2024</p>
+        <h2 data-i18n="exp.title">Work Experience</h2>
+        <p class="section-sub" data-i18n="exp.sub">Where the math met the hardware.</p>
+      </div>
+    </header>
+    <article class="entry">
+      <div class="entry-side">
+        <p class="date" data-i18n="exp.when">Jul. 2024 – Aug. 2024</p>
+        <p class="meta" data-i18n="exp.where">Calgary, AB</p>
+      </div>
+      <div class="entry-body">
+        <h3 data-i18n="exp.position">Technical Intern</h3>
+        <p class="org" data-i18n="exp.company">AUAV · Drone Show Technology</p>
+        <div class="chips"><span class="chip">Python</span><span class="chip">Skybrush</span><span class="chip">Blender</span><span class="chip" data-i18n="chip.telemetry">Telemetry Analysis</span></div>
         <ul>
           <li data-i18n="exp.b1">Simulated drone swarm formations with Python and Skybrush, optimizing flight paths for collision avoidance and visual impact.</li>
           <li data-i18n="exp.b2">Created 3D pre-visualization assets in Blender to align technical flight constraints with artistic design.</li>
           <li data-i18n="exp.b3">Executed automated flight tests and analyzed telemetry data to improve fleet synchronization and battery efficiency.</li>
         </ul>
       </div>
+      <img class="entry-img" src="Assets/content/experience-drone.jpg" alt="AUAV drone show" />
     </article>
   </div>
 </section>
 
 <section id="games">
   <div class="wrap">
-    <h2 data-i18n="games.title">Game Projects</h2>
-    <p class="section-sub" data-i18n="games.sub">Gameplay, physics, and state machines in GDScript — with the pixel art drawn by hand.</p>
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">04</span> <span data-i18n="nav.games">Games</span></p>
+      <div>
+        <h2 data-i18n="games.title">Game Projects</h2>
+        <p class="section-sub" data-i18n="games.sub">Gameplay, physics, and state machines in GDScript — with the pixel art drawn by hand.</p>
+      </div>
+    </header>
     <div class="card-grid">
       <a class="card" href="https://safari-mu.itch.io/until-someone-passes" target="_blank" rel="noopener">
         <img src="Assets/content/until-someone-passes.png" alt="Until Someone Passes" />
@@ -168,48 +201,58 @@
 
 <section id="projects">
   <div class="wrap">
-    <h2 data-i18n="proj.title">Projects</h2>
-    <p class="section-sub" data-i18n="proj.lead">Hackathon wins, civic tech, and web builds.</p>
-    <div class="card-grid">
-      <a class="card" href="#" target="_blank" rel="noopener">
-        <img src="Assets/content/look.png" alt="Loo-k" />
-        <div class="card-text">
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">05</span> <span data-i18n="nav.projects">Projects</span></p>
+      <div>
+        <h2 data-i18n="proj.title">Projects</h2>
+        <p class="section-sub" data-i18n="proj.lead">Hackathon wins, civic tech, and web builds.</p>
+      </div>
+    </header>
+    <div class="proj-list">
+      <a class="proj" href="#" target="_blank" rel="noopener">
+        <span class="proj-num">01</span>
+        <div class="proj-body">
           <h3>Loo-k</h3>
           <p class="meta" data-i18n="proj.look.meta">Cost-of-Living Comparison Tool · Team Lead</p>
           <p data-i18n="proj.look.desc">Led a team of four building a neighborhood-livability aggregator comparing cost-of-living and housing metrics across Canadian cities. Presented at Hack Canada 2026; migrating from web to mobile.</p>
         </div>
+        <img src="Assets/content/look.png" alt="Loo-k" />
       </a>
-      <a class="card" href="#" target="_blank" rel="noopener">
-        <img src="Assets/content/physics-sim.png" alt="Physics Simulation" />
-        <div class="card-text">
+      <a class="proj" href="#" target="_blank" rel="noopener">
+        <span class="proj-num">02</span>
+        <div class="proj-body">
           <h3 data-i18n="proj.phys.title">Physics Simulation <span class="badge">1st Place</span></h3>
           <p class="meta" data-i18n="proj.phys.meta">Claude Create-A-Thon · Data Viz Track</p>
           <p data-i18n="proj.phys.desc">1st place among 30 teams — interactive simulations of Hooke's Law and pendulum energy conversion with real-time visualization.</p>
         </div>
+        <img src="Assets/content/physics-sim.png" alt="Physics Simulation" />
       </a>
-      <a class="card" href="#" target="_blank" rel="noopener">
-        <img src="Assets/content/sentiment-flow.png" alt="Sentiment Flow" />
-        <div class="card-text">
+      <a class="proj" href="#" target="_blank" rel="noopener">
+        <span class="proj-num">03</span>
+        <div class="proj-body">
           <h3>Sentiment Flow</h3>
           <p class="meta" data-i18n="proj.sf.meta">uOttaHack 8 · Developer</p>
           <p data-i18n="proj.sf.desc">Real-time facial-signal monitoring with MediaPipe and a Streamlit dashboard; integrated the OpenAI API for automated insights and SurveyMonkey for survey distribution.</p>
         </div>
+        <img src="Assets/content/sentiment-flow.png" alt="Sentiment Flow" />
       </a>
-      <a class="card" href="#" target="_blank" rel="noopener">
-        <img src="Assets/content/open-pg.png" alt="Open Prince George" />
-        <div class="card-text">
+      <a class="proj" href="#" target="_blank" rel="noopener">
+        <span class="proj-num">04</span>
+        <div class="proj-body">
           <h3>Open Prince George</h3>
           <p class="meta" data-i18n="proj.opg.meta">Civic Tech Developer</p>
           <p data-i18n="proj.opg.desc">An open-source city-council tracker aggregating public-hearing schedules and decisions, with an AI-assisted pipeline that classifies and summarizes agenda items.</p>
         </div>
+        <img src="Assets/content/open-pg.png" alt="Open Prince George" />
       </a>
-      <a class="card" href="#" target="_blank" rel="noopener">
-        <img src="Assets/content/donatrust.png" alt="DonaTrust" />
-        <div class="card-text">
+      <a class="proj" href="#" target="_blank" rel="noopener">
+        <span class="proj-num">05</span>
+        <div class="proj-body">
           <h3>DonaTrust Portal</h3>
           <p class="meta" data-i18n="proj.dt.meta">Humanitarian Tech · Frontend</p>
           <p data-i18n="proj.dt.desc">A frontend prototype for a charity-transparency platform, with a clean interface presenting project goals and features.</p>
         </div>
+        <img src="Assets/content/donatrust.png" alt="DonaTrust" />
       </a>
     </div>
   </div>
@@ -217,30 +260,43 @@
 
 <section id="music">
   <div class="wrap">
-    <h2 data-i18n="musicSec.title">Music Composing</h2>
-    <p class="section-sub" data-i18n="musicSec.sub">10+ years of classical piano, and original work released through R&amp;S Studio.</p>
-    <article class="entry">
-      <img src="Assets/content/music-studio.jpg" alt="R&amp;S Studio" />
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">06</span> <span data-i18n="nav.music">Music</span></p>
       <div>
-        <h3 data-i18n="musicSec.role">R&amp;S Studio — Co-founder</h3>
+        <h2 data-i18n="musicSec.title">Music Composing</h2>
+        <p class="section-sub" data-i18n="musicSec.sub">10+ years of classical piano, and original work released through R&amp;S Studio.</p>
+      </div>
+    </header>
+    <article class="entry">
+      <div class="entry-side">
+        <p class="date" data-i18n="musicSec.when">Co-founder</p>
         <p class="meta" data-i18n="musicSec.meta">Music production · Original compositions</p>
+      </div>
+      <div class="entry-body">
+        <h3>R&amp;S Studio</h3>
         <p data-i18n="musicSec.desc">A music-production project showcasing original works. The full catalogue of tracks and releases lives on the studio site.</p>
         <a class="cta" href="https://r-s-studio.github.io/" target="_blank" rel="noopener"><span data-i18n="musicSec.cta">Visit R&amp;S Studio</span>&nbsp; <i class="fas fa-arrow-right"></i></a>
       </div>
+      <img class="entry-img" src="Assets/content/music-studio.jpg" alt="R&amp;S Studio" />
     </article>
   </div>
 </section>
 
 <section id="contact">
   <div class="wrap">
-    <h2 data-i18n="contact.title">Contact</h2>
-    <p class="section-sub" data-i18n="contact.sub">Open to co-op roles, collaborations, and game-jam teams.</p>
+    <header class="sec-head">
+      <p class="eyebrow"><span class="num">07</span> <span data-i18n="nav.contact">Contact</span></p>
+      <div>
+        <h2 data-i18n="contact.title">Contact</h2>
+        <p class="section-sub" data-i18n="contact.sub">Open to co-op roles, collaborations, and game-jam teams.</p>
+      </div>
+    </header>
     <ul class="contact-list">
-      <li><i class="fas fa-envelope"></i> <a href="mailto:linjiamu49@gmail.com">linjiamu49@gmail.com</a></li>
-      <li><i class="fab fa-github"></i> <a href="https://github.com/mu142857" target="_blank" rel="noopener">github.com/mu142857</a></li>
-      <li><i class="fab fa-linkedin"></i> <a href="https://www.linkedin.com/in/jiamu-shangguan-464092399" target="_blank" rel="noopener">LinkedIn</a></li>
-      <li><i class="fab fa-itch-io"></i> <a href="https://safari-mu.itch.io" target="_blank" rel="noopener">safari-mu.itch.io</a></li>
-      <li><i class="fas fa-video"></i> <a href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener">bilibili</a></li>
+      <li><span class="contact-label"><i class="fas fa-envelope"></i> Email</span> <a href="mailto:linjiamu49@gmail.com">linjiamu49@gmail.com</a></li>
+      <li><span class="contact-label"><i class="fab fa-github"></i> GitHub</span> <a href="https://github.com/mu142857" target="_blank" rel="noopener">github.com/mu142857</a></li>
+      <li><span class="contact-label"><i class="fab fa-linkedin"></i> LinkedIn</span> <a href="https://www.linkedin.com/in/jiamu-shangguan-464092399" target="_blank" rel="noopener">jiamu-shangguan</a></li>
+      <li><span class="contact-label"><i class="fab fa-itch-io"></i> itch.io</span> <a href="https://safari-mu.itch.io" target="_blank" rel="noopener">safari-mu.itch.io</a></li>
+      <li><span class="contact-label"><i class="fas fa-video"></i> bilibili</span> <a href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener">space.bilibili.com/1876827674</a></li>
     </ul>
   </div>
 </section>

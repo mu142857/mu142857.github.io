@@ -67,6 +67,10 @@ const ZH = {
   'hero.name': '上官嘉木',
   'hero.role': '滑铁卢大学数学系 · 游戏开发者 · 作曲人',
   'hero.lead': '应用数学（科学计算与科学机器学习方向）大二学生。我用 Godot 开发游戏，也以键盘手的身份创作音乐。',
+  'hero.focus': '当前关注',
+  'hero.focus1': '科学机器学习',
+  'hero.focus2': '游戏开发',
+  'hero.focus3': '音乐创作',
   'footer.copy': '© 2026 上官嘉木',
   'footer.blurb': '更喜欢像素？<a href="index.html">去交互版看看 ›</a>',
 
@@ -103,6 +107,11 @@ const ZH = {
   'exp.sub': '数学与硬件相遇的地方。',
   'exp.role': 'AUAV — 技术实习生',
   'exp.meta': '无人机表演技术 · 卡尔加里 · 2024 年 7 月 – 8 月',
+  'exp.when': '2024 年 7 月 – 8 月',
+  'exp.where': '阿尔伯塔省卡尔加里',
+  'exp.position': '技术实习生',
+  'exp.company': 'AUAV · 无人机表演技术',
+  'chip.telemetry': '遥测数据分析',
   'exp.b1': '使用 Python 与 Skybrush 模拟无人机集群编队，优化飞行路径，兼顾避障与视觉效果。',
   'exp.b2': '在 Blender 中制作 3D 预演资产，使技术飞行约束与艺术设计相互对齐。',
   'exp.b3': '执行自动化飞行测试并分析遥测数据，提升机群同步性与电池效率。',
@@ -152,6 +161,7 @@ const ZH = {
   'musicSec.role': 'R&amp;S Studio — 联合创始人',
   'musicSec.meta': '音乐制作 · 原创作品',
   'musicSec.desc': '一个展示原创作品的音乐制作项目。完整的曲目与发行都在工作室主页。',
+  'musicSec.when': '联合创始人',
   'musicSec.cta': '访问 R&amp;S Studio',
 
   // Contact (classic only)
