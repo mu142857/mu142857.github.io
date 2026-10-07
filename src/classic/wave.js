@@ -51,10 +51,10 @@ export function startWave(canvas) {
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const band = h * (small ? 0.3 : 0.4);
-    top = h * (small ? 0.42 : 0.4);
+    const band = h * (small ? 0.26 : 0.4);
+    top = h * (small ? 0.66 : 0.4);
     gap = band / (LINES - 1);
-    amp = gap * (small ? 5 : 6.5);
+    amp = gap * (small ? 4 : 6.5);
     if (reduceMotion) draw(6);
   };
 
