@@ -1,7 +1,7 @@
 /* Classic (formal) view of the portfolio — the "grown-up" counterpart to the pixel site.
    Editorial layout: a serif display face (Libre Baskerville) for the name, section titles and
    item titles, set in mixed case; Lato for body copy and for the small uppercase labels, nav and
-   the yellow outlined buttons. Behind everything: a three.js particle wave (src/classic/wave.js),
+   the yellow outlined buttons. Behind everything: harmonic ridgelines (src/classic/wave.js),
    two soft colour glows and a fading drafting grid. Content sits on translucent, blurred panels
    and fades up as it scrolls in. Every section shares one grid — a narrow left rail (section
    number, dates) beside the content column. Palette is the interactive site's.

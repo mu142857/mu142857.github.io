@@ -1,177 +1,184 @@
-// Classic page backdrop: a field of points rolling as a wave behind the content, drawn with
-// three.js on a fixed full-screen canvas. The wave flows sideways on its own and its crest
-// eases toward the cursor; points thin out near the crest's centre and glow toward the edges,
-// with two slow light bands sweeping across. Tinted to the site's warm cream.
-//
-// Adapted from the ThreeWaveBackground in github.com/mobyyyc/qiyuancai.
+// Classic page backdrop: "harmonic ridgelines" — a stack of thin lines across the middle of the
+// screen, each one a slowly drifting sum of sine harmonics shaped like a spectrum, drawn back to
+// front so nearer ridges hide the ones behind (the pulsar-plot look). The cursor swells the
+// lines under it, and moving it "plucks" them: damped ripples spread out from the pluck point.
+// Plain 2D canvas on a fixed full-screen layer; it dims once the hero has scrolled away so it
+// never fights the body text.
 
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js';
-
-const COLOR = '#f4e9c1';
+const CREAM = '244, 233, 193';
+const GOLD = '255, 224, 102';
+const FILL = 'rgba(18, 17, 28, 0.94)'; // ≈ the page background, so ridges occlude what's behind
 
 export function startWave(canvas) {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) { canvas.remove(); return; }
+
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const small = window.matchMedia('(max-width: 760px)').matches;
 
-  let renderer;
-  try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  } catch {
-    canvas.remove(); // no WebGL — the page reads fine without the backdrop
-    return;
-  }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const LINES = small ? 20 : 32;
+  const STEP = small ? 5 : 6; // px between samples along a line
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 8, 110);
+  // Per-line randomness: harmonic phases and where the line's main "peaks" sit. On wide screens
+  // the ridges rise on the right, clear of the hero text in the left column.
+  const centre = small ? 0.5 : 0.68;
+  const rand = mulberry32(142857);
+  const lines = Array.from({ length: LINES }, () => ({
+    phase: [0, 1, 2, 3].map(() => rand() * Math.PI * 2),
+    peakA: centre + (rand() - 0.5) * 0.14,
+    peakB: centre + (rand() - 0.5) * 0.4,
+    weightB: 0.25 + rand() * 0.45,
+  }));
+  // Harmonics shared by all lines: spatial frequency (per px) and drift speed.
+  const HARMONICS = [
+    { f: 0.011, s: 0.55, a: 0.5 },
+    { f: 0.023, s: -0.8, a: 0.28 },
+    { f: 0.047, s: 1.3, a: 0.15 },
+    { f: 0.093, s: -2.1, a: 0.07 },
+  ];
 
-  // Fewer points on phones: the per-frame update runs on the CPU.
-  const cols = small ? 120 : 210;
-  const rows = small ? 50 : 90;
-  const count = cols * rows;
-  const width = 220;
-  const depth = 95;
+  let w = 0, h = 0, dpr = 1;
+  let top = 0, gap = 0, amp = 0;
 
-  const baseX = new Float32Array(count);
-  const baseZ = new Float32Array(count);
-  const positions = new Float32Array(count * 3);
-  const alphas = new Float32Array(count).fill(1);
-  const intensities = new Float32Array(count).fill(1);
+  const mouse = { x: -9999, y: -9999, sx: -9999, sy: -9999, inside: false };
+  const plucks = []; // { x, y, t0, a }
+  let lastPluck = { x: 0, y: 0, t: 0 };
 
-  let i = 0;
-  for (let r = 0; r < rows; r++) {
-    const z = (r / (rows - 1) - 0.5) * depth;
-    for (let c = 0; c < cols; c++) {
-      const x = (c / (cols - 1) - 0.5) * width;
-      baseX[i] = x;
-      baseZ[i] = z;
-      positions[i * 3] = x;
-      positions[i * 3 + 2] = z;
-      i++;
+  const resize = () => {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = window.innerWidth;
+    h = window.innerHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const band = h * (small ? 0.3 : 0.4);
+    top = h * (small ? 0.42 : 0.4);
+    gap = band / (LINES - 1);
+    amp = gap * (small ? 5 : 6.5);
+    if (reduceMotion) draw(6);
+  };
+
+  const now = () => performance.now() / 1000;
+
+  const onMove = (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouse.inside = true;
+    // A pluck whenever the cursor has travelled far enough since the last one.
+    const t = now();
+    const d = Math.hypot(e.clientX - lastPluck.x, e.clientY - lastPluck.y);
+    if (d > 70 && t - lastPluck.t > 0.12) {
+      plucks.push({ x: e.clientX, y: e.clientY, t0: t, a: Math.min(1, d / 160) });
+      if (plucks.length > 8) plucks.shift();
+      lastPluck = { x: e.clientX, y: e.clientY, t };
     }
+  };
+  const onLeave = () => { mouse.inside = false; };
+
+  function height(line, i, x, y0, t) {
+    const u = x / w;
+    // spectrum-shaped envelope: a tall central bump plus a secondary one
+    const env =
+      Math.exp(-(((u - line.peakA) / 0.13) ** 2)) +
+      line.weightB * Math.exp(-(((u - line.peakB) / 0.07) ** 2));
+    let n = 0;
+    for (let k = 0; k < HARMONICS.length; k++) {
+      const hk = HARMONICS[k];
+      n += hk.a * Math.sin(hk.f * x + line.phase[k] + hk.s * t + i * 0.35);
+    }
+    let y = env * (0.55 + n) * amp + Math.abs(n) * amp * 0.06;
+
+    // cursor swell
+    if (mouse.sx > -999) {
+      const dx = (x - mouse.sx) / 110;
+      const dy = (y0 - mouse.sy) / 140;
+      y += Math.exp(-dx * dx - dy * dy) * amp * 0.55;
+    }
+    // pluck ripples
+    for (const p of plucks) {
+      const age = t - p.t0;
+      const d = Math.hypot(x - p.x, y0 - p.y);
+      const front = d - age * 420; // ripple front travels outward
+      y += p.a * amp * 0.35 * Math.exp(-age * 1.4) * Math.exp(-((front / 120) ** 2)) * Math.cos(front * 0.05);
+    }
+    return Math.max(y, -gap * 0.6);
   }
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1));
-  geometry.setAttribute('intensity', new THREE.BufferAttribute(intensities, 1));
-
-  const material = new THREE.PointsMaterial({
-    color: COLOR,
-    size: small ? 0.42 : 0.32,
-    transparent: true,
-    opacity: 0.7,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    sizeAttenuation: true,
-  });
-
-  // Per-point alpha and brightness, patched into the stock points shader.
-  material.onBeforeCompile = (shader) => {
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>',
-        '#include <common>\nattribute float alpha;\nattribute float intensity;\nvarying float vAlpha;\nvarying float vIntensity;')
-      .replace('#include <begin_vertex>',
-        '#include <begin_vertex>\nvAlpha = alpha;\nvIntensity = intensity;');
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>',
-        '#include <common>\nvarying float vAlpha;\nvarying float vIntensity;')
-      .replace('vec4 diffuseColor = vec4( diffuse, opacity );',
-        'vec4 diffuseColor = vec4( diffuse * vIntensity, opacity * vAlpha );');
-  };
-
-  const points = new THREE.Points(geometry, material);
-  points.rotation.x = -0.22;
-  scene.add(points);
-
-  const posAttr = geometry.getAttribute('position');
-  const alphaAttr = geometry.getAttribute('alpha');
-  const intAttr = geometry.getAttribute('intensity');
-
-  // Cursor → a point on the z=0 plane in the wave's local space; the crest lerps toward it.
-  const raycaster = new THREE.Raycaster();
-  const ndc = new THREE.Vector2();
-  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const hit = new THREE.Vector3();
-  const target = new THREE.Vector3();
-  const center = new THREE.Vector3();
-  let yLimit = 22;
-
-  const onMouseMove = (e) => {
-    ndc.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
-    raycaster.setFromCamera(ndc, camera);
-    if (!raycaster.ray.intersectPlane(plane, hit)) return;
-    points.worldToLocal(hit);
-    target.set(
-      THREE.MathUtils.clamp(hit.x, -width * 0.45, width * 0.45),
-      THREE.MathUtils.clamp(hit.y, -yLimit, yLimit),
-      THREE.MathUtils.clamp(hit.z, -depth * 0.35, depth * 0.35),
-    );
-  };
-
-  const update = (t) => {
-    center.lerp(target, 0.05);
-    const half = width * 0.5;
-    const offset = t * 15;
-    const light1 = center.x + Math.sin(t * 0.35) * width * 0.26;
-    const light2 = center.x + Math.cos(t * 0.21 + 1.3) * width * 0.18;
-    const pos = posAttr.array, alpha = alphaAttr.array, inten = intAttr.array;
-
-    for (let p = 0; p < count; p++) {
-      const x = ((baseX[p] + offset + half) % width) - half;
-      const z0 = baseZ[p];
-
-      const dist = Math.min(1, Math.abs(x - center.x) / (half * 0.95));
-      const near = 1 - dist;
-      const smooth = near * near * (3 - 2 * near);
-      const spread = 0.04 + Math.pow(1 - smooth, 1.15) * 0.96;
-      const ridgeY = center.y * (0.3 + smooth * 0.7);
-
-      const yWave =
-        Math.sin(x * 0.13 - t * 2.1 + z0 * 0.07) * 3.6 +
-        Math.cos(x * 0.09 - t * 1.35 + z0 * 0.02) * 2.1 +
-        Math.sin((x + z0) * 0.18 - t * 2.6) * 1.45 +
-        Math.sin(x * 0.24 + t * 3.0) * Math.cos(z0 * 0.19 - t * 2.4) * 1.3;
-      const y = ridgeY + yWave * spread * (0.3 + smooth * 1.05);
-
-      const zBase = z0 + Math.sin(x * 0.06 - t * 1.8 + z0 * 0.05) * 2.8 + Math.cos(x * 0.04 + t * 1.1) * 1.2;
-      const z = center.z + (zBase - center.z) * spread;
-
-      pos[p * 3] = x;
-      pos[p * 3 + 1] = y;
-      pos[p * 3 + 2] = z;
-
-      alpha[p] = Math.pow(dist, 1.65) * (0.9 + 0.1 * Math.sin(t * 1.7 + z0 * 0.08));
-
-      const band1 = Math.exp(-(((x - light1) / (width * 0.12)) ** 2));
-      const band2 = Math.exp(-(((x - light2) / (width * 0.17)) ** 2));
-      const glow = Math.min(1, Math.abs(y - ridgeY) / 8);
-      inten[p] = Math.min(1.9, 0.42 + band1 * 0.9 + band2 * 0.55 + glow * 0.35);
+  function draw(t) {
+    // ease the drawn cursor position toward the real one
+    if (mouse.inside) {
+      if (mouse.sx < -999) { mouse.sx = mouse.x; mouse.sy = mouse.y; }
+      mouse.sx += (mouse.x - mouse.sx) * 0.12;
+      mouse.sy += (mouse.y - mouse.sy) * 0.12;
     }
-    posAttr.needsUpdate = alphaAttr.needsUpdate = intAttr.needsUpdate = true;
-    renderer.render(scene, camera);
-  };
+    while (plucks.length && t - plucks[0].t0 > 3) plucks.shift();
 
-  const onResize = () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight, false);
-    const planeHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * Math.abs(camera.position.z);
-    yLimit = planeHeight * 0.4;
-    if (reduceMotion) update(4); // a single still frame
-  };
+    ctx.clearRect(0, 0, w, h);
+    // dim after the first screen so the lines sit quietly behind the content
+    // (and on phones throughout, where the text spans the full width)
+    ctx.globalAlpha = (small ? 0.55 : 1) * (1 - 0.6 * Math.min(1, window.scrollY / (h * 0.8)));
 
-  onResize();
-  window.addEventListener('resize', onResize);
+    // Lines fade out toward both edges — far more on the left, where the hero text sits —
+    // and turn gold under the cursor (or at the ridge centre when there's no cursor).
+    const cx = mouse.inside ? mouse.sx / w : centre;
+    const stroke = ctx.createLinearGradient(0, 0, w, 0);
+    if (small) {
+      stroke.addColorStop(0, `rgba(${CREAM}, 0)`);
+      stroke.addColorStop(0.2, `rgba(${CREAM}, 0.5)`);
+      stroke.addColorStop(0.8, `rgba(${CREAM}, 0.5)`);
+    } else {
+      stroke.addColorStop(0, `rgba(${CREAM}, 0)`);
+      stroke.addColorStop(0.3, `rgba(${CREAM}, 0.06)`);
+      stroke.addColorStop(0.5, `rgba(${CREAM}, 0.5)`);
+      stroke.addColorStop(0.9, `rgba(${CREAM}, 0.45)`);
+    }
+    stroke.addColorStop(Math.min(0.88, Math.max(0.32, cx)), `rgba(${GOLD}, 0.95)`);
+    stroke.addColorStop(1, `rgba(${CREAM}, 0)`);
+    ctx.strokeStyle = stroke;
+    ctx.fillStyle = FILL;
+    ctx.lineJoin = 'round';
 
+    const baseAlpha = ctx.globalAlpha;
+    for (let i = 0; i < LINES; i++) {
+      const line = lines[i];
+      const y0 = top + i * gap;
+      ctx.beginPath();
+      ctx.moveTo(0, y0);
+      for (let x = 0; x <= w + STEP; x += STEP) {
+        ctx.lineTo(x, y0 - height(line, i, x, y0, t));
+      }
+      // occlude the ridges behind, then stroke this one
+      ctx.lineTo(w + STEP, y0 + 2);
+      ctx.lineTo(0, y0 + 2);
+      ctx.closePath();
+      ctx.globalAlpha = baseAlpha;
+      ctx.fill();
+      ctx.globalAlpha = baseAlpha * (0.35 + 0.65 * (i / (LINES - 1))); // nearer = brighter
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
   if (reduceMotion) return;
 
-  window.addEventListener('mousemove', onMouseMove, { passive: true });
-  const clock = new THREE.Clock();
+  window.addEventListener('mousemove', onMove, { passive: true });
+  document.addEventListener('mouseleave', onLeave);
   const loop = () => {
-    update(clock.getElapsedTime());
+    draw(now());
     requestAnimationFrame(loop);
   };
   loop();
+}
+
+// Small seeded PRNG so the ridges look the same on every visit.
+function mulberry32(a) {
+  return () => {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
