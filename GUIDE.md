@@ -52,7 +52,7 @@ an existing row and bump the number. When you add a project, add it to both.
 ### A. Images — done
 
 All images live in **`Assets/content/`**, lowercase-with-hyphens (`phage.png`,
-`until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
+`linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
 `physics-sim.png`, `sentiment-flow.png`, `open-pg.png`, `donatrust.png`,
 `about-portrait.jpg`, `experience-drone.jpg`, `music-studio.jpg`, `favicon.png`).
 
@@ -84,12 +84,15 @@ and the social icons (email, GitHub, LinkedIn, itch.io, bilibili).
 
 Games are listed **most-important-first** and the order is currently:
 
-1. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
+1. **Linger** — UW Fall 2026 Game Jam (theme: Drift), point-and-click horror puzzle;
+   game design, programming, lighting + particle effects, much of the background art.
+   Jam results (55 entries): Style & Presentation **#1**, Gameplay **#2**
+2. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
    Jam results (~10,500 entries, 37,000+ jammers): Audio **#53**, Narrative **#126**, Artwork **#140**
-2. **Phage** — the long-running main project
-3. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
+3. **Phage** — the long-running main project
+4. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
    Jam results: Narrative **#476**, Artwork **#1,849**, Audio **#3,354**
-4. **Signal Split** — UW Game Jam
+5. **Signal Split** — UW Game Jam
 
 Both 2026 GMTK entries were made in the same jam with a three-person team each; on both you were
 team lead — you assembled and coordinated the team, did the design, and wrote all the code.
@@ -101,8 +104,8 @@ Auto-fetch from the browser is **not possible** (bilibili blocks cross-origin re
 to public proxies). Update it by hand in **both** files (`section-gameProjects` / `#games`):
 
 ```html
-<span>6,600 / 10,000</span>              <!-- update the number -->
-<div class="progress-fill" style="width: 66%"></div>   <!-- update % = followers / 100 -->
+<span>10,000 / 100,000</span>            <!-- update the number -->
+<div class="progress-fill" style="width: 10%"></div>   <!-- update % = followers / 1,000 (goal is 100k) -->
 ```
 
 > If you deploy to GitHub Pages and want true auto-update, ask me to set up a scheduled GitHub
