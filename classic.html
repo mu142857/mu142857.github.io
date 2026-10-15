@@ -358,10 +358,12 @@
   // dictionary is shared with the interactive site (src/i18n.js), as is the music key
   // (src/engine/music.js) — a change made here carries over.
   import { getLang, setLang, applyTranslations, t } from './src/i18n.js';
+  import { applyBiliStats } from './src/bili-stats.js';
 
   const MUSIC_KEY = 'music-on';
 
   applyTranslations(); // pick up a previously saved 中文 before anything is seen
+  applyBiliStats();    // live follower count from data/bilibili.json (keeps the static number if it fails)
 
   // Harmonic-ridgeline backdrop. Imported separately so a failure there can't break the rest.
   const waveCanvas = document.getElementById('wave');

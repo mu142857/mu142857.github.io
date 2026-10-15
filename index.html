@@ -281,5 +281,11 @@
   </template>
 
   <script type="module" src="src/main.js"></script>
+  <script type="module">
+    // Live bilibili follower count (data/bilibili.json, written by a GitHub Action). Patches the
+    // section templates in place; the overlay clones them on open. Fails silently offline.
+    import { applyBiliStats } from './src/bili-stats.js';
+    applyBiliStats();
+  </script>
 </body>
 </html>

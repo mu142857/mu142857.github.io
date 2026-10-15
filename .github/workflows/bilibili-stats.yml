@@ -1,0 +1,50 @@
+# Keeps data/bilibili.json in sync with the public bilibili follower count.
+# The pages read that file (src/bili-stats.js) and rewrite the follower progress bar.
+# Runs every 6 hours; "Run workflow" on the Actions tab triggers it by hand.
+name: bilibili stats
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch follower count and commit if it changed
+        env:
+          MID: '1876827674'
+          UA: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+        run: |
+          set -euo pipefail
+          get() { curl -sS --fail --max-time 20 -A "$UA" -H "Referer: https://space.bilibili.com/$MID" "$1"; }
+
+          n=$(get "https://api.bilibili.com/x/relation/stat?vmid=$MID" | jq -r '.data.follower // empty' || true)
+          if [ -z "$n" ]; then
+            echo "relation/stat gave nothing, trying web-interface/card"
+            n=$(get "https://api.bilibili.com/x/web-interface/card?mid=$MID" | jq -r '.data.card.fans // empty' || true)
+          fi
+          if ! [[ "$n" =~ ^[0-9]+$ ]] || [ "$n" -le 0 ]; then
+            echo "::error::Could not read the follower count from bilibili (blocked runner IP?)"
+            exit 1
+          fi
+          echo "follower=$n"
+
+          old=$(jq -r '.follower // 0' data/bilibili.json 2>/dev/null || echo 0)
+          if [ "$old" = "$n" ]; then echo "unchanged ($n), nothing to commit"; exit 0; fi
+
+          mkdir -p data
+          jq -n --argjson follower "$n" --arg updated "$(date -u +%FT%TZ)" \
+            '{follower: $follower, updated: $updated}' > data/bilibili.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/bilibili.json
+          git commit -m "chore: bilibili followers $old -> $n"
+          git push

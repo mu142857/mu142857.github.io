@@ -98,19 +98,26 @@ Both 2026 GMTK entries were made in the same jam with a three-person team each; 
 team lead — you assembled and coordinated the team, did the design, and wrote all the code.
 Keep the two lists (`index.html` and `classic.html`) in the same order.
 
-### D. bilibili follower count (manual)
+### D. bilibili follower count (automatic)
 
-Auto-fetch from the browser is **not possible** (bilibili blocks cross-origin requests + returns 403
-to public proxies). Update it by hand in **both** files (`section-gameProjects` / `#games`):
+The browser still can't read bilibili (no CORS, public proxies get 403, and the bilibili "toy"
+page is a static upload that asks the toy SDK for the count at runtime — nothing to scrape). So
+the count is fetched **server-side**:
 
-```html
-<span>10,000 / 100,000</span>            <!-- update the number -->
-<div class="progress-fill" style="width: 10%"></div>   <!-- update % = followers / 1,000 (goal is 100k) -->
-```
+- `.github/workflows/bilibili-stats.yml` runs every 6 h (and on "Run workflow" in the Actions
+  tab), reads the public count from `api.bilibili.com/x/relation/stat?vmid=…` (fallback:
+  `x/web-interface/card`), and commits `data/bilibili.json` only when the number changed.
+- `src/bili-stats.js` fetches that JSON on both pages and rewrites every progress bar
+  (number + `width`), in the classic DOM and inside the interactive `<template>`s.
 
-> If you deploy to GitHub Pages and want true auto-update, ask me to set up a scheduled GitHub
-> Action that fetches the count server-side and writes it to a JSON the page reads. (It *might*
-> still be 403'd on the runner's IP — worth a try.)
+Things to know:
+
+- The numbers in the HTML (`10,000 / 100,000`, `width: 10%`) are the **fallback** shown when the
+  JSON can't load (offline, `file://`). Keep them roughly current, but they no longer need to be
+  exact.
+- The **goal** is parsed from the `/ 100,000` part of the HTML — change it there, in both files.
+- If a run fails with -412 / 403, bilibili is blocking GitHub's runner IPs; the site keeps the last
+  committed number. Views / likes in the Phage card stay manual (`x/space/upstat` needs a login).
 
 ### E. Optional / later
 
