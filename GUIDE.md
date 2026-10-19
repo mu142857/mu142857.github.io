@@ -52,13 +52,17 @@ an existing row and bump the number. When you add a project, add it to both.
 ### A. Images — done
 
 All images live in **`Assets/content/`**, lowercase-with-hyphens (`phage.png`,
-`linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
+`meme-archive.png`, `linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
 `physics-sim.png`, `sentiment-flow.png`, `open-pg.png`, `donatrust.png`,
 `about-portrait.jpg`, `experience-drone.jpg`, `music-studio.jpg`, `favicon.png`).
 
 - **Screenshots are portrait by design** (the games are all vertical-composition). Cards crop
   them to a wide thumbnail with `object-fit: cover` — that is intentional, leave it.
 - New image → drop it in `Assets/content/` and point the card's `src` at it. No other wiring.
+- `meme-archive.png` is the left half of the game's instruments wall (cork board, pegboard with the
+  thermometer gun, drawer) — no meme characters, those belong to their creators. The cork board sits
+  near the top, so its `<img>` carries `style="object-position: 50% 10%"` so the wide thumbnail
+  shows the board instead of the drawer. Use the same trick for any cover whose subject isn't centred.
 - The About portrait is used by the interactive site only; the classic hero is text-only
   (role → name → blurb → buttons → social icons, plus the "Current focus" panel) and
   deliberately shows no photo.
@@ -84,15 +88,18 @@ and the social icons (email, GitHub, LinkedIn, itch.io, bilibili).
 
 Games are listed **most-important-first** and the order is currently:
 
-1. **Linger** — UW Fall 2026 Game Jam (theme: Drift), point-and-click horror puzzle;
+1. **Meme Archive 2026** (2026热梗档案馆｜寻找伪人) — solo bilibili Toy game, Oct 2026,
+   Papers-Please-style meme deduction; **74K+ plays in its first ten days**. Chinese-only, so the
+   English card here is what the résumé links to. Plays `https://www.bilibili.com/toy/m/index.html`.
+2. **Linger** — UW Fall 2026 Game Jam (theme: Drift), point-and-click horror puzzle;
    game design, programming, lighting + particle effects, much of the background art.
    Jam results (55 entries): Style & Presentation **#1**, Gameplay **#2**
-2. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
+3. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
    Jam results (~10,500 entries, 37,000+ jammers): Audio **#53**, Narrative **#126**, Artwork **#140**
-3. **Phage** — the long-running main project
-4. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
+4. **Phage** — the long-running main project
+5. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
    Jam results: Narrative **#476**, Artwork **#1,849**, Audio **#3,354**
-5. **Signal Split** — UW Game Jam
+6. **Signal Split** — UW Game Jam
 
 Both 2026 GMTK entries were made in the same jam with a three-person team each; on both you were
 team lead — you assembled and coordinated the team, did the design, and wrote all the code.
@@ -112,7 +119,7 @@ the count is fetched **server-side**:
 
 Things to know:
 
-- The numbers in the HTML (`10,000 / 100,000`, `width: 10%`) are the **fallback** shown when the
+- The numbers in the HTML (`21,000 / 100,000`, `width: 21%`) are the **fallback** shown when the
   JSON can't load (offline, `file://`). Keep them roughly current, but they no longer need to be
   exact.
 - The **goal** is parsed from the `/ 100,000` part of the HTML — change it there, in both files.
