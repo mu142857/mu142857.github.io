@@ -209,8 +209,24 @@
 
   <template id="section-projects">
     <h2 data-i18n="proj.title">Projects</h2>
-    <p class="lead" data-i18n="proj.lead">Hackathon wins, civic tech, and web builds.</p>
+    <p class="lead" data-i18n="proj.lead">ML research, hackathons, civic tech, and web builds.</p>
     <div class="card-grid">
+      <a class="card" href="#" target="_blank" rel="noopener">
+        <img class="card-thumb" src="Assets/content/little-oscar.png" alt="Little Oscar">
+        <div class="card-text">
+          <h3 data-i18n="proj.oscar.title">Little Oscar <span class="badge">In Progress</span></h3>
+          <p class="meta" data-i18n="proj.oscar.meta">Pixel-Art Style Model · Solo · Data Pipeline, Diffusion Models &amp; Tooling</p>
+          <p data-i18n="proj.oscar.desc">Teaching a machine the pixel-art style of Oscar Li, the artist on my games — with his consent, for the team's own use. Stage 0 exports and de-duplicates a few thousand frames from Aseprite and game files, measures the style numerically (palette size and hue families, outline darkness, light direction, animation timing) and compiles the results into a drawing library, a style checker and a Claude skill that already draws rooms, props and creatures in his style. On top of that I train small conditional U-Nets on an Apple M-series GPU — flow matching snapped to the palette versus masked discrete diffusion over palette tokens — and score them against the originals, including a copy-check against memorisation. Consent is enforced in code: the dataset builder refuses any artist not flagged as having agreed.</p>
+        </div>
+      </a>
+      <a class="card" href="https://github.com/mu142857/WaveLens" target="_blank" rel="noopener">
+        <img class="card-thumb" src="Assets/content/wavelens.png" alt="WaveLens">
+        <div class="card-text">
+          <h3 data-i18n="proj.wl.title">WaveLens <span class="badge">Hack the North 2026</span></h3>
+          <p class="meta" data-i18n="proj.wl.meta">Desk Objects → Music · Team of 3 · Main Program, Music Engine, Vision &amp; Demo</p>
+          <p data-i18n="proj.wl.desc">Point a camera at your desk, take a photo, and every object becomes a member of a band that never plays out of tune: a cup is a grand piano, a pen a fingerpicked guitar, a bottle a pizzicato bass, a book a quiet drum machine, and an open mouth the baritone-sax lead. YOLO-World recognises objects from text prompts (so pens and glasses work without training), MediaPipe reads faces, and a sample-based audio engine on sounddevice plays Logic Pro instruments over a four-chord loop, with a "math mode" that composes the melodic parts bar by bar. A UDP remote port lets a Zybo Z7-20 FPGA conduct the beat and sequencer. I wrote the main program, the music engine, the recognition and the demo; teammates built the FPGA conductor and the ElevenLabs / Gemini integrations.</p>
+        </div>
+      </a>
       <a class="card" href="#" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/look.png" alt="Loo-k">
         <div class="card-text">

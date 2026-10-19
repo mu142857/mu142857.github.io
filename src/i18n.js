@@ -148,7 +148,13 @@ const ZH = {
 
   // Other projects — names stay English except the physics sim
   'proj.title': '项目',
-  'proj.lead': '黑客松获奖、公共科技与 Web 作品。',
+  'proj.lead': '机器学习研究、黑客松、公共科技与 Web 作品。',
+  'proj.oscar.title': 'Little Oscar <span class="badge">进行中</span>',
+  'proj.oscar.meta': '像素画风模型 · 个人项目 · 数据管线、扩散模型与工具链',
+  'proj.oscar.desc': '让机器学会我们游戏美术 Oscar Li 的像素画风——经他同意，仅供团队自用。第 0 阶段从 Aseprite 和游戏文件导出并去重几千帧，把画风量化成数字（色数与色相家族、描边深浅、光源方向、动画节奏），整理成画图库、风格检查器和一个 Claude skill，已经能按他的风格画房间、道具和小怪。在此之上，我在 Apple M 系列 GPU 上训练小型条件 U-Net——吸附到调色板的流匹配，对比在调色板索引上的离散 mask 扩散——并对照原稿打分，包括防背图的查重。授权写进了代码：数据集构建脚本会拒绝任何未标记同意的画师。',
+  'proj.wl.title': 'WaveLens <span class="badge">Hack the North 2026</span>',
+  'proj.wl.meta': '桌面物体 → 音乐 · 三人团队 · 主程序、音乐引擎、识别与演示',
+  'proj.wl.desc': '把镜头对准书桌拍一张照片，每样被认出的物体都变成一支永远不会跑调的乐队成员：杯子是三角钢琴，笔是指弹吉他，瓶子是拨弦低音提琴，书是轻声的鼓机，张开的嘴是上低音萨克斯主旋律。YOLO-World 用文字提示识别物体（笔和眼镜不用训练也能认），MediaPipe 读人脸，基于 sounddevice 的采样音频引擎在四和弦循环上演奏 Logic Pro 的乐器，「数学模式」会逐小节生成旋律声部；UDP 远程口让一块 Zybo Z7-20 FPGA 来指挥节拍和音序。我负责主程序、音乐引擎、识别与演示，队友做了 FPGA 指挥器和 ElevenLabs / Gemini 接入。',
   'proj.look.meta': '生活成本对比工具 · 队长',
   'proj.look.desc': '带领四人团队构建社区宜居度聚合工具，对比加拿大各城市的生活成本与住房指标。已在 Hack Canada 2026 上展示；正从 Web 迁移到移动端。',
   'proj.phys.title': '物理模拟 <span class="badge">第一名</span>',

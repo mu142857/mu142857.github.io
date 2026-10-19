@@ -52,7 +52,7 @@ an existing row and bump the number. When you add a project, add it to both.
 ### A. Images — done
 
 All images live in **`Assets/content/`**, lowercase-with-hyphens (`phage.png`,
-`meme-archive.png`, `linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
+`little-oscar.png`, `wavelens.png`, `meme-archive.png`, `linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
 `physics-sim.png`, `sentiment-flow.png`, `open-pg.png`, `donatrust.png`,
 `about-portrait.jpg`, `experience-drone.jpg`, `music-studio.jpg`, `favicon.png`).
 
@@ -76,11 +76,12 @@ Some project cards link to `href="#"` (do nothing). Replace `#` in **both** `ind
 |---|---|---|---|
 | `section-projects` | Physics Simulation | `#` | project / devpost / repo URL |
 | `section-projects` | Sentiment Flow | `#` | devpost or GitHub URL |
+| `section-projects` | Little Oscar | `#` | repo once it is public (no repo yet) |
 | `section-projects` | Loo-k | `#` | live site or repo URL |
 | `section-projects` | Open Prince George | `#` | repo or site URL |
 | `section-projects` | DonaTrust Portal | `#` | prototype or repo URL |
 
-Already wired (no action needed): Phage → bilibili, Until Someone Passes / Signal Split →
+Already wired (no action needed): WaveLens → `github.com/mu142857/WaveLens`, Phage → bilibili, Until Someone Passes / Signal Split →
 their itch.io pages, Eight For Long → `maggieeeeem.itch.io/eight-for-long`, Music → R&S Studio,
 and the social icons (email, GitHub, LinkedIn, itch.io, bilibili).
 
