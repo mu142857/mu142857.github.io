@@ -181,7 +181,7 @@ export class Scene {
           const water = fx && L.fx && L.fx.water;
           if (water) drawWater(g, water, time, mix, (wg, dx) => this._drawImages(wg, L, cam, mix, dx));
           else this._drawImages(g, L, cam, mix, 0);
-          if (fx && it.lights.length) drawLights(g, it.lights, -Math.round(cam * (L.k ?? 1)), time, mix);
+          if (fx && it.lights.length) drawLights(g, it.lights, -Math.round(cam * (L.k ?? 1)), time, mix, L.repeat || 0);
           break;
         }
         case 'player':

@@ -10,6 +10,7 @@ import time
 import numpy as np
 
 import draw_bg
+import draw_run
 from kit import OUT, PREVIEW, STATES, over, save_png
 
 K = {"sky": 0.0, "far": 0.04, "isle": 0.18, "bank": 0.38, "trees": 0.62, "main": 1.0, "front": 1.3}
@@ -64,7 +65,9 @@ def main():
     for l in draw_bg.LIGHTS:
         k = K[l[0]]
         for i in range(1, int((W + k * (2880 - W)) // 960) + 1):
-            if l[0] in ENDS and (i > 1 or l[1] > ENDS[l[0]]):
+            if l[0] not in ENDS:
+                break                                # tiled layers: the engine repeats their lights itself
+            if i > 1 or l[1] > ENDS[l[0]]:
                 continue
             tiled.append((l[0], l[1] + 960 * i) + tuple(l[2:]))
     draw_bg.LIGHTS.extend(tiled)
@@ -80,6 +83,19 @@ def main():
                 over(layers["main"][s], pix.render(s), x, y)
     except ModuleNotFoundError:
         extra = []
+    # ---- the run: a bare tile of the walk, grass without the tree, and the things to jump
+    run_ground = draw_main.draw_ground([], length=960, street=False)
+    run_ground.save("run_ground")
+    draw_bg.draw_front(tree=False).save("run_front")
+    obs = draw_run.draw_obstacles()
+    obs.save("obstacles")
+    for s_ in STATES:
+        strip = run_ground.render(s_)[150:262, 0:260].copy()
+        x = 20
+        for o in draw_run.OBSTACLES:
+            over(strip, obs.render(s_)[:, o["x"]:o["x"] + o["w"]], x, 232 - 150 - obs.h)
+            x += o["w"] + 30
+        save_png(strip, PREVIEW / f"zoom_run_{s_}.png", 5)
     for s_ in STATES:
         a = compose(layers, s_, 300)
         save_png(a[55:240, 50:300], PREVIEW / f"zoom_arcade_{s_}.png", 5)
@@ -115,6 +131,8 @@ def main():
                    {"x": 470, "y": 150, "angle": 190, "w": 30, "len": 620, "alpha": 0.06, "showFromMix": 0.55}],
         "motes": {"count": 36, "dawn": "firefly", "sunrise": "dust"},
         "title": {"x": 24, "y": 20, "w": 300, "h": 56},
+        "run": {"ground": "{state}/run_ground.png", "front": "{state}/run_front.png", "tile": 960,
+                "sheet": "{state}/obstacles.png", "obstacles": draw_run.OBSTACLES},
     }
     (OUT / "scene.json").write_text(json.dumps(scene, ensure_ascii=False, indent=1))
     print("done", time.time() - t0)

@@ -28,6 +28,8 @@ const START = [15, 16, 17];
 const RUN = [18, 19, 20, 21, 22, 23];
 const STOP = [24, 25];
 const GETUP = [0, 1, 2, 3, 4, 5, 6];
+const FALL = [4, 3, 2, 1, 0]; // getting up, backwards: she goes down on her face (the run)
+const FALL_FRAME = 0.06;
 const AIR_UP = 19;
 const AIR_DOWN = 22;
 
@@ -88,6 +90,7 @@ export class ChenFigure {
   _pick(state, t) {
     switch (state.anim) {
       case 'lie': return [0, FOOT_STAND];
+      case 'fall': return [FALL[Math.min(FALL.length - 1, Math.floor(t / FALL_FRAME))], FOOT_STAND];
       case 'getup': return [GETUP[Math.min(GETUP.length - 1, Math.floor(t / FRAME))], FOOT_STAND];
       case 'jump': return [(state.vy ?? 0) < 0 ? AIR_UP : AIR_DOWN, FOOT_RUN];
       case 'stop': return [STOP[Math.min(STOP.length - 1, Math.floor(t / FRAME))], FOOT_RUN];
@@ -116,7 +119,7 @@ export class ChenFigure {
     const [frame, key] = this._frame(index, mixQ);
     const rim = mixColor(RIM_DAWN, RIM_SUN, mixQ / 16);
     const lit = lightFrame(frame, `chen:${key}`, facing, rim, lerp(0.3, 0.5, mixQ / 16));
-    const lying = state.anim === 'lie' || (state.anim === 'getup' && t < 0.3);
+    const lying = state.anim === 'lie' || (state.anim === 'getup' && t < 0.3) || (state.anim === 'fall' && t > 0.12);
     drawContactShadow(g, screenX - (lying ? 6 * facing : 0), state.ground, state.air, state.mix, lying ? 18 : this.halfWidth);
     const ax = facing < 0 ? FW - 1 - AX : AX;
     g.drawImage(lit, screenX - ax, feetY - 1 - foot);

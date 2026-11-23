@@ -200,6 +200,13 @@
    "x0": 2412,
    "x1": 2486,
    "door": 2448
+  },
+  {
+   "id": "run",
+   "x0": 2826,
+   "x1": 2880,
+   "door": 2850,
+   "labelY": 150
   }
  ],
  "lights": [
@@ -731,5 +738,41 @@
   "y": 20,
   "w": 300,
   "h": 56
+ },
+ "run": {
+  "ground": "{state}/run_ground.png",
+  "front": "{state}/run_front.png",
+  "tile": 960,
+  "sheet": "{state}/obstacles.png",
+  "obstacles": [
+   {
+    "name": "bollard",
+    "x": 4,
+    "w": 14,
+    "h": 18,
+    "jumps": 1
+   },
+   {
+    "name": "crate",
+    "x": 22,
+    "w": 20,
+    "h": 18,
+    "jumps": 1
+   },
+   {
+    "name": "barrel",
+    "x": 46,
+    "w": 18,
+    "h": 25,
+    "jumps": 1
+   },
+   {
+    "name": "stack",
+    "x": 68,
+    "w": 26,
+    "h": 46,
+    "jumps": 2
+   }
+  ]
  }
 }

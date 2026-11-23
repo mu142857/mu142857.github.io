@@ -45,7 +45,10 @@ def bench(p, x):
     p.cast(slats | p.R(x + 4, G - 16, x + 44, G), (p.yy >= G) & (p.yy < G + 7), 26, slope=0.12)
 
 
-def draw_ground(lights, pools=()):
+def draw_ground(lights, pools=(), length=LEN, street=True):
+    """The walk. `street=False` draws a bare 960-px tile of it for the run (no bench, lamp,
+    light pools or pier cut; pillars at fixed places so the tile repeats)."""
+    LEN = length
     p = Pix(LEN, H, PAL)
     xx, yy = p.xx, p.yy
     r = np.random.default_rng(61)
@@ -98,11 +101,12 @@ def draw_ground(lights, pools=()):
     p.put(cope & (yy < 211) & (nm > 0.42), "moss", 3)
     p.put(drop_single(wall & (yy >= 225) & (nm > 0.36)), "moss", 1)
     p.put(drop_single(wall & (yy >= 228) & (nm > 0.22)), "moss", 2)
-    for _ in range(90):                                                   # water stains under the coping
+    for _ in range(90 * LEN // 2880):                                     # water stains under the coping
         x, ln = int(r.integers(0, LEN - 2)), int(r.integers(3, 11))
         p.add(p.R(x, 213, x + 2, 213 + ln), -1)
-    x = 96
-    while x < PIER_X - 90:
+    fixed = iter((70, 300, 512, 770, 10 ** 6))
+    x = 96 if street else next(fixed)
+    while x < (PIER_X - 90 if street else LEN):
         pil = p.R(x, 201, x + 12, G)
         p.put(pil, "stone", 4)
         p.put(p.R(x, 201, x + 2, G), "stone", 3)
@@ -120,7 +124,9 @@ def draw_ground(lights, pools=()):
         p.put(ball & (yy >= 196), "stone", 3)
         p.mottle(pil, 70 + x, t=0.55)
         p.cast(pil | cap, wall | cope, 7, slope=0.3)
-        x += int(r.integers(170, 262))
+        x = x + int(r.integers(170, 262)) if street else next(fixed)
+    if not street:
+        return p
     # ---- things on the walk near the start
     bench(p, 196)
     lamp_post(p, 318, G, 136, "main")

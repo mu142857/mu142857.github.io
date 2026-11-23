@@ -34,13 +34,21 @@ export async function adoptTemplates() {
 
 // Settings opens through the same overlay as the sections; the template is cloned fresh each
 // time, so the buttons are re-wired on every open (as in src/main.js).
-export function wireSettings(overlay) {
+export function wireSettings(overlay, music) {
   const open = () => {
     overlay.show('settings');
-    // TODO(music): this pass has no music, so its row is taken out rather than left as a
-    // switch that does nothing. Restore it together with src/engine/music.js.
     const musicBtn = document.getElementById('setting-music');
-    if (musicBtn) musicBtn.closest('.setting-row').remove();
+    if (musicBtn && !music) musicBtn.closest('.setting-row').remove();
+    if (musicBtn && music) {
+      const desc = musicBtn.closest('.setting-row').querySelector('.meta');
+      if (desc) desc.textContent = t('settings.musicDescNext'); // index.html still describes the old worlds
+      const sync = () => {
+        musicBtn.textContent = t(music.enabled ? 'ui.on' : 'ui.off');
+        musicBtn.classList.toggle('off', !music.enabled);
+      };
+      sync();
+      musicBtn.addEventListener('click', () => { music.setEnabled(!music.enabled); sync(); });
+    }
 
     const langBtn = document.getElementById('setting-lang');
     langBtn.textContent = getLang() === 'zh' ? '中文' : 'English';

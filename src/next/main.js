@@ -8,12 +8,15 @@
 //   ?mix=0.7          pin the dawn->sunrise mix instead of following the player's x
 //   ?fx=off           no atmosphere (water, glows, clouds drift, fog, rays, motes)
 //   ?filter=low|off   grain + vignette only / no filter at all
-// window.G = { player, camera, scene, clock, stage, png(), step(seconds), open(id) }
+// window.G = { player, camera, scene, clock, stage, runner, music, mode, png(), step(seconds),
+//              open(id), enterRun(), exitRun() }
 
 import { W, H, mkCanvas, clamp, Stage, Clock } from './engine.js';
 import { loadScene } from './scene.js';
 import { Player } from './player.js';
 import { loadChen, GETUP_TIME } from './chen.js';
+import { loadRunner } from './runner.js';
+import { Music } from '../engine/music.js';
 import * as filter from './filter.js';
 import {
   adoptTemplates, wireSettings, wireRotateHint, drawIntro, drawStopLabel, stopLabelY, drawDoorChevron,
@@ -26,6 +29,10 @@ import { loadPixelFont } from '../ui/pixelText.js';
 import { applyTranslations } from '../i18n.js';
 
 const params = new URLSearchParams(location.search);
+
+// One track for the street, another for the run; they cross-fade when the scene changes.
+const MUSIC_TRACKS = { street: 'Assets/music/Silvaron.m4a', run: 'Assets/music/glitch.mp3' };
+const FADE_TIME = 0.35; // seconds for each half of the black between the street and the run
 
 async function pickScene() {
   const asked = params.get('scene');
@@ -53,13 +60,20 @@ async function main() {
   const overlay = new Overlay();
   const touch = new TouchControls(input);
   const dust = new Particles();
-  const openSettings = wireSettings(overlay);
+  const music = new Music(MUSIC_TRACKS, 'street');
+  const openSettings = wireSettings(overlay, music);
   const syncRotateHint = wireRotateHint(stage);
 
   const startX = params.has('x') ? Number(params.get('x')) : scene.spawn;
   const player = new Player(scene.ground, clamp(startX || scene.spawn, 0, scene.length), chen);
   // A plain visit opens like The Cloud does: she is lying on the walk, and gets up.
   if (chen && !params.has('x')) player.lieDown(1.1, GETUP_TIME);
+  // The run (the minigame at the tip of the pier). Without it the pier is just scenery.
+  const runner = chen ? await loadRunner(scene, chen, input, dust).catch((e) => { console.error(e); return null; }) : null;
+  if (!runner) scene.stops = scene.stops.filter((s) => s.id !== 'run');
+  let mode = 'street'; // 'street' | 'run'
+  const fade = { a: 0, dir: 0, then: null }; // the screen goes black while the scene is swapped
+  const transition = (then) => { if (!fade.dir) { fade.dir = 1; fade.then = then; } };
   const camera = { x: 0 };
   const pinnedMix = params.has('mix') ? clamp(Number(params.get('mix')) || 0, 0, 1) : null;
   let mix = 0;
@@ -88,12 +102,34 @@ async function main() {
     }
   };
 
-  const openStop = (stop) => { if (!overlay.isOpen) overlay.show(stop.id); };
+  function enterRun() {
+    mode = 'run';
+    document.body.classList.add('in-runner');
+    touch.setMode('runner');
+    runner.reset(1); // the pier is at sunrise, so the run starts there
+    music.setTheme('run');
+  }
+  function exitRun() {
+    mode = 'street';
+    document.body.classList.remove('in-runner');
+    touch.setMode('city');
+    dust.list.length = 0;
+    player.vel = 0;
+    player.facing = -1; // back on the pier, looking down the street she came along
+    music.setTheme('street');
+  }
+
+  const openStop = (stop) => {
+    if (overlay.isOpen || fade.dir) return;
+    if (stop.id === 'run') transition(enterRun);
+    else overlay.show(stop.id);
+  };
 
   // Click / tap a stop: enter it if the character is already there, otherwise walk to its
   // door and enter on arrival.
   stage.canvas.addEventListener('click', (e) => {
-    if (overlay.isOpen) return;
+    if (overlay.isOpen || fade.dir) return;
+    if (mode === 'run') { input.pressVirtual('jump'); input.releaseVirtual('jump'); return; } // a click jumps
     const { nx, ny } = stage.norm(e.clientX, e.clientY);
     const wx = nx * W + camera.x;
     const wy = ny * H;
@@ -107,6 +143,18 @@ async function main() {
   function update(dt) {
     if (overlay.isOpen) {
       if (input.wasPressed('interact')) overlay.hide();
+      input.endFrame();
+      return;
+    }
+    if (fade.dir) {
+      fade.a += (fade.dir * dt) / FADE_TIME;
+      if (fade.dir > 0 && fade.a >= 1) { fade.a = 1; fade.dir = -1; fade.then(); }
+      else if (fade.dir < 0 && fade.a <= 0) { fade.a = 0; fade.dir = 0; }
+      if (fade.dir > 0) { input.endFrame(); return; } // nothing moves while the lights go down
+    }
+    if (mode === 'run') {
+      touch.setEnter(stage.touch, 'back');
+      if (runner.update(dt) === 'exit') transition(exitRun);
       input.endFrame();
       return;
     }
@@ -141,11 +189,17 @@ async function main() {
   function draw() {
     const S = stage.scale;
     const t = clock.time;
-    scene.render(g, camera.x, mix, t, (gg) => {
-      dust.draw(gg, camera.x);
-      player.draw(gg, camera.x, mix);
-    });
-    const showStop = nearStop && !overlay.isOpen;
+    const running = mode === 'run';
+    const light = running ? runner.mix : mix;
+    if (running) {
+      runner.draw(g, t);
+    } else {
+      scene.render(g, camera.x, mix, t, (gg) => {
+        dust.draw(gg, camera.x);
+        player.draw(gg, camera.x, mix);
+      });
+    }
+    const showStop = !running && nearStop && !overlay.isOpen;
     if (showStop) drawDoorChevron(g, nearStop, camera.x, stopLabelY(nearStop, scene.ground) + 26, t, mix);
 
     filter.capture(buf);
@@ -153,14 +207,20 @@ async function main() {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(buf, 0, 0, W * S, H * S);
-    filter.draw(ctx, S, scene.warmthAt(mix));
+    filter.draw(ctx, S, scene.warmthAt(light));
 
     ctx.imageSmoothingEnabled = true;
-    if (scene.title) {
+    if (running) runner.drawHud(ctx, S, stage.touch);
+    if (!running && scene.title) {
       const walked = player.farthest - scene.spawn;
       drawIntro(ctx, S, scene.title, mix, 1 - clamp((walked - 60) / 110, 0, 1), stage.touch);
     }
     if (showStop) drawStopLabel(ctx, S, nearStop, camera.x, scene.ground, mix, stage.touch);
+
+    if (fade.a > 0) {
+      ctx.fillStyle = `rgba(4, 5, 12, ${Math.min(1, fade.a)})`;
+      ctx.fillRect(0, 0, W * S, H * S);
+    }
 
     if (backdropTick++ % 4 === 0) stage.paintBackdrop(buf);
   }
@@ -170,8 +230,10 @@ async function main() {
   clock.start();
 
   window.G = {
-    player, camera, scene, clock, stage, filter: filter.FILTER,
-    get mix() { return mix; },
+    player, camera, scene, clock, stage, filter: filter.FILTER, runner, music, input,
+    get mix() { return mode === 'run' ? runner.mix : mix; },
+    get mode() { return mode; },
+    enterRun, exitRun, // skip the fade (for tests and screenshots)
     // The 480x270 buffer as a PNG data URL, redrawn first (works with rAF asleep).
     png() { draw(); return buf.toDataURL('image/png'); },
     step(seconds = 1 / 60) { for (let s = 0; s < seconds; s += 1 / 60) clock.step(1 / 60); },

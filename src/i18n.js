@@ -229,6 +229,12 @@ const UI = {
   'building.skills': { en: 'Technical Skills', zh: '技术能力' },
   'building.experience': { en: 'Work Experience', zh: '工作经历' },
 
+  'building.run': { en: 'Dawn Run', zh: '晨跑' },
+  'run.howKey': { en: 'SPACE  jump  ·  again in the air to go higher  ·  ENTER  back', zh: '空格  跳  ·  空中再按一次跳得更高  ·  回车  返回' },
+  'run.howTouch': { en: 'JUMP  ·  again in the air to go higher', zh: '跳跃  ·  空中再按一次跳得更高' },
+  'run.retryKeyPier': { en: 'SPACE  retry        ENTER  back to the pier', zh: '空格  重试        回车  回到码头' },
+  'run.retryTouchPier': { en: 'JUMP  retry        BACK  to the pier', zh: '跳跃  重试        返回  回到码头' },
+  'settings.musicDescNext': { en: 'One track for the street, another for the run.', zh: '街上一首，晨跑时换另一首。' },
   'run.hi': { en: 'HI', zh: '最高' },
   'run.gameOver': { en: 'GAME OVER', zh: '游戏结束' },
   'run.score': { en: 'SCORE', zh: '得分' },

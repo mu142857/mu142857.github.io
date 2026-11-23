@@ -390,6 +390,19 @@ the cut-over. Open it at **http://localhost:5173/next** (the `dev` server).
   fallback if the sheet fails to load.
 - **Looking at it** — `node tools/shot.mjs out.png 'x=505&mix=1' --size=1440x810` takes a
   headless-Chrome screenshot (the app's preview pane cannot animate the page).
-- **Done so far**: every layer, all six buildings, the pier, the character.
-  **Still to do**: the runner, music, the HUD's last polish, then replacing `index.html` and
-  retiring the old Forest / City worlds.
+- **Music** — `src/engine/music.js` (the old site's class, unchanged) with two tracks named
+  in `src/next/main.js` (`MUSIC_TRACKS`): `Silvaron.m4a` on the street, `glitch.mp3` during
+  the run; they cross-fade when the scene changes. The Settings switch is the same
+  `music-on` key the old site used.
+- **The run** — `src/next/runner.js`. Standing at the pier's tip shows the "Dawn Run / 晨跑"
+  plate (the pier is a stop with `id: "run"`); Enter fades to the run, Enter again comes back.
+  The backdrop is the street's own scene re-declared as endlessly tiling layers
+  (`runSceneDef`), on a bare 960-px tile of the walk (`run_ground.png`) with the grass but not
+  the foreground tree (`run_front.png`). Every 24 s the light drifts between sunrise and
+  before-dawn. Obstacles are drawn by `art-src/dawn/draw_run.py` into `obstacles.png`; their
+  rectangles and jump counts go into `scene.json` under `"run"`, so adding one is a new entry
+  in `SPECS` plus its drawing. Speeds, jump heights and the light cycle are the `RUN` table at
+  the top of `runner.js`; the best score is saved under `dawn-run-best`.
+- **Done so far**: every layer, all six buildings, the pier, the character, music, the run.
+  **Still to do**: replacing `index.html` with this page and retiring the old Forest / City
+  worlds (their runner, themes and tilesets go with them).

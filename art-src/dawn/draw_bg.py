@@ -459,7 +459,9 @@ def draw_trees(end=False):
 
 
 # ====================================================================== foreground silhouettes (k 1.3)
-def draw_front():
+def draw_front(tree=True):
+    """Grass and one tree close to the lens. `tree=False` is the run's copy: grass only, so
+    nothing ever hides an obstacle."""
     p = Pix(TILE, H, PAL)
     xx, yy = p.xx, p.yy
     r = np.random.default_rng(51)
@@ -473,6 +475,8 @@ def draw_front():
             wd = int(r.integers(2, 4))
             p.put(p.P([(x, y0), (x + wd, y0), (x + wd / 2 + ln, y0 - h)]) | p.R(x, y0 - 3, x + wd, y0), "front", lvl)
     p.put(yy >= H - gh[xx], "front", 0)
+    if not tree:
+        return p
     # a tree close to the lens: trunk, one bough, leaves across the top of the frame
     t = trunk(p, [(708, H), (712, 150), (706, 40), (700, -4)], 16, 11, "front", 53)
     p.put(t, "front", 0)

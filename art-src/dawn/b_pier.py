@@ -12,12 +12,16 @@ from kit import Pix, noise, sh, drop_single, long_runs
 from pal import PAL
 
 NAME = "pier"
+ID = "run"                   # not a section: standing at the tip starts the run (main.js)
 X = 2590
 TOP = 148                    # world y of the sprite's first row
 BW, BH = 2880 - X, 270 - TOP
 GL = 232 - TOP               # 84: the row the feet stand on
 QUAY = 2622 - X              # local x where the stone ends
 TIP = 2868 - X               # local x of the pier's last plank
+DOOR = 2850 - X
+STOP = (2826 - X, 2880 - X)
+LABEL_Y = 150 - TOP
 
 
 def _pile(p, x, top, w=7, seed=0):

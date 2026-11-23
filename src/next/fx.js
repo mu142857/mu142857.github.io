@@ -109,12 +109,17 @@ export function prepareLights(lights) {
   return (lights || []).map((l, i) => ({ ...l, sprite: lightSprite(l), seed: i * 97 + 13 }));
 }
 
-export function drawLights(g, lights, ox, time, mix) {
+// `repeat` is the layer's tiling period, if it tiles: its lights then repeat with it.
+export function drawLights(g, lights, ox, time, mix, repeat = 0) {
   if (!lights.length) return;
   g.save();
   g.globalCompositeOperation = 'lighter';
   for (const l of lights) {
-    const x = l.x - l.sprite.r + ox;
+    let x = l.x - l.sprite.r + ox;
+    if (repeat) { // the leftmost copy that can still reach the screen
+      x = ((x % repeat) + repeat) % repeat - repeat;
+      while (x + l.sprite.c.width < 0) x += repeat;
+    }
     if (x > W || x + l.sprite.c.width < 0) continue;
     const day = l.fadeWithMix ? 1 - mix : 1;
     if (day <= 0.01) continue;
@@ -123,7 +128,10 @@ export function drawLights(g, lights, ox, time, mix) {
     const breathe = 0.5 + 0.25 * Math.sin(time * (1.1 + hash(s) * 0.8) + hash(s + 1) * TAU)
       + 0.25 * Math.sin(time * (3.3 + hash(s + 2) * 2) + hash(s + 3) * TAU);
     g.globalAlpha = clamp((l.alpha ?? 1) * day * (1 - f * breathe * 2), 0, 1);
-    g.drawImage(l.sprite.c, x, l.y - l.sprite.r);
+    do {
+      g.drawImage(l.sprite.c, x, l.y - l.sprite.r);
+      x += repeat;
+    } while (repeat && x < W);
   }
   g.restore();
 }
