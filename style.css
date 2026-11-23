@@ -474,6 +474,14 @@ body.narrow .card .card-thumb { flex-basis: auto; width: 100%; }
   cursor: pointer;
 }
 .setting-btn:hover { background: #fff0a0; }
+/* A row that leads to another page uses a link dressed as the same button. */
+#overlay-content a.setting-btn {
+  display: inline-block;
+  box-sizing: border-box;
+  text-align: center;
+  text-decoration: none;
+  color: #14131f;
+}
 
 /* An off toggle reads hollow, so the row's state is visible at a glance. */
 .setting-btn.off {

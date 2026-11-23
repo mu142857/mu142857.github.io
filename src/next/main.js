@@ -1,6 +1,6 @@
-// Boot and main loop of the 480x270 site (next.html). It runs next to the current site and
-// shares its content: index.html's section templates, the overlay, the input manager, the
-// touch gamepad and the language dictionary are all imported, not copied.
+// Boot and main loop of the 480x270 site (index.html). The overlay, the input manager, the
+// touch gamepad and the language dictionary are the same modules the first site (v1.html,
+// src/main.js) uses: imported, not copied.
 //
 // URL parameters (for looking at things and for the screenshot tool):
 //   ?scene=<folder>   which scene under Assets/ (default: dawn, else dawn-greybox)
@@ -19,7 +19,7 @@ import { loadRunner } from './runner.js';
 import { Music } from '../engine/music.js';
 import * as filter from './filter.js';
 import {
-  adoptTemplates, wireSettings, wireRotateHint, drawIntro, drawStopLabel, stopLabelY, drawDoorChevron,
+  wireSettings, wireRotateHint, drawIntro, drawStopLabel, stopLabelY, drawDoorChevron,
 } from './ui.js';
 import { InputManager } from '../engine/input.js';
 import { Particles } from '../engine/particles.js';
@@ -27,6 +27,7 @@ import { Overlay } from '../ui/overlay.js';
 import { TouchControls } from '../ui/touchControls.js';
 import { loadPixelFont } from '../ui/pixelText.js';
 import { applyTranslations } from '../i18n.js';
+import { applyBiliStats } from '../bili-stats.js';
 
 const params = new URLSearchParams(location.search);
 
@@ -46,11 +47,12 @@ async function pickScene() {
 
 async function main() {
   applyTranslations(); // before anything is seen, so a saved 中文 never flashes English
+  applyBiliStats(); // live follower count: patches the section templates when data/bilibili.json arrives
   const stage = new Stage();
   const [buf, g] = mkCanvas(W, H);
 
   const [scene, chen] = await Promise.all([
-    pickScene(), loadChen().catch(() => null), loadPixelFont(), adoptTemplates(),
+    pickScene(), loadChen().catch(() => null), loadPixelFont(),
   ]);
   scene.fxOn = params.get('fx') !== 'off';
   const tier = params.get('filter');

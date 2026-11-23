@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="robots" content="noindex" />
+  <title data-i18n="doc.titleIndex">Jiamu Shangguan</title>
+  <link rel="icon" type="image/png" href="Assets/content/favicon.png" />
+  <link rel="stylesheet" href="Home/assets/css/fontawesome-all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!--
+    The FIRST interactive site (160x90, the Forest and City worlds), kept as it was when the
+    street took over index.html on 2026-11-23. Reached from Settings on the current site.
+
+    Everything visible lives inside #app. On a phone held upright, #app is rotated 90deg by
+    CSS (body.rotated) so the site always plays in landscape — even with rotation lock on.
+    JS (src/main.js `layout`) sets #app's pixel size and the body mode classes.
+  -->
+  <div id="app">
+    <div id="stage">
+      <canvas id="game" width="160" height="90"></canvas>
+    </div>
+
+    <div id="hud">
+      <div id="social">
+        <a class="hud-icon" href="mailto:linjiamu49@gmail.com" title="Email" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a class="hud-icon" href="https://github.com/mu142857" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a class="hud-icon" href="https://www.linkedin.com/in/jiamu-shangguan-464092399" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a class="hud-icon" href="https://safari-mu.itch.io" target="_blank" rel="noopener" title="itch.io" aria-label="itch.io"><i class="fab fa-itch-io"></i></a>
+        <a class="hud-icon" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
+      </div>
+      <a id="classic-toggle" href="classic.html" data-i18n="hud.classic">Classic Site &rsaquo;</a>
+      <button id="skin-toggle" type="button" title="Switch skin">Forest Style &rsaquo;</button>
+      <button id="settings-toggle" type="button" title="Settings" data-i18n="hud.settings">Settings &rsaquo;</button>
+    </div>
+
+    <!-- Touch gamepad: walk on the left, sprint / jump on the right (shown on touch devices). -->
+    <div id="touch-controls" class="hidden">
+      <div class="pad pad-left">
+        <button class="tbtn" type="button" data-action="left" aria-label="Walk left"><i class="fas fa-chevron-left"></i></button>
+        <button class="tbtn" type="button" data-action="right" aria-label="Walk right"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="pad pad-right">
+        <button class="tbtn tbtn-enter hidden" type="button" data-action="interact" aria-label="Enter"><i class="fas fa-sign-in-alt"></i>&nbsp;<span class="tbtn-label">ENTER</span></button>
+        <div class="pad-row">
+          <button class="tbtn" type="button" data-action="sprint" aria-label="Sprint"><i class="fas fa-angle-double-right"></i></button>
+          <button class="tbtn" type="button" data-action="jump" aria-label="Jump"><i class="fas fa-chevron-up"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="rotate-hint" class="hidden"><i class="fas fa-redo"></i>&nbsp; <span data-i18n="hud.rotate">Turn your phone sideways</span></div>
+
+    <div id="overlay" class="hidden">
+      <div id="overlay-panel">
+        <button id="overlay-close" aria-label="Close">&times;</button>
+        <div id="overlay-content"></div>
+      </div>
+    </div>
+
+    <!-- First-visit world picker. Shown by src/main.js only when localStorage has no saved
+         skin-theme (a cleared save counts as a first visit). The third cover is sealed:
+         clicking it only flashes the red ACCESS DENIED line. -->
+    <div id="theme-picker" class="hidden">
+      <header id="picker-head">
+        <h1 data-i18n="picker.name">JIAMU SHANGGUAN</h1>
+        <p data-i18n="picker.sub">Personal site &amp; portfolio — pick a world to explore it in</p>
+        <h2 data-i18n="picker.choose">CHOOSE YOUR WORLD</h2>
+      </header>
+      <div class="theme-options">
+        <button class="theme-option" type="button" data-theme="silvaron">
+          <img src="Assets/theme/Silvaron.png" alt="Forest" draggable="false">
+          <span class="theme-name" data-i18n="picker.forest">Forest</span>
+        </button>
+        <button class="theme-option" type="button" data-theme="rustCity">
+          <img src="Assets/theme/rust_city.png" alt="City" draggable="false">
+          <span class="theme-name" data-i18n="picker.city">City</span>
+        </button>
+        <button class="theme-option locked" type="button" aria-disabled="true">
+          <img src="Assets/theme/CrimsonSanctum.png" alt="???" draggable="false">
+          <span class="theme-name">???</span>
+        </button>
+      </div>
+      <div id="theme-denied" aria-live="polite" data-i18n="picker.denied">ACCESS DENIED</div>
+    </div>
+  </div>
+
+  <!-- Settings modal content. Shown through the same overlay as the sections; the buttons
+       are wired up in src/main.js each time it opens (the template is cloned fresh). -->
+  <template id="section-settings">
+    <h2 data-i18n="settings.title">Settings</h2>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3 data-i18n="settings.music">Music</h3>
+        <p class="meta" data-i18n="settings.musicDesc">Theme music, one track per world.</p>
+      </div>
+      <button id="setting-music" class="setting-btn" type="button">On</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3 data-i18n="settings.language">Language</h3>
+        <p class="meta" data-i18n="settings.langDesc">Switches the language of the whole site.</p>
+      </div>
+      <button id="setting-lang" class="setting-btn" type="button">English</button>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3 data-i18n="settings.newTitle">Current site</h3>
+        <p class="meta" data-i18n="settings.newDesc">The street from before dawn to sunrise.</p>
+      </div>
+      <a class="setting-btn" href="index.html" data-i18n="settings.open">Open</a>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info">
+        <h3 data-i18n="settings.clearTitle">Clear saved data</h3>
+        <p class="meta" data-i18n="settings.clearDesc">Wipes the world choice, music &amp; language settings, and the runner best score, then reloads.</p>
+      </div>
+      <button id="setting-clear" class="setting-btn danger" type="button">Clear</button>
+    </div>
+  </template>
+
+  <!--
+    The section text (About, Skills, …) is not copied here: it lives in index.html, the current
+    site. src/templates.js fetches that page and adopts its <template id="section-*"> blocks
+    (the Settings one above is this page's own), then the game starts.
+  -->
+  <script type="module">
+    import { adoptTemplates } from './src/templates.js';
+    await adoptTemplates().catch((e) => console.error(e));
+    await import('./src/main.js');
+  </script>
+</body>
+</html>

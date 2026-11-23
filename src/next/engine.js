@@ -1,4 +1,4 @@
-// Canvas, scaling and the clock for the 480x270 site (next.html).
+// Canvas, scaling and the clock for the 480x270 site (index.html).
 //
 // Carried over from 好结局's engine.js:
 //   - The scene is always drawn on a 480x270 offscreen buffer and then upscaled once, by a

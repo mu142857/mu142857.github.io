@@ -1,4 +1,4 @@
-// Everything around the scene: the section templates, the Settings modal, and the text drawn
+// Everything around the scene: the Settings modal, and the text drawn
 // over the picture (the intro lines and the name over a door).
 //
 // Text is never baked into the art. It is drawn in DEVICE space after the buffer has been
@@ -7,30 +7,7 @@
 
 import { W, clamp, mixColor, rgb } from './engine.js';
 import { drawText, measureText, wrapText } from '../ui/pixelText.js';
-import { getLang, setLang, applyTranslations, t } from '../i18n.js';
-import { applyBiliStats } from '../bili-stats.js';
-
-// The section content lives in index.html's <template id="section-*"> blocks. Until the
-// cut-over there is exactly one copy of it: this page fetches index.html and adopts those
-// templates (the Settings one included), then runs the same language and follower-count
-// passes index.html runs.
-export async function adoptTemplates() {
-  const res = await fetch('index.html', { cache: 'no-cache' });
-  if (!res.ok) throw new Error('Could not load index.html for the section templates');
-  const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-  let n = 0;
-  for (const src of doc.querySelectorAll('template[id^="section-"]')) {
-    if (document.getElementById(src.id)) continue;
-    const tpl = document.createElement('template');
-    tpl.id = src.id;
-    tpl.innerHTML = src.innerHTML;
-    document.body.appendChild(tpl);
-    n++;
-  }
-  applyTranslations();
-  applyBiliStats(); // patches the templates in place when data/bilibili.json arrives
-  return n;
-}
+import { getLang, setLang, t } from '../i18n.js';
 
 // Settings opens through the same overlay as the sections; the template is cloned fresh each
 // time, so the buttons are re-wired on every open (as in src/main.js).
@@ -40,8 +17,6 @@ export function wireSettings(overlay, music) {
     const musicBtn = document.getElementById('setting-music');
     if (musicBtn && !music) musicBtn.closest('.setting-row').remove();
     if (musicBtn && music) {
-      const desc = musicBtn.closest('.setting-row').querySelector('.meta');
-      if (desc) desc.textContent = t('settings.musicDescNext'); // index.html still describes the old worlds
       const sync = () => {
         musicBtn.textContent = t(music.enabled ? 'ui.on' : 'ui.off');
         musicBtn.classList.toggle('off', !music.enabled);

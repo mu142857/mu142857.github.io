@@ -23,7 +23,7 @@ export function setLang(lang) {
 }
 
 // ---------------------------------------------------------------------------
-// DOM text (data-i18n keys). Keys are shared between index.html and classic.html wherever
+// DOM text (data-i18n keys). Keys are shared between index.html, v1.html and classic.html wherever
 // both show the same content — the per-element English cache makes that safe even when the
 // two English wordings differ slightly.
 const ZH = {
@@ -52,6 +52,14 @@ const ZH = {
   'settings.langDesc': '切换整站的显示语言。',
   'settings.clearTitle': '清除记录',
   'settings.clearDesc': '清除世界选择、音乐与语言设置以及跑酷最高分，然后刷新页面。',
+  // Settings on the current site (index.html) / the row that leads back from v1.html
+  'settings.musicDescStreet': '街上一首，晨跑时换另一首。',
+  'settings.clearDescStreet': '清除音乐与语言设置以及跑酷最高分，然后刷新页面。',
+  'settings.v1Title': '第一版网站',
+  'settings.v1Desc': '最早的交互版：森林和城市两个世界。',
+  'settings.newTitle': '现在的网站',
+  'settings.newDesc': '从天亮前走到日出的那条街。',
+  'settings.open': '打开',
 
   // Classic top bar / hero / footer
   'nav.brand': '上官嘉木',
@@ -234,7 +242,6 @@ const UI = {
   'run.howTouch': { en: 'JUMP  ·  again in the air to go higher', zh: '跳跃  ·  空中再按一次跳得更高' },
   'run.retryKeyPier': { en: 'SPACE  retry        ENTER  back to the pier', zh: '空格  重试        回车  回到码头' },
   'run.retryTouchPier': { en: 'JUMP  retry        BACK  to the pier', zh: '跳跃  重试        返回  回到码头' },
-  'settings.musicDescNext': { en: 'One track for the street, another for the run.', zh: '街上一首，晨跑时换另一首。' },
   'run.hi': { en: 'HI', zh: '最高' },
   'run.gameOver': { en: 'GAME OVER', zh: '游戏结束' },
   'run.score': { en: 'SCORE', zh: '得分' },

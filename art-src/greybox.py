@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Grey-box placeholder scene for the 480x270 engine (next.html).
+"""Grey-box placeholder scene for the 480x270 engine (index.html).
 
 Flat colour blocks only: it exists so the engine can be built and tested before the real art
 lands in Assets/dawn/. It follows the same scene.json contract the real scene uses, so the two

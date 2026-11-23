@@ -1,4 +1,4 @@
-/* next.html — what the 480x270 site does differently from style.css (loaded before this).
+/* index.html — what the 480x270 site does differently from style.css (loaded before this).
    The overlay, cards, chips, settings rows and touch gamepad are inherited unchanged. */
 
 html, body.next { background: #0b0d1c; }

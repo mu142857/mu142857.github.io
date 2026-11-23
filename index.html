@@ -9,17 +9,25 @@
   <title data-i18n="doc.titleIndex">Jiamu Shangguan</title>
   <link rel="icon" type="image/png" href="Assets/content/favicon.png" />
   <link rel="stylesheet" href="Home/assets/css/fontawesome-all.min.css" />
+  <!-- style.css is shared with v1.html: it carries the overlay, cards, chips, settings rows
+       and the touch gamepad. next.css then restyles what this page does differently (the
+       stage, the backdrop, the quiet HUD). -->
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="next.css" />
 </head>
-<body>
+<body class="next">
   <!--
-    Everything visible lives inside #app. On a phone held upright, #app is rotated 90deg by
-    CSS (body.rotated) so the site always plays in landscape — even with rotation lock on.
-    JS (src/main.js `layout`) sets #app's pixel size and the body mode classes.
+    The interactive site: one street, walked from before dawn to sunrise, on a 480x270 buffer.
+    Engine: src/next/. Scene art + data: Assets/<scene>/scene.json.
+    The first interactive site (the Forest and City worlds) is kept at v1.html; it takes its
+    section text from the <template id="section-*"> blocks below.
   -->
   <div id="app">
+    <!-- A tiny copy of the scene, stretched and blurred by CSS: what shows around the
+         whole-number-scaled picture instead of black bars. -->
+    <canvas id="backdrop" width="48" height="27" aria-hidden="true"></canvas>
     <div id="stage">
-      <canvas id="game" width="160" height="90"></canvas>
+      <canvas id="game" width="480" height="270"></canvas>
     </div>
 
     <div id="hud">
@@ -31,11 +39,10 @@
         <a class="hud-icon" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener" title="bilibili" aria-label="bilibili"><i class="fas fa-video"></i></a>
       </div>
       <a id="classic-toggle" href="classic.html" data-i18n="hud.classic">Classic Site &rsaquo;</a>
-      <button id="skin-toggle" type="button" title="Switch skin">Forest Style &rsaquo;</button>
       <button id="settings-toggle" type="button" title="Settings" data-i18n="hud.settings">Settings &rsaquo;</button>
     </div>
 
-    <!-- Touch gamepad: walk on the left, sprint / jump on the right (shown on touch devices). -->
+    <!-- Touch gamepad (same markup src/ui/touchControls.js expects). -->
     <div id="touch-controls" class="hidden">
       <div class="pad pad-left">
         <button class="tbtn" type="button" data-action="left" aria-label="Walk left"><i class="fas fa-chevron-left"></i></button>
@@ -59,31 +66,7 @@
       </div>
     </div>
 
-    <!-- First-visit world picker. Shown by src/main.js only when localStorage has no saved
-         skin-theme (a cleared save counts as a first visit). The third cover is sealed:
-         clicking it only flashes the red ACCESS DENIED line. -->
-    <div id="theme-picker" class="hidden">
-      <header id="picker-head">
-        <h1 data-i18n="picker.name">JIAMU SHANGGUAN</h1>
-        <p data-i18n="picker.sub">Personal site &amp; portfolio — pick a world to explore it in</p>
-        <h2 data-i18n="picker.choose">CHOOSE YOUR WORLD</h2>
-      </header>
-      <div class="theme-options">
-        <button class="theme-option" type="button" data-theme="silvaron">
-          <img src="Assets/theme/Silvaron.png" alt="Forest" draggable="false">
-          <span class="theme-name" data-i18n="picker.forest">Forest</span>
-        </button>
-        <button class="theme-option" type="button" data-theme="rustCity">
-          <img src="Assets/theme/rust_city.png" alt="City" draggable="false">
-          <span class="theme-name" data-i18n="picker.city">City</span>
-        </button>
-        <button class="theme-option locked" type="button" aria-disabled="true">
-          <img src="Assets/theme/CrimsonSanctum.png" alt="???" draggable="false">
-          <span class="theme-name">???</span>
-        </button>
-      </div>
-      <div id="theme-denied" aria-live="polite" data-i18n="picker.denied">ACCESS DENIED</div>
-    </div>
+    <div id="boot-error" class="hidden"></div>
   </div>
 
   <!--
@@ -296,13 +279,13 @@
   </template>
 
   <!-- Settings modal content. Shown through the same overlay as the sections; the buttons
-       are wired up in src/main.js each time it opens (the template is cloned fresh). -->
+       are wired up in src/next/ui.js each time it opens (the template is cloned fresh). -->
   <template id="section-settings">
     <h2 data-i18n="settings.title">Settings</h2>
     <div class="setting-row">
       <div class="setting-info">
         <h3 data-i18n="settings.music">Music</h3>
-        <p class="meta" data-i18n="settings.musicDesc">Theme music, one track per world.</p>
+        <p class="meta" data-i18n="settings.musicDescStreet">One track for the street, another for the run.</p>
       </div>
       <button id="setting-music" class="setting-btn" type="button">On</button>
     </div>
@@ -315,19 +298,20 @@
     </div>
     <div class="setting-row">
       <div class="setting-info">
+        <h3 data-i18n="settings.v1Title">The first version</h3>
+        <p class="meta" data-i18n="settings.v1Desc">The earlier interactive site: the Forest and City worlds.</p>
+      </div>
+      <a class="setting-btn" href="v1.html" data-i18n="settings.open">Open</a>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info">
         <h3 data-i18n="settings.clearTitle">Clear saved data</h3>
-        <p class="meta" data-i18n="settings.clearDesc">Wipes the world choice, music &amp; language settings, and the runner best score, then reloads.</p>
+        <p class="meta" data-i18n="settings.clearDescStreet">Wipes the music &amp; language settings and the best scores, then reloads.</p>
       </div>
       <button id="setting-clear" class="setting-btn danger" type="button">Clear</button>
     </div>
   </template>
 
-  <script type="module" src="src/main.js"></script>
-  <script type="module">
-    // Live bilibili follower count (data/bilibili.json, written by a GitHub Action). Patches the
-    // section templates in place; the overlay clones them on open. Fails silently offline.
-    import { applyBiliStats } from './src/bili-stats.js';
-    applyBiliStats();
-  </script>
+  <script type="module" src="src/next/main.js"></script>
 </body>
 </html>

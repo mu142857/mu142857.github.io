@@ -1,11 +1,15 @@
 # Jiamu Shangguan — Site Guide
 
-Two views of the same portfolio, switchable by a button:
+Three views of the same portfolio:
 
-1. **Interactive** (`index.html`) — a pixel side-scroller. Walk right past buildings; each building
-   opens a portfolio section. Keep walking past the last one and an **ENTER GAME** arrow drops you
-   into an endless runner. This is the main site.
-2. **Classic** (`classic.html` + `classic.css`) — a normal scrolling one-pager: sticky nav,
+1. **Interactive** (`index.html`) — the main site since 2026-11-23: one street at 480×270,
+   walked from before dawn to sunrise. Each building opens a portfolio section; the pier at the
+   end leads into an endless runner ("Dawn Run"). Everything about it is in **§6**.
+2. **The first version** (`v1.html`) — the earlier interactive site (160×90, the Forest and
+   City worlds, its own runner), kept exactly as it played. Reached from **Settings → The first
+   version** on the main site; its own Settings has a row that leads back. The parts of §3
+   about worlds, skins, `config.js`, controls and `src/runner/` describe this page.
+3. **Classic** (`classic.html` + `classic.css`) — a normal scrolling one-pager: sticky nav,
    text-only editorial hero (with a "Current focus" panel), then About / Skills / Experience /
    Games / Projects / Music / Contact. Same palette as the interactive site. Titles are set in
    a serif (Libre Baskerville, mixed case); body copy, labels, nav and the yellow outlined
@@ -26,7 +30,8 @@ cd "/Users/jiamulin/Desktop/程序programs/Web/Personal Website/mu142857.github.
 python3 -m http.server 5500
 ```
 
-Open **http://localhost:5500** . Classic view: **http://localhost:5500/classic.html** .
+Open **http://localhost:5500** . First version: **http://localhost:5500/v1.html** . Classic view:
+**http://localhost:5500/classic.html** .
 Stop with `Ctrl+C`.
 
 > ⚠️ **After editing code, the browser often caches the old version.** Hard-refresh with
@@ -36,7 +41,8 @@ Stop with `Ctrl+C`.
 
 ## 2. Keeping the content up to date
 
-**Content lives in two places and must be edited in both:**
+**Content lives in two places and must be edited in both** (`v1.html` has no copy of its own:
+it loads the section templates from `index.html` when it starts, see `src/templates.js`):
 
 | | Interactive site | Classic site |
 |---|---|---|
@@ -148,9 +154,14 @@ Things to know:
 ## 3. Project structure
 
 ```
-index.html      Interactive site: canvas, HUD (social + Classic/skin/Settings buttons), section
-                <template>s, the first-visit world picker, and the Settings modal template.
-style.css       Interactive-site styling (canvas, HUD, overlay cards, chips, progress bar, vignette).
+index.html      The interactive site (the street, §6): canvas, HUD (social + Classic/Settings
+                buttons), the section <template>s, and the Settings modal template.
+next.css        What the street does differently from style.css (stage, backdrop, quiet HUD).
+v1.html         The first interactive site: canvas, HUD (Classic/skin/Settings buttons), the
+                first-visit world picker, and its own Settings template. No section text: it
+                adopts index.html's templates at startup, then starts src/main.js.
+style.css       Shared by index.html and v1.html (canvas, HUD, overlay cards, chips, progress
+                bar, settings rows, touch gamepad, vignette).
 classic.html    Classic site: one scrolling page, same content as the templates in index.html.
 classic.css     Classic-site styling (serif titles + Lato, rail grid, glass panels, reveal animations; border-radius: 0 everywhere).
 src/classic/wave.js  Classic-site harmonic-ridgeline backdrop (2D canvas).
@@ -163,7 +174,9 @@ Assets/
   shared/PixelFont.ttf             The pixel font (used on canvas + in overlays).
   content/                         All site photos + screenshots (see §2A).
 src/
-  main.js                          Boot + game loop + scene switching + HUD/text/vignette/dust.
+  next/                            The street's engine (index.html), see §6.
+  templates.js                     Lets v1.html borrow the section templates from index.html.
+  main.js                          v1.html: boot + game loop + scene switching + HUD/text/vignette/dust.
   i18n.js                          The bilingual dictionary (see "Language" below) — every 中文
                                    string on both sites lives here.
   engine/     config.js (all tunable numbers), loop, input, assets, spritesheet, particles,
@@ -173,6 +186,9 @@ src/
   runner/     runner.js (the minigame scene), stones.js (obstacle sheet spec).
   ui/         overlay.js (section modal), pixelText.js (canvas text),
               touchControls.js (on-screen gamepad for phones).
+              (engine/, entities/, world/ and runner/ are v1.html's. The street reuses
+              engine/input.js, engine/particles.js, engine/music.js and all of ui/, so do not
+              delete those folders while v1.html is kept.)
 Home/         Leftover HTML5-UP "Twenty" template. Only still needed for the Font Awesome CSS
               + webfonts that both sites link to (see §2E).
 ```
@@ -336,8 +352,8 @@ Test it by resizing a desktop browser window to phone size — anything with a s
 ## 4. Deploy (GitHub Pages)
 
 Push this whole folder to a repo (e.g. as the source of `mu142857.github.io`, or a project repo
-with Pages enabled). `index.html` at the root is the interactive site; `classic.html` is the
-classic one. No build step — it's plain HTML/CSS/JS.
+with Pages enabled). `index.html` at the root is the interactive site, `v1.html` the first version of it,
+`classic.html` the classic one. No build step — it's plain HTML/CSS/JS.
 
 ---
 
@@ -349,16 +365,18 @@ classic one. No build step — it's plain HTML/CSS/JS.
 
 ---
 
-## 6. The next interactive site (in progress, not live)
+## 6. The interactive site: the street (`index.html`)
 
-`next.html` is the 480×270 rebuild of the interactive site ("方案 A", started 2026-11-22). It
-sits beside the current one and nothing links to it yet; `index.html` stays the live site until
-the cut-over. Open it at **http://localhost:5173/next** (the `dev` server).
+The 480×270 rebuild of the interactive site ("方案 A", started 2026-11-22) took over
+`index.html` on 2026-11-23; the site it replaced is kept as `v1.html`. The folder and the
+stylesheet kept their working names (`src/next/`, `next.css`). Open it at
+**http://localhost:5173** (the `dev` server); `node tools/shot.mjs out.png` screenshots it in
+a headless Chrome (`--page=v1.html` for the first version).
 
-- **Engine** — `next.html`, `next.css`, `src/next/*.js`. The scene is drawn on a 480×270 buffer
+- **Engine** — `index.html`, `next.css`, `src/next/*.js`. The scene is drawn on a 480×270 buffer
   and upscaled by a whole number; logic runs on `setInterval`, so it also advances in a hidden
-  tab. Section content is not copied: at startup the page fetches `index.html` and adopts its
-  `<template id="section-…">` nodes, so the content rules in §2 still apply unchanged.
+  tab. The section content is the `<template id="section-…">` blocks in `index.html` itself, so
+  the content rules in §2 apply unchanged.
   URL switches: `?x=1200` (spawn there), `?mix=0..1` (pin dawn→sunrise), `?fx=off`,
   `?filter=low|off`, `?scene=dawn-greybox` (the engine's placeholder scene).
 - **Scene data** — `Assets/dawn/scene.json` (layers and their parallax `k`, `stops` = where
@@ -403,6 +421,6 @@ the cut-over. Open it at **http://localhost:5173/next** (the `dev` server).
   rectangles and jump counts go into `scene.json` under `"run"`, so adding one is a new entry
   in `SPECS` plus its drawing. Speeds, jump heights and the light cycle are the `RUN` table at
   the top of `runner.js`; the best score is saved under `dawn-run-best`.
-- **Done so far**: every layer, all six buildings, the pier, the character, music, the run.
-  **Still to do**: replacing `index.html` with this page and retiring the old Forest / City
-  worlds (their runner, themes and tilesets go with them).
+- **Done**: every layer, all six buildings, the pier, the character, music, the run, and the
+  cut-over. The Forest / City worlds were not retired: they are `v1.html`, with their runner,
+  themes and tilesets untouched.

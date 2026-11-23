@@ -1,11 +1,11 @@
-// Headless-Chrome screenshot of next.html (adapted from 好结局/游戏/tools/截图.mjs).
+// Headless-Chrome screenshot of the site (index.html by default; adapted from 好结局/游戏/tools/截图.mjs).
 // The desktop app's preview pane never fires requestAnimationFrame, so the page cannot be
 // looked at there; a headless Chrome draws normally. Also prints page errors and the frame
 // rate.
 //
 //   node tools/shot.mjs <out.png> [query] [--size=1280x720] [--wait=1500] [--dpr=1]
 //                       [--js=<code run in the page>] [--buf=<480x270 buffer.png>]
-//                       [--page=next.html] [--port=5173] [--after=<ms to wait after --js>]
+//                       [--page=v1.html] [--port=5173] [--after=<ms to wait after --js>]
 //   node tools/shot.mjs /tmp/a.png 'x=1200&mix=0.7' --buf=/tmp/a_buf.png
 //
 // --js runs inside an async function; whatever it returns is printed. --buf saves the
@@ -27,8 +27,10 @@ const js = flag('js', '');
 const dpr = +flag('dpr', '1');
 const bufOut = flag('buf', '');
 const origin = `http://localhost:${flag('port', '5173')}`;
-let pagePath = `/${flag('page', 'next.html')}`;
-// `npx serve` (the dev preview server) answers next.html with a redirect to /next and DROPS
+let pagePath = `/${flag('page', 'index.html')}`;
+// Only the street (index.html) sets window.READY; v1.html and classic.html just get the wait.
+const wantReady = !args.some((a) => a.startsWith('--page=')) || flag('page', '') === 'index.html';
+// `npx serve` (the dev preview server) answers x.html with a redirect to /x (or /) and DROPS
 // the query string on the way, so follow that redirect here and put the query back.
 try {
   const r = await fetch(origin + pagePath, { redirect: 'manual' });
@@ -83,12 +85,12 @@ try {
   await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: dpr, mobile: false });
   await send('Page.navigate', { url });
   // Wait for the page to say it is up (window.READY), then the requested settle time.
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; wantReady && i < 60; i++) {
     await sleep(150);
     if ((await evaluate('!!window.READY')).result.value) break;
   }
   await sleep(waitMs);
-  if (!(await evaluate('!!window.READY')).result.value) {
+  if (wantReady && !(await evaluate('!!window.READY')).result.value) {
     errors.push('page did not come up (window.READY is not true): '
       + (await evaluate('(document.getElementById("boot-error") || {}).textContent || ""')).result.value);
   }
