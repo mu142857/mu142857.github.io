@@ -17,6 +17,7 @@ from pal import PAL
 LEN, H = 2880, 270
 G = 232
 ARC_X, ARC_Y = 360, 60
+PIER_X = 2622          # the stone walk ends here; b_pier.py draws everything to the right of it
 SPRITES = []          # (name, world x, world y, Pix)
 STOPS = []
 
@@ -44,7 +45,7 @@ def bench(p, x):
     p.cast(slats | p.R(x + 4, G - 16, x + 44, G), (p.yy >= G) & (p.yy < G + 7), 26, slope=0.12)
 
 
-def draw_ground(lights):
+def draw_ground(lights, pools=()):
     p = Pix(LEN, H, PAL)
     xx, yy = p.xx, p.yy
     r = np.random.default_rng(61)
@@ -101,7 +102,7 @@ def draw_ground(lights):
         x, ln = int(r.integers(0, LEN - 2)), int(r.integers(3, 11))
         p.add(p.R(x, 213, x + 2, 213 + ln), -1)
     x = 96
-    while x < LEN - 20:
+    while x < PIER_X - 90:
         pil = p.R(x, 201, x + 12, G)
         p.put(pil, "stone", 4)
         p.put(p.R(x, 201, x + 2, G), "stone", 3)
@@ -124,17 +125,19 @@ def draw_ground(lights):
     bench(p, 196)
     lamp_post(p, 318, G, 136, "main")
     # ---- window light lying on the paving in front of the arcade (dawn only)
-    for cx, hw in ((ARC_X + 68, 44), (ARC_X + 145, 15), (ARC_X + 183, 11)):
+    for cx, hw in ((ARC_X + 68, 44), (ARC_X + 145, 15), (ARC_X + 183, 11)) + tuple(pools):
         half = hw + (yy - G) * 2.2
         pool = (yy >= G) & (yy < 250) & (np.abs(xx - cx) < half)
         p.remat(pool & pave, "pavewarm", 0, "dawn")
         p.remat(pool & pave & (np.abs(xx - cx) < half * 0.6), "pavewarm", 1, "dawn")
         p.add(pool & curb & (np.abs(xx - cx) < half * 0.7), 1, "dawn")
+    p.clear(xx >= PIER_X)
     return p
 
 
 # ====================================================================== building 1: the arcade
-def window(p, x0, y0, x1, y1, lit, lights):
+def window(p, x0, y0, x1, y1, lit, lights, ox=ARC_X, oy=ARC_Y):
+    """A sash window with lintel, frame and sill. (ox, oy) = the sprite's world origin, for the light entry."""
     xx, yy = p.xx, p.yy
     p.put(p.R(x0 - 3, y0 - 6, x1 + 3, y0 - 2), "stone", 4)               # lintel
     p.put(p.R(x0 - 3, y0 - 6, x1 + 3, y0 - 5), "stone", 6)
@@ -153,7 +156,7 @@ def window(p, x0, y0, x1, y1, lit, lights):
             p.add(cur & ((xx - a) % 4 == 3), -1, "dawn")
         p.put(p.P([(mx - 8, y1 - 9), (mx - 5, y1 - 15), (mx - 1, y1 - 15), (mx + 2, y1 - 9)]) & glass, "glow", 6, "dawn")   # a table lamp
         p.put(p.R(mx - 4, y1 - 9, mx - 2, y1) & glass, "cab", 1, "dawn")
-        lights.append(("main", ARC_X + x0, ARC_Y + y0, x1 - x0, y1 - y0))
+        lights.append(("main", ox + x0, oy + y0, x1 - x0, y1 - y0))
     else:
         p.put(glass, "glass", 1, "dawn")
         p.put(glass & (yy > y1 - 9), "glass", 0, "dawn")
@@ -552,9 +555,36 @@ def draw_arcade(lights):
     return p
 
 
+# ====================================================================== buildings 2-6
+# Each lives in its own module b_<id>.py (see b_template.md for the contract). Missing ones are skipped.
+BUILDINGS = ["b_projects", "b_music", "b_about", "b_skills", "b_experience", "b_pier"]
+
+
 def build(lights):
-    ground = draw_ground(lights)
+    import importlib
+    import os
+    only = os.environ.get("ONLY")                      # e.g. ONLY=b_pier,b_experience while others are in progress
+    names = [n for n in BUILDINGS if only is None or n in only.split(",")]
+    out, pools = {}, []
     arcade = draw_arcade(lights)
     SPRITES.append(("arcade", ARC_X, ARC_Y, arcade))
     STOPS.append({"id": "gameProjects", "x0": ARC_X + 110, "x1": ARC_X + 180, "door": ARC_X + 145})
-    return {"ground": ground, "arcade": arcade}
+    out["arcade"] = arcade
+    for name in names:
+        try:
+            mod = importlib.import_module(name)
+        except ModuleNotFoundError as e:
+            if e.name != name:
+                raise
+            continue
+        pix = mod.draw(lights)
+        SPRITES.append((mod.NAME, mod.X, G - mod.GL, pix))
+        out[mod.NAME] = pix
+        if getattr(mod, "ID", None):
+            stop = {"id": mod.ID, "x0": mod.X + mod.STOP[0], "x1": mod.X + mod.STOP[1], "door": mod.X + mod.DOOR}
+            if hasattr(mod, "LABEL_Y"):
+                stop["labelY"] = G - mod.GL + mod.LABEL_Y
+            STOPS.append(stop)
+        pools += [(mod.X + cx, hw) for cx, hw in getattr(mod, "POOLS", ())]
+    out["ground"] = draw_ground(lights, pools)
+    return out

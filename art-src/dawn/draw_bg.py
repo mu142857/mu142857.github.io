@@ -6,7 +6,7 @@ coordinates: the sky layer never scrolls). Light is low and from the RIGHT in bo
 """
 import numpy as np
 
-from kit import Pix, noise, periodic, sh, dilate, erode, drop_single, long_runs
+from kit import Pix, noise, noise1d, periodic, sh, dilate, erode, drop_single, long_runs
 from pal import PAL
 
 W, H, TILE = 480, 270, 960
@@ -292,10 +292,18 @@ def draw_isle():
 
 
 # ====================================================================== our shore curving away (k .38)
-def draw_bank():
+BANK_END = 96           # in the last copy of the bank the land stops here; past it, open lake
+
+
+def draw_bank(end=False):
+    """Our own shore curving away. `end=True` is the copy behind the pier: the shore runs out
+    after BANK_END and the rest is left clear, so the lake and the sun show."""
     p = Pix(TILE, H, PAL)
     xx, yy = p.xx, p.yy
     yb = np.round(205 + 2.5 * periodic(TILE, 21, (1, 2, 4, 7))).astype(int)
+    if end:
+        fall = np.clip((np.arange(TILE) - BANK_END) / 84.0, 0, 1) ** 1.5
+        yb = np.round(yb + fall * 70).astype(int)
     r = np.random.default_rng(23)
     # trees first (the bank's turf then covers the foot of each trunk)
     # in groups, never evenly spaced: (x, height, half-width); "p" = a poplar (tall, narrow)
@@ -306,6 +314,8 @@ def draw_bank():
         base = yb[cx] + 2
         lean = int(r.integers(-4, 5))
         top = base - hgt
+        if end and cx > BANK_END:
+            continue
         if kind == "p":
             trunk(p, [(cx, base), (cx + lean * 0.3, top + hgt * 0.3)], 4, 2, "hut", cx)
             cl = [(cx + lean * 0.3 * (1 - i / 8) + r.uniform(-2, 2), top + 4 + i * (hgt - 16) / 8,
@@ -319,6 +329,8 @@ def draw_bank():
         crown(p, dome(r, cx + lean, top, hw, hgt * 0.40, int(hw * 0.55) + 4, 9.5), "leafA", 100 + cx, base=2, drips=5)
     # boathouse with a lit window
     bx, by = 452, yb[470]
+    if end:
+        bx = -400                                                         # off the picture
     body = p.R(bx, by - 21, bx + 42, by + 2)
     p.put(body, "hut", 2)
     p.put(p.R(bx + 39, by - 21, bx + 42, by + 2), "hut", 4)
@@ -338,7 +350,8 @@ def draw_bank():
     p.put(win, "hut", 3, "sunrise")
     p.put(p.R(bx + 30, by - 14, bx + 33, by - 6), "hut", 5, "sunrise")
     p.put(p.R(bx + 28, by - 14, bx + 29, by - 6), "hut", 1)               # glazing bar
-    LIGHTS.append(("bank", bx + 25, by - 14, 8, 8))
+    if not end:
+        LIGHTS.append(("bank", bx + 25, by - 14, 8, 8))
     # the turf
     land = yy >= yb[xx]
     d = yy - yb[xx]
@@ -351,13 +364,16 @@ def draw_bank():
             x = int((r.normal(0, 1) * 34 + r.choice([60, 210, 250, 410, 520, 640, 830, 930])) % TILE)
             h = int(r.integers(3, 9))
             y0 = yb[x] + 1
+            if end and x > BANK_END + 30:
+                continue
             ln = int(r.integers(-2, 3))
             p.put(p.P([(x, y0), (x + 2, y0), (x + 1 + ln, y0 - h)]) | p.R(x, y0 - 2, x + 2, y0), "bank", lvl - row)
     # a rowboat pulled up beside the boathouse
-    rb = p.P([(506, by - 6), (530, by - 6), (526, by), (510, by)])
-    p.put(rb, "hut", 2)
-    p.put(rb & ~sh(rb, 0, 1), "hut", 4)
-    p.put(rb & ~sh(rb, 0, -1), "hut", 0)
+    if not end:
+        rb = p.P([(506, by - 6), (530, by - 6), (526, by), (510, by)])
+        p.put(rb, "hut", 2)
+        p.put(rb & ~sh(rb, 0, 1), "hut", 4)
+        p.put(rb & ~sh(rb, 0, -1), "hut", 0)
     return p
 
 
@@ -386,8 +402,15 @@ def lamp_post(p, x, foot, top, layer):
     LIGHTS.append((layer, x + 7, top + 3, 7, 8))
 
 
-def draw_trees():
-    p = Pix(TILE, H, PAL)
+TREES_END_W = 1010      # the last copy of the trees layer is wider: it ends in open water
+
+
+def draw_trees(end=False):
+    """The trees right behind the walk. `end=True` draws the copy that closes the street: the
+    same tile up to x = 700, where the bank slopes down into the lake and nothing more stands
+    between the walk and the sunrise (the pier is in front of that stretch)."""
+    Wd = TREES_END_W if end else TILE
+    p = Pix(Wd, H, PAL)
     xx, yy = p.xx, p.yy
     r = np.random.default_rng(41)
     for cx, hgt, hw, w in ((150, 158, 78, 12), (236, 104, 46, 8), (606, 170, 86, 13), (848, 128, 60, 9)):
@@ -395,6 +418,9 @@ def draw_trees():
         lean = int(r.integers(-9, 10))
         top = base - hgt
         fork = base - hgt * 0.40
+        if end and cx > 700:
+            dome(r, cx + lean, top, hw, hgt * 0.36, int(hw * 0.42) + 6, 16)       # keep the random stream in step
+            continue
         trunk(p, [(cx - lean * 0.4, base), (cx - lean * 0.1, base - hgt * 0.2), (cx + lean * 0.3, fork)], w, w - 3, "trunk", cx)
         trunk(p, [(cx + lean * 0.3 - 2, fork + 4), (cx + lean - hw * 0.34, fork - hgt * 0.14), (cx + lean - hw * 0.60, top + hgt * 0.26)], w - 4, 3, "trunk", cx + 1)
         trunk(p, [(cx + lean * 0.3 + 2, fork + 4), (cx + lean + hw * 0.22, fork - hgt * 0.18), (cx + lean + hw * 0.50, top + hgt * 0.22)], w - 5, 3, "trunk", cx + 2)
@@ -402,18 +428,37 @@ def draw_trees():
         crown(p, dome(r, cx + lean, top, hw, hgt * 0.36, int(hw * 0.42) + 6, 16), "leafB", 300 + cx, base=3, drips=10)
     # the hedge that hides the foot of everything
     yh = np.round(214 + 2.2 * periodic(TILE, 43, (3, 5, 8, 13)) - 3 * np.clip(periodic(TILE, 44, (7, 11)), 0, None)).astype(int)
+    yh = np.concatenate([yh, yh])[:Wd]
+    n = noise(H, Wd, 3.0, 2.6, 45, 2)
+    if end:
+        # past x = 700 the bank falls away: a slope of rough grass, a strip of wet stones, then water
+        xs = np.arange(Wd)
+        fall = np.clip((xs - 704) / 74.0, 0, 1) ** 1.6
+        yh = np.round(yh + fall * 64 + 1.5 * noise1d(Wd, 9, 46) * (fall > 0)).astype(int)
+        water = (yy >= 214) & (xx >= 700)
+        p.put(water, "water", 0)
+        nw = noise(H, Wd, 22, 1.2, 47, 2)
+        p.add(long_runs(water & (nw > 0.34) & (yy % 2 == 0), 7), 1)                # long calm ripples, never dashes
+        p.add(long_runs(water & (nw > 0.62) & (yy % 2 == 0), 9), 1)
     hedge = yy >= yh[xx]
     d = yy - yh[xx]
-    n = noise(H, TILE, 3.0, 2.6, 45, 2)
     p.put(hedge, "leafB", np.where(d < 2, 4, np.where(d < 6, 3, np.where(d < 14, 2, 1))))
     p.add(drop_single(hedge & (n > 0.55) & (d < 12)), 1)
     p.add(drop_single(hedge & (n < -0.55)), -1)
+    if end:
+        shore = hedge & (xx >= 742) & (d < 3)                                     # wet stones where it meets the lake
+        p.put(shore, "stone", 3)
+        p.put(shore & (d < 1), "stone", 5)
+        p.add(drop_single(shore & (n > 0.2)), -1)
+        p.put(sh(hedge, 0, -1) & ~hedge & (xx >= 742) & (yy >= 214), "water", 2)    # the bright line of water along it
     for x in (520, 902):
+        if end and x > 700:
+            continue
         lamp_post(p, x, 240, 146, "trees")
     return p
 
 
-# ====================================================================== foreground silhouettes (k 1.4)
+# ====================================================================== foreground silhouettes (k 1.3)
 def draw_front():
     p = Pix(TILE, H, PAL)
     xx, yy = p.xx, p.yy
@@ -445,6 +490,12 @@ def draw_front():
     p.put(leaves, "front", 0)
     edge = leaves & ~sh(leaves, -1, 0) & ~sh(leaves, 0, -1)
     p.put(drop_single(dilate(edge) & leaves & (n > 0.1)), "front", 1)
+    # Slide the tile so the trunk (now at x = 838) never stands on a door. At k = 1.3 it crosses
+    # the character when she is at world x = 700, 1438 and 2177 -- the gaps between buildings --
+    # and the first and last screens (tile x 0-480 and 240-720) are clear of it.
+    for st in p.mat:
+        p.mat[st] = np.roll(p.mat[st], 130, axis=1)
+        p.lvl[st] = np.roll(p.lvl[st], 130, axis=1)
     return p
 
 

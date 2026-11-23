@@ -366,13 +366,30 @@ the cut-over. Open it at **http://localhost:5173/next** (the `dev` server).
   layer per state in `Assets/dawn/dawn/` and `Assets/dawn/sunrise/`. Both states have identical
   geometry; the engine cross-fades them as the player walks right (`mixByX`).
 - **Art** — generated, never hand-edited: `art-src/dawn/` (`kit.py` tools, `pal.py` palettes,
-  `draw_bg.py` sky / lake / far shore / trees, `draw_main.py` the walk and the buildings,
+  `draw_bg.py` sky / lake / far shore / trees, `draw_main.py` the walk and the arcade,
   `build.py` writes the PNGs, `scene.json` and 3× previews into `art-src/dawn/preview/`).
-  Run: `"/Users/jiamulin/Desktop/程序programs/AI Oscar/.venv/bin/python" build.py 0 150` from
+  Run: `"/Users/jiamulin/Desktop/程序programs/AI Oscar/.venv/bin/python" build.py 0 2400` from
   that folder (the numbers are camera positions to preview). Style rules are xiao-oscar's
   (`cloud.md`): hard edges, no outlines, no dashed or dotted lines, one light from the right.
+- **Buildings** — one module each, `art-src/dawn/b_<id>.py`, listed in `draw_main.BUILDINGS`;
+  the contract (size, door, stop range, light pools, label height) is in `b_template.md`.
+  `preview_b.py b_music` redraws just that one onto the street without touching `Assets/`.
+  Left to right: arcade (Game Projects) 360 · workshop (Projects) 800 · music shop 1180 ·
+  cottage (About) 1560 · bookshop (Skills) 1940 · clock tower (Experience) 2290 · pier 2590–2880.
+  Signs are pictograms only; the section name is drawn by the engine at the door.
+- **The end of the street** — past x = 2622 the stone walk stops and `b_pier.py` takes over.
+  So that the lake and the sun show there, the trees and bank layers are not tiled: each is two
+  images, the normal tile and an `_end` copy that runs out into open water
+  (`draw_trees(end=True)`, `draw_bank(end=True)`). The foreground tree (k 1.3) is placed so it
+  crosses the character only in the gaps between buildings, never on a door.
+- **Character** — 晨 from The Cloud (`src/next/chen.js`, sheet `Assets/dawn/chen.png`, copied
+  unchanged from the game: Oscar's art). Frame numbers and timings are the game's. She lies on
+  the walk and gets up when the page opens, runs at 150 px/s (Shift ×1.5), and in the air holds
+  the run's two airborne frames (the sheet has no jump). Each frame is multiplied by the
+  scene's ambient light before drawing. The code-drawn hooded figure in `player.js` is only the
+  fallback if the sheet fails to load.
 - **Looking at it** — `node tools/shot.mjs out.png 'x=505&mix=1' --size=1440x810` takes a
   headless-Chrome screenshot (the app's preview pane cannot animate the page).
-- **Done so far**: all background layers, the walk, building 1 (the arcade = Game Projects).
-  **Still to do**: buildings 2–6, the pier at the far end, the real character (the hooded
-  figure is a code-drawn placeholder), the runner, music, then replacing `index.html`.
+- **Done so far**: every layer, all six buildings, the pier, the character.
+  **Still to do**: the runner, music, the HUD's last polish, then replacing `index.html` and
+  retiring the old Forest / City worlds.

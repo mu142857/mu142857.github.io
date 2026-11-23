@@ -9,8 +9,9 @@
 //   screenX  the character's centre line, in buffer pixels
 //   feetY    the row its soles rest on (the ground line, minus the jump height)
 //   facing   1 = right, -1 = left
-//   state    { anim: 'idle' | 'walk' | 'run' | 'jump', mix: 0..1, air: px above the ground,
-//              ground: the ground row }
+//   state    { anim: 'idle' | 'walk' | 'run' | 'stop' | 'jump' | 'lie' | 'getup', mix: 0..1,
+//              air: px above the ground, ground: the ground row, vy: vertical speed (px/s, up
+//              is negative), moveT: seconds since she stood still, stride: run-cycle clock }
 //   t        seconds, for picking the animation frame
 //
 // Whatever the figure is, the light is the scene's: it comes from the RIGHT and low (the
@@ -21,8 +22,10 @@ import { mkCanvas, clamp, lerp, mixColor, rgb } from './engine.js';
 
 // All movement numbers in one place. World units are buffer pixels (480 across).
 export const TUNE = {
-  walk: 105, // px/s
-  sprint: 2.1, // multiplier while Shift is held
+  walk: 150, // px/s: the speed 晨's run cycle was drawn for (The Cloud's RUN_SPEED)
+  sprint: 1.5, // multiplier while Shift is held (the cycle plays that much faster)
+  accel: 0.3, // seconds from standing to full speed (= her three push-off frames)
+  decel: 0.2, // seconds to brake (= her two braking frames)
   gravity: 900, // px/s^2
   jump: -250, // px/s  (about 35 px high)
   jump2: -205, // the mid-air hop (about 23 px more)
@@ -44,6 +47,18 @@ export class Player {
     this.farthest = x; // rightmost x reached, for fading the intro
     this.figure = figure || new PlaceholderFigure();
     this.onDoubleJump = null;
+    this.vel = 0; // px/s along `facing`
+    this.moveT = 0; // seconds since she last stood still (picks the push-off frames)
+    this.stride = 0; // run-cycle clock, advancing with her speed
+    this.intro = null; // { wait, up }: lying on the ground, then getting up
+  }
+
+  // Start the visit the way The Cloud starts: face down on the ground, then getting up.
+  // `wait` seconds lying (any key cuts it short), then `up` seconds of the getting-up frames.
+  lieDown(wait, up) {
+    this.intro = { wait, up };
+    this.anim = 'lie';
+    this.animT = 0;
   }
 
   get grounded() { return this.air <= 0 && this.vy === 0; }
@@ -56,6 +71,20 @@ export class Player {
     let sprint = input.isDown('sprint');
     const jumpPressed = input.wasPressed('jump');
 
+    if (this.intro) {
+      const it = this.intro;
+      this.animT += dt;
+      if (this.anim === 'lie') {
+        it.wait -= dt;
+        if (it.wait <= 0 || left || right || jumpPressed) { this.anim = 'getup'; this.animT = 0; }
+      } else if (this.animT >= it.up) {
+        this.intro = null;
+        this.anim = 'idle';
+        this.animT = 0;
+      }
+      return;
+    }
+
     if (this.auto) {
       if (left || right || jumpPressed) {
         this.auto = null; // any input of the player's own takes over
@@ -65,6 +94,7 @@ export class Player {
           const then = this.auto.then;
           this.auto = null;
           this.x = Math.round(this.x + d);
+          this.vel = 0;
           if (then) then();
         } else {
           left = d < 0;
@@ -76,13 +106,29 @@ export class Player {
 
     const moving = left !== right;
     this.sprinting = moving && sprint;
+    const top = TUNE.walk * (this.sprinting ? TUNE.sprint : 1);
     if (moving) {
-      this.facing = left ? -1 : 1;
-      let step = this.facing * TUNE.walk * (this.sprinting ? TUNE.sprint : 1) * dt;
+      const facing = left ? -1 : 1;
+      if (facing !== this.facing) { this.facing = facing; this.vel *= 0.4; }
+      this.vel = this.vel < top
+        ? Math.min(top, this.vel + (top / TUNE.accel) * dt)
+        : Math.max(top, this.vel - (TUNE.walk / TUNE.decel) * dt);
+    } else {
+      this.vel = Math.max(0, this.vel - (TUNE.walk / TUNE.decel) * dt);
+    }
+    if (this.vel > 0) {
+      let step = this.facing * this.vel * dt;
       if (this.auto && Math.abs(step) > Math.abs(this.auto.x - this.x)) step = this.auto.x - this.x;
       this.x += step;
+      this.moveT += dt;
+      this.stride += dt * Math.max(0.6, this.vel / TUNE.walk);
+    } else {
+      this.moveT = 0;
+      this.stride = 0;
     }
+    const before = this.x;
     this.x = clamp(this.x, TUNE.edge, length - TUNE.edge);
+    if (this.x !== before) this.vel = 0; // walked into the end of the world
     if (this.x > this.farthest) this.farthest = this.x;
 
     if (jumpPressed) {
@@ -105,13 +151,18 @@ export class Player {
       }
     }
 
-    const anim = this.air > 0 ? 'jump' : moving ? (this.sprinting ? 'run' : 'walk') : 'idle';
+    const anim = this.air > 0 ? 'jump'
+      : moving ? (this.sprinting ? 'run' : 'walk')
+        : this.vel > 0 ? 'stop' : 'idle';
     if (anim !== this.anim) { this.anim = anim; this.animT = 0; } else this.animT += dt;
   }
 
   draw(g, cam, mix) {
     const sx = Math.round(this.x - cam);
-    const state = { anim: this.anim, mix, air: this.air, ground: this.ground };
+    const state = {
+      anim: this.anim, mix, air: this.air, ground: this.ground,
+      vy: this.vy, moveT: this.moveT, stride: this.stride,
+    };
     this.figure.draw(g, sx, this.ground - Math.round(this.air), this.facing, state, this.animT);
   }
 }
@@ -143,7 +194,7 @@ export function lightFrame(frame, key, facing, rimColor, rimAlpha) {
   const id = `${key}|${facing}|${rimColor.join(',')}|${rimAlpha.toFixed(2)}`;
   let out = lightCache.get(id);
   if (out) return out;
-  if (lightCache.size > 400) lightCache.clear();
+  if (lightCache.size > 1200) lightCache.clear();
   const w = frame.width;
   const h = frame.height;
   const [c, x] = mkCanvas(w, h, { willReadFrequently: true });
@@ -247,6 +298,7 @@ export class PlaceholderFigure {
 
   draw(g, screenX, feetY, facing, state, t) {
     const list = FRAMES[state.anim] || FRAMES.idle;
+    if (!(state.anim in FRAMES)) state = { ...state, anim: 'idle' };
     const index = Math.floor(t / (FRAME_TIME[state.anim] || 0.2)) % list.length;
     const mixQ = Math.round(clamp(state.mix, 0, 1) * 16);
     const [frame, key] = this._frame(state.anim in FRAMES ? state.anim : 'idle', index, mixQ);

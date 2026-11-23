@@ -13,6 +13,7 @@
 import { W, H, mkCanvas, clamp, Stage, Clock } from './engine.js';
 import { loadScene } from './scene.js';
 import { Player } from './player.js';
+import { loadChen, GETUP_TIME } from './chen.js';
 import * as filter from './filter.js';
 import {
   adoptTemplates, wireSettings, wireRotateHint, drawIntro, drawStopLabel, stopLabelY, drawDoorChevron,
@@ -41,7 +42,9 @@ async function main() {
   const stage = new Stage();
   const [buf, g] = mkCanvas(W, H);
 
-  const [scene] = await Promise.all([pickScene(), loadPixelFont(), adoptTemplates()]);
+  const [scene, chen] = await Promise.all([
+    pickScene(), loadChen().catch(() => null), loadPixelFont(), adoptTemplates(),
+  ]);
   scene.fxOn = params.get('fx') !== 'off';
   const tier = params.get('filter');
   if (tier === 'off' || tier === 'low') filter.FILTER.tier = tier;
@@ -54,7 +57,9 @@ async function main() {
   const syncRotateHint = wireRotateHint(stage);
 
   const startX = params.has('x') ? Number(params.get('x')) : scene.spawn;
-  const player = new Player(scene.ground, clamp(startX || scene.spawn, 0, scene.length));
+  const player = new Player(scene.ground, clamp(startX || scene.spawn, 0, scene.length), chen);
+  // A plain visit opens like The Cloud does: she is lying on the walk, and gets up.
+  if (chen && !params.has('x')) player.lieDown(1.1, GETUP_TIME);
   const camera = { x: 0 };
   const pinnedMix = params.has('mix') ? clamp(Number(params.get('mix')) || 0, 0, 1) : null;
   let mix = 0;
