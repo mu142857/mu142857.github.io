@@ -52,7 +52,7 @@ an existing row and bump the number. When you add a project, add it to both.
 ### A. Images — done
 
 All images live in **`Assets/content/`**, lowercase-with-hyphens (`phage.png`,
-`little-oscar.png`, `wavelens.png`, `meme-archive.png`, `linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
+`little-oscar.png`, `wavelens.png`, `rewind-rush.png`, `meme-archive.png`, `linger.png`, `until-someone-passes.png`, `eight-for-long.png`, `signal-split.png`, `look.png`,
 `physics-sim.png`, `sentiment-flow.png`, `open-pg.png`, `donatrust.png`,
 `about-portrait.jpg`, `experience-drone.jpg`, `music-studio.jpg`, `favicon.png`).
 
@@ -89,18 +89,23 @@ and the social icons (email, GitHub, LinkedIn, itch.io, bilibili).
 
 Games are listed **most-important-first** and the order is currently:
 
-1. **Meme Archive 2026** (2026热梗档案馆｜寻找伪人) — solo bilibili Toy game, Oct 2026,
+1. **Rewind Rush** (倒带冲刺) — Ludum Dare 60 (theme: Old Tech), four-player co-op action platformer;
+   direction, programming, lighting + VFX on a four-person team. Jam results (735 jam entries):
+   **#66 overall**, Graphics **#60**, Audio **#66**, Mood **#96**. Plays `safari-mu.itch.io/rewind-rush`.
+   Cover is a portrait crop of the itch cover (English title + film strip); the card centres the film-strip band via
+   `object-position: 50% 40%`.
+2. **Meme Archive 2026** (2026热梗档案馆｜寻找伪人) — solo bilibili Toy game, Oct 2026,
    Papers-Please-style meme deduction; **74K+ plays in its first ten days**. Chinese-only, so the
    English card here is what the résumé links to. Plays `https://www.bilibili.com/toy/m/index.html`.
-2. **Linger** — UW Fall 2026 Game Jam (theme: Drift), point-and-click horror puzzle;
+3. **Linger** — UW Fall 2026 Game Jam (theme: Drift), point-and-click horror puzzle;
    game design, programming, lighting + particle effects, much of the background art.
    Jam results (55 entries): Style & Presentation **#1**, Gameplay **#2**
-3. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
+4. **Until Someone Passes** — GMTK 2026, narrative/art game, team lead (design + all code).
    Jam results (~10,500 entries, 37,000+ jammers): Audio **#53**, Narrative **#126**, Artwork **#140**
-4. **Phage** — the long-running main project
-5. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
+5. **Phage** — the long-running main project
+6. **Eight For Long** — GMTK 2026, puzzle/strategy, team lead (design + all code).
    Jam results: Narrative **#476**, Artwork **#1,849**, Audio **#3,354**
-6. **Signal Split** — UW Game Jam
+7. **Signal Split** — UW Game Jam
 
 Both 2026 GMTK entries were made in the same jam with a three-person team each; on both you were
 team lead — you assembled and coordinated the team, did the design, and wrote all the code.
@@ -120,7 +125,7 @@ the count is fetched **server-side**:
 
 Things to know:
 
-- The numbers in the HTML (`21,000 / 100,000`, `width: 21%`) are the **fallback** shown when the
+- The numbers in the HTML (`33,000 / 100,000`, `width: 33%`) are the **fallback** shown when the
   JSON can't load (offline, `file://`). Keep them roughly current, but they no longer need to be
   exact.
 - The **goal** is parsed from the `/ 100,000` part of the HTML — change it there, in both files.

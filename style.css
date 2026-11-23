@@ -337,6 +337,9 @@ body.compact #touch-controls.runner .tbtn[data-action="jump"] { width: 74px; hei
   box-sizing: border-box;
 }
 #overlay-content img { border-style: solid; border-color: rgba(244, 233, 193, 0.25); min-height: 0; height: 200px; object-fit: cover; }
+/* Several entries in one section (work experience): a ruled gap, so each photo reads as
+   belonging to the entry below it rather than the one above. */
+#overlay-content .entry + .entry { margin-top: 26px; padding-top: 22px; border-top: 2px solid rgba(244, 233, 193, 0.25); }
 .img-ph.portrait { max-width: 180px; min-height: 180px; }
 #overlay-content img.portrait { max-width: 200px; height: 200px; }
 

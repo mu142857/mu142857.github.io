@@ -113,7 +113,7 @@
     </div>
     <div class="skill-block">
       <h3 data-i18n="skills.langs">Languages</h3>
-      <div class="chips"><span class="chip">Python</span><span class="chip">GDScript</span></div>
+      <div class="chips"><span class="chip">Python</span><span class="chip">GDScript</span><span class="chip">C++</span></div>
     </div>
     <div class="skill-block">
       <h3 data-i18n="skills.tools">Tools &amp; Platforms</h3>
@@ -121,12 +121,20 @@
     </div>
     <div class="skill-block">
       <h3 data-i18n="skills.ai">AI &amp; Data</h3>
-      <div class="chips"><span class="chip">MediaPipe</span><span class="chip">Streamlit</span><span class="chip">OpenAI API</span></div>
+      <div class="chips"><span class="chip">PyTorch</span><span class="chip">OpenCV</span><span class="chip">NumPy</span><span class="chip">MediaPipe</span><span class="chip">Streamlit</span><span class="chip">OpenAI API</span></div>
     </div>
   </template>
 
   <template id="section-experience">
     <h2 data-i18n="exp.title">Work Experience</h2>
+    <article class="entry">
+      <h3 data-i18n="exp.cp.role">C-POLAR Technologies — AI Research Associate</h3>
+      <p class="meta" data-i18n="exp.cp.meta">LLM Agent Evaluation · On-site · Jul. 2026 – Aug. 2026</p>
+      <ul>
+        <li data-i18n="exp.cp.b1">Owned the evaluation loop for an LLM-based deep-research agent benchmarked against DeepResearch Bench: ran benchmark passes, scored outputs against the rubric and kept the verdict ledger reproducible across iterations.</li>
+        <li data-i18n="exp.cp.b2">Proposed changes to the agent's retrieval and synthesis pipeline that yielded a measurable score improvement, shipped through reviewed pull requests.</li>
+      </ul>
+    </article>
     <article class="entry">
       <img src="Assets/content/experience-drone.jpg" alt="AUAV drone show">
       <h3 data-i18n="exp.role">AUAV — Technical Intern</h3>
@@ -143,6 +151,15 @@
     <h2 data-i18n="games.title">Game Projects</h2>
     <p class="lead" data-i18n="games.lead">I make games in Godot — writing gameplay, physics, and state machines in GDScript, and drawing the pixel art myself.</p>
     <div class="card-grid">
+      <a class="card" href="https://safari-mu.itch.io/rewind-rush" target="_blank" rel="noopener">
+        <img class="card-thumb" src="Assets/content/rewind-rush.png" alt="Rewind Rush" style="object-position: 50% 40%">
+        <div class="card-text">
+          <h3 data-i18n="games.rr.title">Rewind Rush <span class="badge">Ludum Dare 60</span></h3>
+          <p class="meta" data-i18n="games.rr.meta">Co-op Action Platformer · Team of 4 · Direction, Programming, Lighting &amp; VFX</p>
+          <p class="jam-results" data-i18n="games.rr.results"><span class="of">Among 735 jam entries:</span> <strong>#66 overall · #60 in Graphics · #66 Audio · #96 Mood</strong></p>
+          <p data-i18n="games.rr.desc">A scrap planet piled with dead machines, and four people carrying one lantern toward its core — sealed inside is the last tape of home. The lantern is both the party's health and its only light: set it down and you fight more freely, but the dark closes in. Built in 72 hours for Ludum Dare 60 (theme: Old Tech): three levels and bosses, seven weapons, between-level mutations, and local co-op for up to four across mixed inputs — two sharing one keyboard, the rest on gamepads. I directed the four-person team and did the programming, lighting and VFX.</p>
+        </div>
+      </a>
       <a class="card" href="https://www.bilibili.com/toy/m/index.html" target="_blank" rel="noopener">
         <img class="card-thumb" src="Assets/content/meme-archive.png" alt="Meme Archive 2026" style="object-position: 50% 10%">
         <div class="card-text">
@@ -157,7 +174,7 @@
         <div class="card-text">
           <h3 data-i18n="games.linger.title">Linger <span class="badge">1st Place</span></h3>
           <p class="meta" data-i18n="games.linger.meta">UW Fall 2026 Game Jam · Point-and-Click Horror Puzzle · Design, Programming &amp; VFX</p>
-          <p class="jam-results" data-i18n="games.linger.results"><span class="of">Among 55 entries:</span> <strong>#1 in Style &amp; Presentation · #2 in Gameplay</strong></p>
+          <p class="jam-results" data-i18n="games.linger.results"><span class="of">Among 55 entries:</span> <strong>#1 in Style &amp; Presentation · #2 in Gameplay</strong> <span class="of">· 80,000+ plays since release</span></p>
           <p data-i18n="games.linger.desc">Sylvia buys an old wooden house at the end of a quiet valley — and every night, something in it is wrong. Built in 72 hours for the UW Fall 2026 Game Jam (theme: Drift): each evening you get three minutes before midnight to find what changed and do what the last owner's book says before the lights go out. Seven days, five endings. I did the game design, the programming, lighting and particle effects, and much of the background pixel art.</p>
         </div>
       </a>
@@ -175,7 +192,7 @@
         <div class="card-text">
           <h3 data-i18n="games.phage.title">Phage <span class="badge">In Development</span></h3>
           <p class="meta" data-i18n="games.phage.meta">Action-Adventure · 2D pixel side-scroller</p>
-          <p data-i18n="games.phage.desc">My main project: a hand-drawn pixel action-adventure taken to an extreme — the hero is just 8&times;4 pixels, yet every frame is drawn by hand. Follow the (rather fun) dev-log series on bilibili: 803K+ total views and ~112K likes so far.</p>
+          <p data-i18n="games.phage.desc">My main project: a hand-drawn pixel action-adventure taken to an extreme — the hero is just 8&times;4 pixels, yet every frame is drawn by hand. Follow the (rather fun) dev-log series on bilibili: 1.2M+ total views so far.</p>
         </div>
       </a>
       <a class="card" href="https://maggieeeeem.itch.io/eight-for-long" target="_blank" rel="noopener">
@@ -199,8 +216,8 @@
 
     <div class="cta-block">
       <div class="progress">
-        <div class="progress-head"><span data-i18n="games.progress">bilibili followers</span><span>21,000 / 100,000</span></div>
-        <div class="progress-track"><div class="progress-fill" style="width: 21%"></div></div>
+        <div class="progress-head"><span data-i18n="games.progress">bilibili followers</span><span>33,000 / 100,000</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width: 33%"></div></div>
       </div>
       <a class="cta" href="https://safari-mu.itch.io/" target="_blank" rel="noopener"><i class="fab fa-itch-io"></i>&nbsp; <span data-i18n="games.ctaItch">Play my games on itch.io</span></a>
       <a class="cta" href="https://space.bilibili.com/1876827674" target="_blank" rel="noopener"><i class="fas fa-play"></i>&nbsp; <span data-i18n="games.ctaBili">Subscribe at bilibili</span></a>
@@ -216,7 +233,7 @@
         <div class="card-text">
           <h3 data-i18n="proj.oscar.title">Little Oscar <span class="badge">In Progress</span></h3>
           <p class="meta" data-i18n="proj.oscar.meta">Pixel-Art Style Model · Solo · Data Pipeline, Diffusion Models &amp; Tooling</p>
-          <p data-i18n="proj.oscar.desc">Teaching a machine the pixel-art style of Oscar Li, the artist on my games — with his consent, for the team's own use. Stage 0 exports and de-duplicates a few thousand frames from Aseprite and game files, measures the style numerically (palette size and hue families, outline darkness, light direction, animation timing) and compiles the results into a drawing library, a style checker and a Claude skill that already draws rooms, props and creatures in his style. On top of that I train small conditional U-Nets on an Apple M-series GPU — flow matching snapped to the palette versus masked discrete diffusion over palette tokens — and score them against the originals, including a copy-check against memorisation. Consent is enforced in code: the dataset builder refuses any artist not flagged as having agreed.</p>
+          <p data-i18n="proj.oscar.desc">Teaching a machine the pixel-art style of Oscar Li, the artist on my games — with his consent, for the team's own use. Stage 0 exports and de-duplicates a few thousand frames from Aseprite and game files, measures the style numerically (palette size and hue families, outline darkness, light direction, animation timing) and compiles the results into a drawing library, a style checker and a Claude skill that already draws rooms, props and creatures in his style. On top of that I train small conditional U-Nets (3.2M parameters, 918 consented sprites) on an Apple M-series GPU — flow matching snapped to the palette versus masked discrete diffusion over palette tokens — and score them against the originals, including a copy-check against memorisation. Nearly every sprite in Rewind Rush started as one of its drafts. Consent is enforced in code: the dataset builder refuses any artist not flagged as having agreed.</p>
         </div>
       </a>
       <a class="card" href="https://github.com/mu142857/WaveLens" target="_blank" rel="noopener">
