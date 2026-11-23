@@ -1,0 +1,360 @@
+{
+ "screen": [
+  480,
+  270
+ ],
+ "length": 2880,
+ "ground": 232,
+ "states": [
+  "dawn",
+  "sunrise"
+ ],
+ "mixByX": [
+  [
+   0,
+   0
+  ],
+  [
+   2400,
+   1
+  ]
+ ],
+ "warmth": {
+  "dawn": 0.0,
+  "sunrise": 1.0
+ },
+ "layers": [
+  {
+   "name": "sky",
+   "k": 0,
+   "images": [
+    {
+     "file": "{state}/sky.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "far",
+   "k": 0.06,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/far.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "water",
+   "k": 0,
+   "images": [
+    {
+     "file": "{state}/water.png",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "fx": {
+    "water": {
+     "y0": 150,
+     "y1": 232
+    }
+   }
+  },
+  {
+   "name": "mid",
+   "k": 0.38,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/mid.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "main",
+   "k": 1,
+   "images": [
+    {
+     "file": "{state}/ground.png",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "file": "{state}/building1.png",
+     "x": 520,
+     "y": 104
+    },
+    {
+     "file": "{state}/building2.png",
+     "x": 900,
+     "y": 128
+    },
+    {
+     "file": "{state}/building3.png",
+     "x": 1290,
+     "y": 82
+    },
+    {
+     "file": "{state}/building4.png",
+     "x": 1650,
+     "y": 116
+    },
+    {
+     "file": "{state}/building5.png",
+     "x": 2030,
+     "y": 94
+    },
+    {
+     "file": "{state}/building6.png",
+     "x": 2400,
+     "y": 122
+    }
+   ]
+  },
+  {
+   "name": "player"
+  },
+  {
+   "name": "front",
+   "k": 1.4,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/front.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  }
+ ],
+ "stops": [
+  {
+   "id": "gameProjects",
+   "x0": 520,
+   "x1": 690,
+   "door": 605
+  },
+  {
+   "id": "projects",
+   "x0": 900,
+   "x1": 1100,
+   "door": 1000
+  },
+  {
+   "id": "music",
+   "x0": 1290,
+   "x1": 1440,
+   "door": 1365
+  },
+  {
+   "id": "about",
+   "x0": 1650,
+   "x1": 1830,
+   "door": 1740
+  },
+  {
+   "id": "skills",
+   "x0": 2030,
+   "x1": 2190,
+   "door": 2110
+  },
+  {
+   "id": "experience",
+   "x0": 2400,
+   "x1": 2610,
+   "door": 2505
+  }
+ ],
+ "lights": [
+  {
+   "layer": "main",
+   "x": 534,
+   "y": 134,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 646,
+   "y": 134,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 914,
+   "y": 164,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 1056,
+   "y": 164,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 1304,
+   "y": 124,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 1396,
+   "y": 124,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 1664,
+   "y": 146,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 1786,
+   "y": 146,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 2044,
+   "y": 130,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 2146,
+   "y": 130,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 2414,
+   "y": 164,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  },
+  {
+   "layer": "main",
+   "x": 2566,
+   "y": 164,
+   "w": 30,
+   "h": 22,
+   "color": "#ffc870",
+   "flicker": 0.08,
+   "fadeWithMix": true
+  }
+ ],
+ "clouds": [
+  {
+   "file": "{state}/cloud1.png",
+   "x": 120,
+   "y": 40,
+   "speed": 1.5,
+   "k": 0.02
+  },
+  {
+   "file": "{state}/cloud2.png",
+   "x": 340,
+   "y": 78,
+   "speed": 0.9,
+   "k": 0.02
+  }
+ ],
+ "fog": [
+  {
+   "y": 196,
+   "h": 34,
+   "alpha": [
+    0.1,
+    0.06,
+    0.03
+   ],
+   "color": {
+    "dawn": "#8fa3c8",
+    "sunrise": "#f0d9a0"
+   },
+   "speed": 3,
+   "k": 0.5
+  }
+ ],
+ "shafts": [
+  {
+   "x": 470,
+   "y": 96,
+   "angle": 200,
+   "w": 34,
+   "len": 300,
+   "alpha": 0.1,
+   "showFromMix": 0.5
+  },
+  {
+   "x": 480,
+   "y": 40,
+   "angle": 196,
+   "w": 18,
+   "len": 320,
+   "alpha": 0.07,
+   "showFromMix": 0.5
+  }
+ ],
+ "motes": {
+  "count": 40,
+  "dawn": "firefly",
+  "sunrise": "dust"
+ },
+ "title": {
+  "x": 24,
+  "y": 40,
+  "w": 220,
+  "h": 90
+ }
+}

@@ -346,3 +346,33 @@ classic one. No build step — it's plain HTML/CSS/JS.
 - Email: linjiamu49@gmail.com · GitHub: github.com/mu142857 ·
   LinkedIn: linkedin.com/in/jiamu-shangguan-464092399 · itch.io: safari-mu.itch.io
 - Music (R&S Studio): https://r-s-studio.github.io/ · bilibili: https://space.bilibili.com/1876827674
+
+---
+
+## 6. The next interactive site (in progress, not live)
+
+`next.html` is the 480×270 rebuild of the interactive site ("方案 A", started 2026-11-22). It
+sits beside the current one and nothing links to it yet; `index.html` stays the live site until
+the cut-over. Open it at **http://localhost:5173/next** (the `dev` server).
+
+- **Engine** — `next.html`, `next.css`, `src/next/*.js`. The scene is drawn on a 480×270 buffer
+  and upscaled by a whole number; logic runs on `setInterval`, so it also advances in a hidden
+  tab. Section content is not copied: at startup the page fetches `index.html` and adopts its
+  `<template id="section-…">` nodes, so the content rules in §2 still apply unchanged.
+  URL switches: `?x=1200` (spawn there), `?mix=0..1` (pin dawn→sunrise), `?fx=off`,
+  `?filter=low|off`, `?scene=dawn-greybox` (the engine's placeholder scene).
+- **Scene data** — `Assets/dawn/scene.json` (layers and their parallax `k`, `stops` = where
+  each section's door is, `lights`, fog, sun shafts, the `title` rectangle) plus one PNG per
+  layer per state in `Assets/dawn/dawn/` and `Assets/dawn/sunrise/`. Both states have identical
+  geometry; the engine cross-fades them as the player walks right (`mixByX`).
+- **Art** — generated, never hand-edited: `art-src/dawn/` (`kit.py` tools, `pal.py` palettes,
+  `draw_bg.py` sky / lake / far shore / trees, `draw_main.py` the walk and the buildings,
+  `build.py` writes the PNGs, `scene.json` and 3× previews into `art-src/dawn/preview/`).
+  Run: `"/Users/jiamulin/Desktop/程序programs/AI Oscar/.venv/bin/python" build.py 0 150` from
+  that folder (the numbers are camera positions to preview). Style rules are xiao-oscar's
+  (`cloud.md`): hard edges, no outlines, no dashed or dotted lines, one light from the right.
+- **Looking at it** — `node tools/shot.mjs out.png 'x=505&mix=1' --size=1440x810` takes a
+  headless-Chrome screenshot (the app's preview pane cannot animate the page).
+- **Done so far**: all background layers, the walk, building 1 (the arcade = Game Projects).
+  **Still to do**: buildings 2–6, the pier at the far end, the real character (the hooded
+  figure is a code-drawn placeholder), the runner, music, then replacing `index.html`.

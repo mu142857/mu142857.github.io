@@ -1,0 +1,344 @@
+{
+ "screen": [
+  480,
+  270
+ ],
+ "length": 2880,
+ "ground": 232,
+ "spawn": 120,
+ "states": [
+  "dawn",
+  "sunrise"
+ ],
+ "mixByX": [
+  [
+   700,
+   0
+  ],
+  [
+   2400,
+   1
+  ]
+ ],
+ "warmth": {
+  "dawn": 0.0,
+  "sunrise": 1.0
+ },
+ "layers": [
+  {
+   "name": "sky",
+   "k": 0,
+   "images": [
+    {
+     "file": "{state}/sky.png",
+     "x": 0,
+     "y": 0
+    }
+   ],
+   "fx": {
+    "water": {
+     "y0": 152,
+     "y1": 214,
+     "glintX": 392
+    }
+   }
+  },
+  {
+   "name": "far",
+   "k": 0.04,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/far.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "isle",
+   "k": 0.18,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/isle.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "bank",
+   "k": 0.38,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/bank.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "trees",
+   "k": 0.62,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/trees.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  },
+  {
+   "name": "main",
+   "k": 1,
+   "images": [
+    {
+     "file": "{state}/ground.png",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "file": "{state}/arcade.png",
+     "x": 360,
+     "y": 60
+    }
+   ]
+  },
+  {
+   "name": "player"
+  },
+  {
+   "name": "front",
+   "k": 1.4,
+   "repeat": 960,
+   "images": [
+    {
+     "file": "{state}/front.png",
+     "x": 0,
+     "y": 0
+    }
+   ]
+  }
+ ],
+ "stops": [
+  {
+   "id": "gameProjects",
+   "x0": 470,
+   "x1": 540,
+   "door": 505
+  }
+ ],
+ "lights": [
+  {
+   "layer": "isle",
+   "x": 616,
+   "y": 111,
+   "w": 4,
+   "h": 4,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "isle",
+   "x": 116,
+   "y": 164,
+   "w": 3,
+   "h": 2,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "bank",
+   "x": 477,
+   "y": 192,
+   "w": 8,
+   "h": 8,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "trees",
+   "x": 527,
+   "y": 149,
+   "w": 7,
+   "h": 8,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "trees",
+   "x": 909,
+   "y": 149,
+   "w": 7,
+   "h": 8,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "main",
+   "x": 325,
+   "y": 139,
+   "w": 7,
+   "h": 8,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "main",
+   "x": 392,
+   "y": 120,
+   "w": 28,
+   "h": 34,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 18,
+   "alpha": 0.45,
+   "flicker": 0.02
+  },
+  {
+   "layer": "main",
+   "x": 384,
+   "y": 172,
+   "w": 88,
+   "h": 46,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 48,
+   "alpha": 0.45,
+   "flicker": 0.02
+  },
+  {
+   "layer": "main",
+   "x": 495,
+   "y": 185,
+   "w": 20,
+   "h": 20,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 11,
+   "alpha": 0.45,
+   "flicker": 0.02
+  },
+  {
+   "layer": "main",
+   "x": 528,
+   "y": 181,
+   "w": 7,
+   "h": 8,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 15,
+   "steps": [
+    0.17,
+    0.09,
+    0.04
+   ],
+   "flicker": 0.07
+  },
+  {
+   "layer": "main",
+   "x": 535,
+   "y": 199,
+   "w": 16,
+   "h": 17,
+   "color": "#ffc46a",
+   "fadeWithMix": true,
+   "r": 9,
+   "alpha": 0.45,
+   "flicker": 0.02
+  }
+ ],
+ "fog": [
+  {
+   "y": 196,
+   "h": 30,
+   "alpha": [
+    0.1,
+    0.06,
+    0.03
+   ],
+   "color": {
+    "dawn": "#8296c0",
+    "sunrise": "#f3dca0"
+   },
+   "speed": 3,
+   "k": 0.5
+  }
+ ],
+ "shafts": [
+  {
+   "x": 470,
+   "y": 96,
+   "angle": 196,
+   "w": 46,
+   "len": 620,
+   "alpha": 0.07,
+   "showFromMix": 0.55
+  },
+  {
+   "x": 470,
+   "y": 150,
+   "angle": 190,
+   "w": 30,
+   "len": 620,
+   "alpha": 0.06,
+   "showFromMix": 0.55
+  }
+ ],
+ "motes": {
+  "count": 36,
+  "dawn": "firefly",
+  "sunrise": "dust"
+ },
+ "title": {
+  "x": 24,
+  "y": 20,
+  "w": 300,
+  "h": 56
+ }
+}

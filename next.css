@@ -1,0 +1,103 @@
+/* next.html — what the 480x270 site does differently from style.css (loaded before this).
+   The overlay, cards, chips, settings rows and touch gamepad are inherited unchanged. */
+
+html, body.next { background: #0b0d1c; }
+
+/* Around the scene: a 48x27 copy of the picture itself, stretched over the whole stage,
+   smoothed, blurred and dimmed. It follows the scene's colours, so the area the
+   whole-number-scaled picture does not reach is never a black bar. */
+#backdrop {
+  position: absolute;
+  inset: -6%;
+  width: 112%;
+  height: 112%;
+  z-index: 0;
+  image-rendering: auto;
+  filter: blur(28px) brightness(0.62) saturate(0.9);
+  pointer-events: none;
+}
+
+body.next #stage { position: relative; z-index: 1; }
+
+/* A hairline around the picture so its edge reads as a frame, not a seam. */
+body.next #game {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  box-shadow: 0 0 0 1px rgba(244, 233, 193, 0.1), 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* ---- HUD: quiet. Thin outline, translucent dark fill, no solid yellow blocks. ---- */
+body.next #hud { top: 12px; right: 14px; gap: 10px; }
+body.next #social { gap: 4px; }
+
+body.next .hud-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 15px;
+  color: rgba(244, 233, 193, 0.72);
+  transition: color 0.15s, background 0.15s;
+}
+body.next .hud-icon:hover {
+  color: #ffe9a8;
+  background: rgba(12, 14, 28, 0.4);
+  transform: none;
+}
+
+body.next #classic-toggle,
+body.next #settings-toggle {
+  font-family: 'PixelFont', monospace;
+  font-size: 13px;
+  line-height: 1;
+  color: rgba(244, 233, 193, 0.86);
+  background: rgba(12, 14, 28, 0.42);
+  padding: 8px 11px;
+  border: 1px solid rgba(244, 233, 193, 0.34);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+body.next #classic-toggle:hover,
+body.next #settings-toggle:hover {
+  color: #ffe9a8;
+  border-color: rgba(255, 233, 168, 0.8);
+  background: rgba(12, 14, 28, 0.6);
+}
+
+body.compact.next #hud { top: 6px; right: 8px; gap: 6px; }
+body.compact.next .hud-icon { width: 24px; height: 24px; font-size: 13px; }
+body.compact.next #classic-toggle,
+body.compact.next #settings-toggle { font-size: 11px; padding: 6px 8px; border-width: 1px; }
+
+/* The touch buttons take the same quiet treatment. */
+body.next .tbtn {
+  border: 1px solid rgba(244, 233, 193, 0.4);
+  background: rgba(12, 14, 28, 0.38);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+body.next .tbtn.active { background: rgba(255, 233, 168, 0.8); color: #14131f; border-color: #fff4d0; }
+body.next .tbtn-enter { background: rgba(255, 233, 168, 0.86); color: #14131f; border-color: #fff4d0; }
+
+body.next #rotate-hint {
+  color: rgba(244, 233, 193, 0.9);
+  background: rgba(12, 14, 28, 0.6);
+  border: 1px solid rgba(244, 233, 193, 0.4);
+}
+
+#boot-error {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 40;
+  max-width: 80%;
+  padding: 14px 18px;
+  font: 14px/1.5 ui-monospace, Menlo, monospace;
+  color: #ffb3b3;
+  background: rgba(20, 10, 14, 0.9);
+  border: 1px solid rgba(255, 107, 107, 0.6);
+}
+#boot-error.hidden { display: none; }
